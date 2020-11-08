@@ -4,8 +4,8 @@ if (isset($_SESSION['user'])) {
 
     include 'model/m_utilisateurs.php';
     include 'model/m_compteFB.php';
-    $view = 'lier';
-    
+    include 'model/m_pagesInsta.php';
+    $view = 'v_lier';
     
     if(!isset($_GET['token']) && !isset($_GET['pagefb'])){
         echo "

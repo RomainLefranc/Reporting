@@ -7,7 +7,8 @@ $navigations = array (
     ['action' => "c","controller" => "connexion"],
     ['action' => "a","controller" => "admin"],
     ['action' => "l","controller" => "lier"],
-    ['action' => "d","controller" => "deconnexion"]
+    ['action' => "d","controller" => "deconnexion"],
+    ['action' => "ib","controller" => "instagram_bilan"]
 );
 
 $actionEstValide = false;
@@ -18,7 +19,7 @@ if (isset($_GET["a"])) {
     foreach ($navigations as $navigation) {
         if ($navigation["action"] == $action) {
             include 'controller/c_'.$navigation["controller"].'.php';
-            include "view/v_$view.php";
+            include "view/$view.php";
             $actionEstValide = true;
         }
     }

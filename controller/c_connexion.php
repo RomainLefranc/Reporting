@@ -14,5 +14,5 @@
             $_POST["erreur"] = 1;
         }
     }
-    $view = 'connexion';
+    $view = 'v_connexion';
 ?>
