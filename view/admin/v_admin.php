@@ -47,7 +47,7 @@
 
                 <!-- Begin Page Content -->
                 <?php
-                    include 'admin/content.php';
+                    include 'content.php';
                 ?>
                 <!-- /.container-fluid -->
 

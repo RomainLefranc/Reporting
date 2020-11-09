@@ -27,7 +27,7 @@
 
         <!-- Sidebar -->
         <?php
-            include 'view/sidebar.php'
+            include 'view/admin/sidebar.php'
         ?>
         <!-- End of Sidebar -->
 
@@ -39,7 +39,7 @@
 
                 <!-- Topbar -->
                 <?php
-                    include 'view/navbar.php'
+                    include 'view/admin/navbar.php'
                 ?>
                 <!-- End of Topbar -->
 
@@ -105,6 +105,7 @@
                                 </div>`;
                                 return alert;
                             }
+                            $("#progress_bar").val("10");
 
                             var url = `https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`;
                             if (dateDebut >= dateFin || dateFin <= dateDebut) {
@@ -115,7 +116,7 @@
                                 $.get(url, function (data, textStatus) {
                                     switch (textStatus) { 
                                         case 'success':
-                                            $("#progress_bar").val("15");
+                                            $("#progress_bar").val("20");
                                             nbMedia = 0
                                             var itemsNotFormatted = []
                                             if (data.media !== undefined ) {
@@ -329,7 +330,7 @@
     </a>
 
     <?php
-        include 'view/footer.php';
+        include 'view/admin/footer.php';
     ?>
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

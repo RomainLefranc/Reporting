@@ -27,7 +27,7 @@
 
         <!-- Sidebar -->
         <?php
-            include 'view/sidebar.php'
+            include 'view/admin/sidebar.php'
         ?>
         <!-- End of Sidebar -->
 
@@ -39,7 +39,7 @@
 
                 <!-- Topbar -->
                 <?php
-                    include 'view/navbar.php'
+                    include 'view/admin/navbar.php'
                 ?>
                 <!-- End of Topbar -->
 
@@ -365,7 +365,7 @@
     </a>
 
     <?php
-        include 'view/footer.php';
+        include 'view/admin/footer.php';
     ?>
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

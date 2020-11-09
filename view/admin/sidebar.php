@@ -3,7 +3,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php?a=a">
                 <div class="sidebar-brand-icon">
-                    <img src="media\44767108_2196185164002161_3379978518505979904_n.jpg" class="rounded img-fluid" width='35' height='35' >
+                    <img src="media\44767108_2196185164002161_3379978518505979904_n.jpg" class="rounded img-fluid" width='45' height='45' >
                 </div>
                 <div class="sidebar-brand-text mx-3">Nautilus</div>
             </a>
@@ -30,7 +30,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
+                    <i class="fab fa-facebook-square"></i>
                     <span>Facebook</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -49,7 +49,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                     aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-wrench"></i>
+                    <i class="fab fa-instagram"></i>
                     <span>Instagram</span>
                 </a>
                 <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"

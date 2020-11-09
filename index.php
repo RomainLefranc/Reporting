@@ -5,13 +5,13 @@ require_once __DIR__ . '/Facebook/autoload.php';
 
 $navigations = array (
     ['action' => "c","controller" => "connexion"],
-    ['action' => "a","controller" => "admin"],
-    ['action' => "l","controller" => "lier"],
-    ['action' => "d","controller" => "deconnexion"],
-    ['action' => "ib","controller" => "instagram_bilan"],
-    ['action' => "icsv","controller" => "instagram_csv"],
-    ['action' => "ie","controller" => "instagram_exporter"]
-
+    ['action' => "a","controller" => "admin/c_admin"],
+    ['action' => "l","controller" => "admin/c_lier"],
+    ['action' => "d","controller" => "admin/c_deconnexion"],
+    ['action' => "ib","controller" => "admin/instagram/c_instagram_bilan"],
+    ['action' => "icsv","controller" => "admin/instagram/c_instagram_csv"],
+    ['action' => "ie","controller" => "admin/instagram/c_instagram_exporter"],
+    ['action' => "fb","controller" => "admin/facebook/c_facebook_bilan"],
 );
 
 $actionEstValide = false;
@@ -21,7 +21,7 @@ if (isset($_GET["a"])) {
 
     foreach ($navigations as $navigation) {
         if ($navigation["action"] == $action) {
-            include 'controller/c_'.$navigation["controller"].'.php';
+            include 'controller/'.$navigation["controller"].'.php';
             include "view/$view.php";
             $actionEstValide = true;
         }
