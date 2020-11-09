@@ -2,6 +2,9 @@
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php?a=a">
+                <div class="sidebar-brand-icon">
+                    <img src="media\44767108_2196185164002161_3379978518505979904_n.jpg" class="rounded img-fluid" width='35' height='35' >
+                </div>
                 <div class="sidebar-brand-text mx-3">Nautilus</div>
             </a>
 
