@@ -13,9 +13,8 @@ $navigations = array (
     ['action' => "ie","controller" => "admin/instagram/c_instagram_exporter"],
     ['action' => "fb","controller" => "admin/facebook/c_facebook_bilan"],
     ['action' => "fcsv","controller" => "admin/facebook/c_facebook_csv"],
-    ['action' => "fe","controller" => "admin/facebook/c_facebook_exporter"]
-
-
+    ['action' => "fe","controller" => "admin/facebook/c_facebook_exporter"],
+    ['action' => "ff","controller" => "admin/facebook/c_facebook_comparatif"]
 );
 
 $actionEstValide = false;
