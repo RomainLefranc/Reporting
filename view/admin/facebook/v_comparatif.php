@@ -53,11 +53,16 @@
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Comparatif Facebook</h1>
                     </div>
-                    <div class="container col-12">
+                    <div class="container row col-12">
                         <!------------------------PHP affichant la totalité des pages de notre BDD----------------------------->
                         <?php
+                            $moitie = sizeof($listePageFB)/2;
+                            $listePageFBGauche = array_slice($listePageFB,0,intval($moitie));
+                            
+                            $listePageFBDroite =  array_slice($listePageFB,$moitie);
+
                         echo '<div class="col-6">';
-                            foreach ($listePageFB as $pageFB) {
+                            foreach ($listePageFBGauche as $pageFB) {
                                 $token = getComptesFB( $pageFB['id_comptes']);
                                 echo '
                                     <div class="form-check">
@@ -71,7 +76,7 @@
                         echo '</div>';
 
                         echo '<div class="col-6">';
-                            foreach ($listePageFB as $pageFB) {
+                            foreach ($listePageFBDroite as $pageFB) {
                                 $token = getComptesFB( $pageFB['id_comptes']);
                                 echo '
                                     <div class="form-check">
