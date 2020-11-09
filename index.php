@@ -8,7 +8,10 @@ $navigations = array (
     ['action' => "a","controller" => "admin"],
     ['action' => "l","controller" => "lier"],
     ['action' => "d","controller" => "deconnexion"],
-    ['action' => "ib","controller" => "instagram_bilan"]
+    ['action' => "ib","controller" => "instagram_bilan"],
+    ['action' => "icsv","controller" => "instagram_csv"],
+    ['action' => "ie","controller" => "instagram_exporter"]
+
 );
 
 $actionEstValide = false;
