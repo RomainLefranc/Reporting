@@ -31,7 +31,14 @@ function setToken($id, $token){
     $requete->bindParam(':id',$id);
     $requete->execute();
 }
-
+function getComptesFB($id){
+    global $pdo;
+    $requete = $pdo->prepare("SELECT * FROM comptesFB WHERE id = :id");
+    $requete->bindParam(':id',$id);
+    $requete->execute();
+    $resultat = $requete->fetchall();
+    return $resultat[0]['jeton'];
+}
 
 
 

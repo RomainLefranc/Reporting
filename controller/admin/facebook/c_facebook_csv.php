@@ -3,7 +3,7 @@
         include 'model/m_pagesFB.php';
         include 'model/m_compteFB.php';
         $username = htmlspecialchars($_SESSION['user']);
-        $view = 'admin/facebook/v_bilan';
+        $view = 'admin/facebook/v_csv';
         $listePageFB = getPagesFB_BDD();
     }
 ?>
