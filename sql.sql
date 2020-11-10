@@ -1,26 +1,13 @@
--- --------------------------------------------------------
--- Hôte :                        localhost
--- Version du serveur:           5.7.24 - MySQL Community Server (GPL)
--- SE du serveur:                Win64
--- HeidiSQL Version:             10.2.0.5599
--- --------------------------------------------------------
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES utf8 */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-
-
-CREATE DATABASE IF NOT EXISTS `nautilusv2` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `nautilusv2`;
+CREATE DATABASE IF NOT EXISTS nautilusv2 CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+USE nautilusv2;
 
 CREATE TABLE IF NOT EXISTS `comptesFB` (
   `id` varchar(50) NOT NULL,
   `nom` varchar(50) DEFAULT NULL,
   `jeton` varchar(250) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 INSERT INTO `comptesFB` (`id`,`nom`,`jeton`) VALUES
 	('10156975604778178', 'Sim On','EAANX4doqDDsBAOBQszs1wRZCIUG5SEQaArSVtofdWwdZA6ivaIvn6JnvaMFfIyHN7AynqP2Sf9gfeSFKXFDGIJEupHBB0wiyZArFt5hIodzJPreTYqZBK4tO7408TQhiiaqc20hJuuYZC6cT0Fjl4xug8CWLb6APtZCWOGYX2jvgZDZD'),
@@ -32,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `pagesFB` (
   `id_comptes` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_pages_id_comptes` FOREIGN KEY (`id_comptes`) REFERENCES `comptesFB` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `pagesInsta` (
   `id` varchar(100) NOT NULL,
@@ -40,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `pagesInsta` (
   `id_pagesFB` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_pages_1` FOREIGN KEY (`id_pagesFB`) REFERENCES `pagesFB` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 INSERT INTO `pagesFB` (`id`, `nom`, `id_comptes`) VALUES
 	('106656610804614', 'Double Test', '454172598774501'),
@@ -78,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `login` varchar(50) DEFAULT NULL,
   `mdp` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 INSERT INTO `users` (`id`,`pseudo`, `login`, `mdp`) VALUES
 	(1, 'admin','supernautilus', 'b09c600fddc573f117449b3723f23d64'),

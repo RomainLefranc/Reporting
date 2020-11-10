@@ -117,9 +117,7 @@
                                     ajouterCompteFB($user['id'],$user['name'],$token->access_token);
                                 } else {
                                     $token_BDD = getToken($user['id']);
-                                    if (empty($token_BDD)) {
-                                        setToken($user['id'], $token->access_token);
-                                    } elseif ($token_BDD != $token->access_token) {
+                                    if (empty($token_BDD) || $token_BDD != $token->access_token) {
                                         setToken($user['id'], $token->access_token);
                                     }
                                 }
@@ -143,7 +141,6 @@
                                         $json = file_get_contents('https://graph.facebook.com/v3.2/'.$idPageInsta.'?fields=name,profile_picture_url&access_token='.$token->access_token);
                                         $parsed_json = json_decode($json, true);
                                         $nomPageInsta = $parsed_json['name'];
-                                        $nomPageInsta = preg_replace('/[[:^print:]]/', '', $nomPageInsta );
                                         $imgPageInsta = $parsed_json['profile_picture_url'];
                                         $listePageInstarecupere.= "<img src='" . $imgPageInsta . "' width='25' height='25' style='border-radius:30px'> ".$nomPageInsta.'<br>';
                                     }

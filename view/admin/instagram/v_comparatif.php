@@ -51,38 +51,37 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Comparatif Facebook</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Comparatif Instagram</h1>
                     </div>
                     <div class="container row col-12">
                         <!------------------------PHP affichant la totalité des pages de notre BDD----------------------------->
                         <?php
-                            $moitie = sizeof($listePageFB)/2;
-                            $listePageFBGauche = array_slice($listePageFB,0,intval($moitie));
+                            $moitie = sizeof($listePageInsta)/2;
+                            $listePageInstaGauche = array_slice($listePageInsta,0,intval($moitie));
                             
-                            $listePageFBDroite =  array_slice($listePageFB,$moitie);
+                            $listePageInstaDroite =  array_slice($listePageInsta,$moitie);
 
                         echo '<div class="col-6">';
-                            foreach ($listePageFBGauche as $pageFB) {
-                                $token = getComptesFB( $pageFB['id_comptes']);
+                            foreach ($listePageInstaGauche as $pageInsta) {
+                                $token = getComptesFB( $pageInsta['id_comptes']);
                                 echo '
                                     <div class="form-check">
-                                        <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" data-value="'.$token.'" value="'.$pageFB['id'].'">
+                                        <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" data-value="'.$token.'" value="'.$pageInsta[0].'">
                                         <label class="form-check-label">
-                                        '.$pageFB['nom'].'
+                                        '.$pageInsta['nom'].'
                                         </label>
-                                    </div>
-                                ';
-                            }
+                                    </div>';
+                              }
                         echo '</div>';
 
                         echo '<div class="col-6">';
-                            foreach ($listePageFBDroite as $pageFB) {
-                                $token = getComptesFB( $pageFB['id_comptes']);
-                                echo '
+                            foreach ($listePageInstaDroite as $pageInsta) {
+                                $token = getComptesFB( $pageInsta['id_comptes']);
+                                 echo '
                                     <div class="form-check">
-                                        <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" data-value="'.$token.'" value="'.$pageFB['id'].'">
+                                        <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" data-value="'.$token.'" value="'.$pageInsta[0].'">
                                         <label class="form-check-label">
-                                        '.$pageFB['nom'].'
+                                        '.$pageInsta['nom'].'
                                         </label>
                                     </div>
                                 ';
@@ -123,7 +122,6 @@
                             var count = $('input:checkbox:checked').length;
                             var lesPages = [];
                             var lesFans = [];
-
                             //boucle for pour récupérer les données de chacune des pages sélectionnées
                             for(var i = 0; i < count; i++){
                                 //on selectionne l'id de la page
@@ -132,7 +130,7 @@
                                 var token = $('input:checkbox:checked')[i].getAttribute('data-value');
                                 
                                 //on lance l'ajax qui récupérera les données via l'API
-                                var monUrl = 'https://graph.facebook.com/v4.0/' + pagesArrays[i] + '?fields=name,fan_count,picture&access_token=' + token;
+                                var monUrl = 'https://graph.facebook.com/v3.2/' + pagesArrays[i] + '?fields=name,followers_count&access_token=' + token;
                                 $.ajax(
                                 {
                                     url : monUrl,
@@ -146,7 +144,7 @@
                                         
                                         //on contruit nos deux variable pour notre graphique numero 1
                                         lesPages.push(response['name']);
-                                        lesFans.push(response['fan_count']);
+                                        lesFans.push(response['followers_count']);
 
                                         //////////////////graphique 1/////////////////////////////////////////////////////////
                                         var max = (Math.ceil(Math.max(...lesFans)/10000)*10000);
