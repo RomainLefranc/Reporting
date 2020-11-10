@@ -68,7 +68,7 @@
                                     <div class="form-check">
                                         <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" data-value="'.$token.'" value="'.$pageInsta[0].'">
                                         <label class="form-check-label">
-                                        '.$pageInsta['nom'].'
+                                        '.$pageInsta[1].'
                                         </label>
                                     </div>';
                               }
@@ -81,7 +81,7 @@
                                     <div class="form-check">
                                         <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" data-value="'.$token.'" value="'.$pageInsta[0].'">
                                         <label class="form-check-label">
-                                        '.$pageInsta['nom'].'
+                                        '.$pageInsta[1].'
                                         </label>
                                     </div>
                                 ';
@@ -99,7 +99,7 @@
                             <div class="card mb-3 mt-2">
                                 <div class="card-header">
                                 <i class="fas fa-chart-bar"></i>
-                                Comparatif du nombre de fans par page</div>
+                                Comparatif du nombre de follower par page</div>
                                 <div class="card-body">
                                 <canvas id="myBarChart" width="100%" height="50"></canvas>
                                 </div>
