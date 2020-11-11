@@ -1,14 +1,9 @@
 {
-    "_readme": [
-        "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
-        "This file is @generated automatically"
-    ],
-    "content-hash": "5ad16f3919e2717367983dd655f41f64",
     "packages": [
         {
             "name": "google/recaptcha",
             "version": "1.2.4",
+            "version_normalized": "1.2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/google/recaptcha.git",
@@ -28,12 +23,14 @@
                 "php-coveralls/php-coveralls": "^2.1",
                 "phpunit/phpunit": "^4.8.36|^5.7.27|^6.59|^7.5.11"
             },
+            "time": "2020-03-31T17:50:54+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "1.2.x-dev"
                 }
             },
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "ReCaptcha\\": "src/ReCaptcha"
@@ -56,11 +53,12 @@
                 "issues": "https://github.com/google/recaptcha/issues",
                 "source": "https://github.com/google/recaptcha"
             },
-            "time": "2020-03-31T17:50:54+00:00"
+            "install-path": "../google/recaptcha"
         },
         {
             "name": "spipu/html2pdf",
             "version": "v5.2.2",
+            "version_normalized": "5.2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spipu/html2pdf.git",
@@ -86,7 +84,9 @@
                 "ext-gd": "Allows to embed images into the PDF",
                 "fagundes/zff-html2pdf": "if you need to integrate Html2Pdf with Zend Framework 2 (zf2)"
             },
+            "time": "2020-03-22T16:23:26+00:00",
             "type": "library",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Spipu\\Html2Pdf\\": "src/"
@@ -114,11 +114,12 @@
                 "issues": "https://github.com/spipu/html2pdf/issues",
                 "source": "https://github.com/spipu/html2pdf/tree/v5.2.2"
             },
-            "time": "2020-03-22T16:23:26+00:00"
+            "install-path": "../spipu/html2pdf"
         },
         {
             "name": "tecnickcom/tcpdf",
             "version": "6.3.5",
+            "version_normalized": "6.3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tecnickcom/TCPDF.git",
@@ -133,7 +134,9 @@
             "require": {
                 "php": ">=5.3.0"
             },
+            "time": "2020-02-14T14:20:12+00:00",
             "type": "library",
+            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     "config",
@@ -180,16 +183,9 @@
                 "issues": "https://github.com/tecnickcom/TCPDF/issues",
                 "source": "https://github.com/tecnickcom/TCPDF/tree/6.3.5"
             },
-            "time": "2020-02-14T14:20:12+00:00"
+            "install-path": "../tecnickcom/tcpdf"
         }
     ],
-    "packages-dev": [],
-    "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
-    "prefer-stable": false,
-    "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "dev": true,
+    "dev-package-names": []
 }

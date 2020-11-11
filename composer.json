@@ -1,6 +1,6 @@
 {
     "require": {
        "spipu/html2pdf": "^5.2",
-        "cosenary/instagram": "^2.3"
+        "google/recaptcha": "^1.2"
     }
 }
