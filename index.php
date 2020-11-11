@@ -2,7 +2,6 @@
 
 session_start();
 
-require_once 'vendor/google/recaptcha/src/autoload.php';
 require_once __DIR__ . '/Facebook/autoload.php';
 
 $navigations = array (
