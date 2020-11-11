@@ -20,7 +20,7 @@
                 $_POST["erreur"] = 1;
             }
         } else {
-            $_POST["erreur"] = 1;
+            $_POST["erreur"] = 2;
         }
     }
 ?>

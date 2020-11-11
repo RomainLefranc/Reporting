@@ -53,15 +53,18 @@
                                             data-callback='onSubmit' 
                                             data-action='submit' >Se connecter</button>
 
-                                        <!-- <button type="submit" class="btn btn-primary btn-user btn-block" name="submitConnexion">Se connecter</button> -->
                                     </form>
                                     
                                     <?php
                                         if (isset($_POST['erreur'])) {
                                             $erreur = htmlspecialchars($_POST['erreur']);
-                                            switch (true) {
-                                                case $erreur == 1:
+                                            switch ($erreur) {
+                                                case 1:
                                                     $msg =  'Mot de passe ou identifiant invalide';
+                                                    $typeMsg = 'danger';
+                                                    break;
+                                                case 2:
+                                                    $msg =  'Bot detecté';
                                                     $typeMsg = 'danger';
                                                     break;
                                             }
