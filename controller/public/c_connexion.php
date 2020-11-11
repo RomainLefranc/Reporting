@@ -1,7 +1,7 @@
 <?php
 
     include "model/m_utilisateurs.php";
-
+    
     if (isset($_POST["id"]) && isset($_POST['mdp'])) {
         require_once 'vendor/google/recaptcha/src/autoload.php';
         $recaptcha = new \ReCaptcha\ReCaptcha('6LeQn-EZAAAAAJIPWyMdK0NjEGgmIGbIEWti3_Ee');
@@ -15,7 +15,7 @@
             if (Connexion($id, $mdp)) {
                 $id_utilisateur = getIdUtilisateur($id,$mdp);
                 $_SESSION["user"] = getPseudoUser($id_utilisateur);
-                header ('location: index.php?a=A');
+                header ('location: index.php?a=a');
             } else {
                 $_POST["erreur"] = 1;
             }
@@ -23,5 +23,4 @@
             $_POST["erreur"] = 1;
         }
     }
-    $view = 'v_connexion';
 ?>
