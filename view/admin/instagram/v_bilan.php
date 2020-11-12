@@ -126,19 +126,20 @@
                                                 var nbVue = response.data[2].values[0].value;
                                                 var carte = `
                                                     <div class="card m-2" style="width: 18rem;">
-                                                    <img class="card-img-top" src="${img}">
-                                                    <div class="card-body">
-                                                        <p class="card-text">
-                                                            <strong>Date : </strong>${dateFormatte}<br>
-                                                            <strong>like : </strong>${nbLike}<br>
-                                                            <strong>Commentaire : </strong>${nbComments}<br>
-                                                            <strong>Impression : </strong>${impression}<br>
-                                                            <strong>Vue videos : </strong>${nbVue}<br>
-                                                            <strong>Reach : </strong>${reach}<br>
-                                                            <strong>Taux d'engagement </strong>${(((nbLike + nbComments)/reach)*100).toFixed(2)+' %'}
-                                                        </p>
+                                                        <img class="card-img-top" src="${img}">
+                                                        <div class="card-body">
+                                                            <p class="card-text">
+                                                                <strong>Date : </strong>${dateFormatte}<br>
+                                                                <strong>like : </strong>${nbLike}<br>
+                                                                <strong>Commentaire : </strong>${nbComments}<br>
+                                                                <strong>Impression : </strong>${impression}<br>
+                                                                <strong>Vue videos : </strong>${nbVue}<br>
+                                                                <strong>Reach : </strong>${reach}<br>
+                                                                <strong>Taux d'engagement </strong>${(((nbLike + nbComments)/reach)*100).toFixed(2)+' %'}
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                    </div>`;
+                                                    `;
                                                 $( "#result" ).append(carte);
                                                 }
                                             });
@@ -156,18 +157,19 @@
                                                 var reach = response.data[1].values[0].value;
                                                 var carte = `
                                                     <div class="card m-2" style="width: 18rem;">
-                                                    <img class="card-img-top" src="${img}">
-                                                    <div class="card-body">
-                                                        <p class="card-text">
-                                                            <strong>Date : </strong>${dateFormatte}<br>
-                                                            <strong>like : </strong>${nbLike}<br>
-                                                            <strong>Commentaire : </strong>${nbComments}<br>
-                                                            <strong>Impression : </strong>${impression}<br>
-                                                            <strong>Reach : </strong>${reach}<br>
-                                                            <strong>Taux d'engagement </strong>${(((nbLike + nbComments)/reach)*100).toFixed(2)+' %'}<br>
-                                                        </p>
+                                                        <img class="card-img-top" src="${img}">
+                                                        <div class="card-body">
+                                                            <p class="card-text">
+                                                                <strong>Date : </strong>${dateFormatte}<br>
+                                                                <strong>like : </strong>${nbLike}<br>
+                                                                <strong>Commentaire : </strong>${nbComments}<br>
+                                                                <strong>Impression : </strong>${impression}<br>
+                                                                <strong>Reach : </strong>${reach}<br>
+                                                                <strong>Taux d'engagement </strong>${(((nbLike + nbComments)/reach)*100).toFixed(2)+' %'}<br>
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                    </div>`;
+                                                    `;
                                                 $( "#result" ).append(carte);
                                                 }
                                             });
