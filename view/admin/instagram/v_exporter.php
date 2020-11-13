@@ -121,15 +121,15 @@
                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
                     <script>
                         function msgErreur(texte) {
-                                var alert = `
-                                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" >
-                                    <strong>Erreur !</strong> ${texte}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>`;
-                                return alert;
-                            }
+                            var alert = `
+                            <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" >
+                                <strong>Erreur !</strong> ${texte}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>`;
+                            return alert;
+                        }
                         function formatterDateAPI(date) {
                             return date.getFullYear() + '-' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '-' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate()));
                         }
@@ -183,6 +183,7 @@
                                 var totalReachMensuel = 0
                                 var totalImpressionMensuel = 0;
                                 var tabPost = [];
+                                data.media.data.reverse();
                                 data.media.data.forEach(media => {
                                     var dateMedia = new Date(media.timestamp);
                                     if (dateMedia >= dateDebut && dateMedia <= dateFin) {
@@ -919,11 +920,6 @@
                                                                                                 slide.addImage({ data:dataUrl10, x:"75%", y:"18%", w:"22%", h:"39%" });
                                                                                             }
                                                                                             
-
-                                                                                            
-                                                                                            
-                                                                                            
-
                                                                                             //dixième page CONCLUSION
                                                                                             slide = pptx.addSlide();
                                                                                             slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
@@ -942,7 +938,7 @@
                                                                                             $("#progress_bar").val("100");
 
                                                                                             //on enregistre le powerpoint
-                                                                                            pptx.writeFile('bilan-reporting');
+                                                                                            pptx.writeFile('bilan-reporting-Instagram ' + nomMois + '' + nomPageInsta);
                                                                                         }).catch(function (error) {
                                                                                             console.error('oops, something went wrong!', error);
                                                                                         });

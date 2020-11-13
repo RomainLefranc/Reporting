@@ -14,11 +14,14 @@ $navigations = array (
     ['action' => "icsv",    "NiveauAcces" => 1,     "controller" => "instagram/c_instagram_csv",          "view" => "instagram/v_csv"        ],
     ['action' => "ie",      "NiveauAcces" => 1,     "controller" => "instagram/c_instagram_exporter",     "view" => "instagram/v_exporter"   ],
     ['action' => "if",      "NiveauAcces" => 1,     "controller" => "instagram/c_instagram_comparatif",   "view" => "instagram/v_comparatif" ],
+    ['action' => "ir",      "NiveauAcces" => 1,     "controller" => "instagram/c_instagram_rapport",      "view" => "instagram/v_rapport" ],
+
     /* Facebook */
     ['action' => "fb",      "NiveauAcces" => 1,     "controller" => "facebook/c_facebook_bilan",          "view" => "facebook/v_bilan"       ],
     ['action' => "fcsv",    "NiveauAcces" => 1,     "controller" => "facebook/c_facebook_csv" ,           "view" => "facebook/v_csv"         ],
     ['action' => "fe",      "NiveauAcces" => 1,     "controller" => "facebook/c_facebook_exporter" ,      "view" => "facebook/v_exporter"    ],
-    ['action' => "ff",      "NiveauAcces" => 1,     "controller" => "facebook/c_facebook_comparatif" ,    "view" => "facebook/v_comparatif"  ]
+    ['action' => "ff",      "NiveauAcces" => 1,     "controller" => "facebook/c_facebook_comparatif" ,    "view" => "facebook/v_comparatif"  ],
+    ['action' => "fr",      "NiveauAcces" => 1,     "controller" => "facebook/c_facebook_rapport" ,    "view" => "facebook/v_rapport"  ]
 );
 
 $actionEstValide = false;
