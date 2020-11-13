@@ -470,7 +470,7 @@
                                         // console.log(impressionMensuelPageInsta + ' visites sur le compte Instagram dont ' + reachMensuelPageInsta + ' visiteurs unique');
                                         var donneesPowerPoint = [];
 
-                                        donneesPowerPoint.moyenneTauxInteraction = (totalInteractionMensuel/nbMediaMensuel).toFixed(0);
+                                        donneesPowerPoint.moyenneTauxInteraction = (((totalInteractionMensuel/totalReachMensuel)*100)).toFixed(2);
                                         donneesPowerPoint.followerGagne = followergagneMensuel;
                                         donneesPowerPoint.totalInteraction = totalInteractionMensuel;
                                         donneesPowerPoint.totalReach = totalReachMensuel;
@@ -512,7 +512,7 @@
                                         if (donneesPowerPoint.top3ReachMois.length >= 2) {
                                             imgTop2Reach = donneesPowerPoint.top3ReachMois[1].media_url;
                                         }
-                                        if (donneesPowerPoint.top3ReachMois.length >= 2) {
+                                        if (donneesPowerPoint.top3ReachMois.length >= 3) {
                                             imgTop3Reach = donneesPowerPoint.top3ReachMois[2].media_url;
                                         }
                                         
@@ -580,7 +580,7 @@
                                                                                             slide = pptx.addSlide();
                                                                                             slide.addText([
                                                                                                     { text:  donneesPowerPoint.moyenneTauxInteraction.toString() + ' %', options: {bold:true, fontSize:12}},
-                                                                                                    { text: ' Taux d\'interaction', options: {}}
+                                                                                                    { text: ' Taux d\'interaction moyen', options: {}}
                                                                                                 ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'15%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                                                             slide.addText([
                                                                                                     { text: donneesPowerPoint.followerGagne.toString(), options: {bold:true, fontSize:12}},
@@ -600,7 +600,7 @@
                                                                                                     { text: ' reach total posts', options: {}}
                                                                                                 ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'75%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                                                             slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
-                                                                                            slide.addText('LA PAGE FACEBOOK',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
+                                                                                            slide.addText('LE COMPTE INSTAGRAM',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                                                             slide.addImage({ path:img6.src, x:"18%", y:"18%", w:"64%", h:"55%" });
                                                                                             
                                                                                             
@@ -938,7 +938,7 @@
                                                                                             $("#progress_bar").val("100");
 
                                                                                             //on enregistre le powerpoint
-                                                                                            pptx.writeFile('bilan-reporting-Instagram ' + nomMois + '' + nomPageInsta);
+                                                                                            pptx.writeFile('bilan-reporting-Instagram ' + nomMois + ' ' + nomPageInsta);
                                                                                         }).catch(function (error) {
                                                                                             console.error('oops, something went wrong!', error);
                                                                                         });
