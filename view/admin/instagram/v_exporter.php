@@ -126,7 +126,6 @@
 
                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
                     <script>
-                        $('.top').hide();
                         function msgErreur(texte) {
                                 var alert = `
                                 <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" >
