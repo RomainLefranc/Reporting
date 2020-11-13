@@ -99,27 +99,21 @@
                         <div class="card-header">
                             <i class="fas fa-chart-area"></i>
                             Nombre d'interaction par post</div>
-                        <div class="card-body">
+                        <div class="card-body audience">
                             <canvas id="myAreaChart2" width="100%" height="30"></canvas>
                         </div>
                     </div>
 
-                    <div id="chartdiv" style='width: 100%;height: 500px;'></div>
-                    <div id="editor"></div><br/>
-                    <div class="top">
-                        <h3>Top post du mois</h3>
-                        <div class="row" id="topMedia" ></div>
-                    </div>
-                    <div class="top">
-                        <h3>Top 3 reach du mois</h3>
-                        <div class="row" id="top3Reach" ></div>
-                    </div>
-                    <div class="top">
-                        <h3>Top 3 interaction du mois</h3>
-                        <div class="row" id="top3Interaction"></div>
+                    <div class="card mb-3 mt-2">
+                        <div class="card-header">
+                            <i class="fas fa-chart-area"></i>
+                            Audience</div>
+                        <div class="card-body">
+                            <div id="chartdiv" style='width: 100%;height: 500px;'></div>
+                        </div>
                     </div>
 
-                                    <!-- Resources -->
+                    <!-- Resources -->
                     <script src="https://www.amcharts.com/lib/4/core.js"></script>
                     <script src="https://www.amcharts.com/lib/4/charts.js"></script>
                     <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
@@ -147,8 +141,9 @@
                             $('#erreur').html('');
                             $("#progress_bar").val("0");
                             //on réinitialise le contenu de le l'HTML contenant le canvas, évitant un bug d'affichage
-                            $(".card-body").html("");
-                            $(".card-body").html('<canvas id="myAreaChart2" width="100%" height="30"></canvas>');
+                            $("#chartdiv").html('');
+                            $("#myAreaChart2").remove();
+                            $(".audience").append('<canvas id="myAreaChart2" width="100%" height="30"></canvas>');
 
                             var idPageInsta = $('#choixPageInsta').val();
                             var nomPageInsta = $('#choixPageInsta').find('option:selected').data('nom');
@@ -179,7 +174,7 @@
 
                             var dateFin = new Date(mois.getFullYear(), mois.getMonth() + 1, 0);
                             var dateUntil = formatterDateAPI(dateFin);
-
+                            
                             $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`, function (data) {
                                 var tabDateMedia = [];
                                 var tabEngagementMedia = [];
@@ -227,11 +222,12 @@
                                     }
                                 });
                                 if (nbMediaMensuel == 0) {
-                                    $('#error').html(msgErreur('Aucun post trouvé dans ce mois'));
+                                    $('#erreur').html(msgErreur('Aucun post trouvé dans ce mois'));
                                 } else {
+                                    $("#progress_bar").val("10");
                                     /* Tableau top 3 interaction */
                                     var tabInteraction = [...tabPost];
-                                    tabInteraction.sort(function (a,b) { return (b.interaction/b.reach) - (a.interaction/b.reach) });
+                                    tabInteraction.sort(function (a,b) { return (b.interaction/b.reach) - (a.interaction/a.reach) });
                                     tabInteraction = tabInteraction.slice(0,3)
 
                                     /* Tableau top 3 reach */
@@ -301,7 +297,7 @@
                                             }
                                         }
                                     });
-
+                                    $("#progress_bar").val("20");
                                     $.get(`https://graph.facebook.com/v4.0/${idPageInsta}/insights/audience_gender_age/lifetime?&access_token=${token}`,function (data) {
                                         
                                         function verifValeur(params) {
@@ -449,7 +445,7 @@
                                             femaleRange.grid.stroke = female.stroke;
 
                                         }); 
-                                    
+                                        $("#progress_bar").val("40");
                                     });
                                     $.get(`https://graph.facebook.com/v4.0/${idPageInsta}/insights?metric=follower_count,reach,impressions&period=day&since=${dateSince}&until=${dateUntil}&access_token=${token}`, function (data) {
                                         var followergagneMensuel = 0;
@@ -483,7 +479,7 @@
                                         donneesPowerPoint.top3Interaction = tabInteraction;
                                         donneesPowerPoint.top3FlopReach = flopReach;
                                         console.log(donneesPowerPoint);
-                                        
+                                        $("#progress_bar").val("60");
                                         function toDataURL(url, callback) {
                                             var xhr = new XMLHttpRequest();
                                             xhr.onload = function() {
@@ -528,6 +524,7 @@
                                         if (donneesPowerPoint.top3FlopReach.length >= 3) {
                                             imgFlop3Reach = donneesPowerPoint.top3FlopReach[2].media_url;
                                         }
+                                        $("#progress_bar").val("70");
                                         toDataURL(imageMeilleurPost, function(dataUrl1) {
                                             toDataURL(imgTop1Interaction, function(dataUrl12) {
                                                 toDataURL(imgTop2Interaction, function(dataUrl3) {
@@ -576,7 +573,7 @@
                                                                                             slide.addText(nomMois + ' 2020',  { x:'25%', y:'72%', w:5, color:'FFFFFF', fontFace:'Avenir 85 Heavy', align: 'center', fontSize:22 });
 
 
-                                                                                            $("#progress_selectionne").val("85");
+                                                                                            $("#progress_bar").val("85");
                                                                                             
                                                                                             //seconde page "LA PAGE FACEBOOK"
                                                                                             slide = pptx.addSlide();
@@ -610,7 +607,7 @@
                                                                                             slide = pptx.addSlide();
                                                                                             slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
                                                                                             slide.addText('FOCUS FANS',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-                                                                                            slide.addImage({ data:img5.src, x:1, y:1, w:8, h:3 });
+                                                                                            slide.addImage({ data:img5.src, x:1, y:1, w:8, h:4 });
 
                                                                                             //cinquième page FOCUS LIKE
                                                                                             slide = pptx.addSlide();
@@ -942,7 +939,7 @@
                                                                                             slide.addImage({ path:img4.src, x:0, y:0, w:'100%', h:'100%' });
                                                                                             slide.addText('Merci',  { x:'35%', y:'40%', w:3, color:'FFFFFF', align: 'center', fontFace:'Avenir 85 Heavy', fontSize:35 });
                                                                                             
-                                                                                            $("#progress_selectionne").val("100");
+                                                                                            $("#progress_bar").val("100");
 
                                                                                             //on enregistre le powerpoint
                                                                                             pptx.writeFile('bilan-reporting');
