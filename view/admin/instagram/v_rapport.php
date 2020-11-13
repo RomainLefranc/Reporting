@@ -89,17 +89,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Bilan</button>
+                            <button type="submit" class="btn btn-primary">Rapport</button>
                         </form>
                     </div>
 
-                    <div id="msg"></div>
                     <div id="erreur"></div>
 
                     <!-- Area Chart Example-->
-                    <div class="card mb-3">
+                    <div class="card mb-3 mt-2">
                         <div class="card-header">
-                            <i class="fas fa-chart-area"></i>Nombre d'interaction par post
+                            <i class="fas fa-chart-area"></i> Nombre d'interaction par post
                         </div>
                         <div class="card-body rapport">
                             <canvas id="myAreaChart" width="100%" height="30"></canvas>
