@@ -174,6 +174,43 @@
 
                             var dateFin = new Date(mois.getFullYear(), mois.getMonth() + 1, 0);
                             var dateUntil = formatterDateAPI(dateFin);
+
+
+                            /* var mois = $('#dateDebut').val();
+                            mois = new Date(mois);
+
+                            var tabMois = [];
+                            for (let index = 0; index < 3; index++) {
+
+                                tabMois[index] = new Date(mois.getFullYear(), mois.getMonth() + index)
+                                listeMois = [
+                                        'Janvier',
+                                        'Février',
+                                        'Mars',
+                                        'Avril',
+                                        'Mai',
+                                        'Juin',
+                                        'Juillet',
+                                        'Août',
+                                        'Septembre',
+                                        'Octobre',
+                                        'Novembre',
+                                        'Decembre'
+                                        ]
+                                
+                                nomMois = listeMois[mois.getMonth() + index];
+                                
+                                var dateDebut = new Date(mois.getFullYear(), mois.getMonth() + index, 1);
+                                var dateSince = formatterDateAPI(dateDebut);
+
+                                var dateFin = new Date(mois.getFullYear(), mois.getMonth() + index + 1, 0);
+                                var dateUntil = formatterDateAPI(dateFin);
+
+                                tabMois[index].mois = nomMois;
+                                tabMois[index].dateDebut = dateSince;
+                                tabMois[index].dateFin = dateUntil;
+                            }
+                            console.log(tabMois); */
                             
                             $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`, function (data) {
                                 var tabDateMedia = [];
