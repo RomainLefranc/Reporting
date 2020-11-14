@@ -82,11 +82,11 @@
                             </div>
                         </div>
                         <div class="form-group row" >
-                            <label for="example-date-input" class="col-lg-2 col-form-label">Mois</label>
+                            <label for="example-date-input" class="col-lg-2 col-form-label">Mois 1</label>
                             <div class="col-lg-10">
                             <input class="form-control" type="month" id="dateDebut" style="max-width: 300px;" required>
                             </div>
-                        </div> 
+                        </div>
                         <button type="submit" class="btn btn-primary">Generer PowerPoint
                             <section>
                                 <progress value="0" max="100" id="progress_bar"></progress>
@@ -150,8 +150,8 @@
 
                             var token = $('#choixPageInsta').find('option:selected').data('value');
                             var mois = $('#dateDebut').val();
-
                             mois = new Date(mois);
+
                             var nomMois = '';
                             listeMois = [
                                         'Janvier',
@@ -228,13 +228,13 @@
                                     $("#progress_bar").val("10");
                                     /* Tableau top 3 interaction */
                                     var tabInteraction = [...tabPost];
-                                    tabInteraction.sort(function (a,b) { return (b.interaction/b.reach) - (a.interaction/a.reach) });
-                                    tabInteraction = tabInteraction.slice(0,3)
+                                    tabInteraction.sort((a,b) => (b.interaction/b.reach) - (a.interaction/a.reach));
+                                    tabInteraction = tabInteraction.slice(0,3);
 
                                     /* Tableau top 3 reach */
                                     var tabReach = [...tabPost];
                                     tabReach.sort((a,b) => b.reach - a.reach);
-                                    tabReach = tabReach.slice(0,3)
+                                    tabReach = tabReach.slice(0,3);
 
                                     /* top 1 post */
                                     var topMedia = [...tabPost];
@@ -244,7 +244,7 @@
                                     /* Tableau top 3 flop reach */
                                     var flopReach = [...tabPost];
                                     flopReach.sort((a,b) => a.reach - b.reach);
-                                    flopReach = flopReach.slice(0,3)
+                                    flopReach = flopReach.slice(0,3);
 
                                     //on défini l'échelle maximale de notre graphique
                                     var max = Math.ceil(Math.max(...tabEngagementMedia)) + 5;
@@ -462,14 +462,8 @@
                                         data.data[2].values.forEach(element => {
                                             impressionMensuelPageInsta += element.value
                                         });
-                                        // console.log(totalInteractionMensuel + ' Interaction dans le mois, soit une moyenne de ' + (totalInteractionMensuel/nbMediaMensuel).toFixed(0) + ' par post');
-                                        // console.log(totalImpressionMensuel + ' visites sur les post dont ' + totalReachMensuel + ' visiteurs unique');
-                                        // console.log("Taux d'interaction moyenne de :" + ((totalInteractionMensuel/totalReachMensuel)*100).toFixed(2)) + ' %';
-                                        // console.log(nbMediaMensuel + " post");
-                                        // console.log(followergagneMensuel + ' abonnés gagné');
-                                        // console.log(impressionMensuelPageInsta + ' visites sur le compte Instagram dont ' + reachMensuelPageInsta + ' visiteurs unique');
+                                
                                         var donneesPowerPoint = [];
-
                                         donneesPowerPoint.moyenneTauxInteraction = (((totalInteractionMensuel/totalReachMensuel)*100)).toFixed(2);
                                         donneesPowerPoint.followerGagne = followergagneMensuel;
                                         donneesPowerPoint.totalInteraction = totalInteractionMensuel;
@@ -479,8 +473,9 @@
                                         donneesPowerPoint.top3ReachMois = tabReach;
                                         donneesPowerPoint.top3Interaction = tabInteraction;
                                         donneesPowerPoint.top3FlopReach = flopReach;
-                                        console.log(donneesPowerPoint);
+
                                         $("#progress_bar").val("60");
+
                                         function toDataURL(url, callback) {
                                             var xhr = new XMLHttpRequest();
                                             xhr.onload = function() {
@@ -525,17 +520,18 @@
                                         if (donneesPowerPoint.top3FlopReach.length >= 3) {
                                             imgFlop3Reach = donneesPowerPoint.top3FlopReach[2].media_url;
                                         }
+
                                         $("#progress_bar").val("70");
-                                        toDataURL(imageMeilleurPost, function(dataUrl1) {
-                                            toDataURL(imgTop1Interaction, function(dataUrl12) {
-                                                toDataURL(imgTop2Interaction, function(dataUrl3) {
-                                                    toDataURL(imgTop3Interaction, function(dataUrl4) {
-                                                        toDataURL(imgTop1Reach, function(dataUrl5) {
-                                                            toDataURL(imgTop2Reach, function(dataUrl6) {
-                                                                toDataURL(imgTop3Reach, function(dataUrl7) {
-                                                                    toDataURL(imgFlop1Reach, function(dataUrl8) {
-                                                                        toDataURL(imgFlop2Reach, function(dataUrl9) {
-                                                                            toDataURL(imgFlop3Reach, function(dataUrl10) {
+                                        toDataURL(imageMeilleurPost, function(imageMeilleurPost) {
+                                            toDataURL(imgTop1Interaction, function(imgTop1Interaction) {
+                                                toDataURL(imgTop2Interaction, function(imgTop2Interaction) {
+                                                    toDataURL(imgTop3Interaction, function(imgTop3Interaction) {
+                                                        toDataURL(imgTop1Reach, function(imgTop1Reach) {
+                                                            toDataURL(imgTop2Reach, function(imgTop2Reach) {
+                                                                toDataURL(imgTop3Reach, function(imgTop3Reach) {
+                                                                    toDataURL(imgFlop1Reach, function(imgFlop1Reach) {
+                                                                        toDataURL(imgFlop2Reach, function(imgFlop2Reach) {
+                                                                            toDataURL(imgFlop3Reach, function(imgFlop3Reach) {
                                                                                 //on initialise notre Powerpoint
                                                                                 var pptx = new PptxGenJS();
                                                                                 var slide = pptx.addSlide();
@@ -650,7 +646,7 @@
                                                                                                     { text: '% Taux d\'interaction', options: {bold:true}}
                                                                                                 ],  { x:'55%', y:'65%', w:'100%', color:'000000', fontSize:15 });
 
-                                                                                            slide.addImage({ data:dataUrl1, x:"10%", y:"18%", w:"40%", h:"65%" });
+                                                                                            slide.addImage({ data:imageMeilleurPost, x:"10%", y:"18%", w:"40%", h:"65%" });
 
                                                                                             //septième page TOP 3 (taux d'interaction)
                                                                                             slide = pptx.addSlide();
@@ -681,7 +677,7 @@
                                                                                                     { text: ((donneesPowerPoint.top3Interaction[0].interaction/donneesPowerPoint.top3Interaction[0].reach)*100).toFixed(2), options: {}},
                                                                                                     { text: ' % Taux d\'interaction', options: {bold:true}}
                                                                                                 ],  { x:'5%', y:'84%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                                                slide.addImage({ data:dataUrl12, x:"5%", y:"18%", w:"22%", h:"39%" });
+                                                                                                slide.addImage({ data:imgTop1Interaction, x:"5%", y:"18%", w:"22%", h:"39%" });
                                                                                             
                                                                                             if (donneesPowerPoint.top3Interaction.length >= 2) {
                                                                                                 slide.addText([
@@ -707,7 +703,7 @@
                                                                                                         { text: ' % Taux d\'interaction', options: {bold:true}}
                                                                                                     ],  { x:'40%', y:'84%', w:'100%', color:'0088CC', fontSize:10 });
                                                                                                 
-                                                                                                slide.addImage({ data:dataUrl3, x:"40%", y:"18%", w:"22%", h:"39%" });
+                                                                                                slide.addImage({ data:imgTop2Interaction, x:"40%", y:"18%", w:"22%", h:"39%" });
                                                                                             }
                                                                                             
                                                                                             if (donneesPowerPoint.top3Interaction.length >= 3) {
@@ -734,7 +730,7 @@
                                                                                                         { text: ' % Taux d\'interaction', options: {bold:true}}
                                                                                                     ],  { x:'75%', y:'84%', w:'100%', color:'0088CC', fontSize:10 });
                                                                                                 
-                                                                                                slide.addImage({ data:dataUrl4, x:"75%", y:"18%", w:"22%", h:"39%" });
+                                                                                                slide.addImage({ data:imgTop3Interaction, x:"75%", y:"18%", w:"22%", h:"39%" });
                                                                                             }
                                                                                             
 
@@ -770,7 +766,7 @@
                                                                                                     { text: ((donneesPowerPoint.top3ReachMois[0].interaction/donneesPowerPoint.top3ReachMois[0].reach)*100).toFixed(2), options: {}},
                                                                                                     { text: ' % Taux d\'interaction', options: {bold:true}}
                                                                                                 ],  { x:'5%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                                            slide.addImage({ data:dataUrl5, x:"5%", y:"18%", w:"22%", h:"39%" });
+                                                                                            slide.addImage({ data:imgTop1Reach, x:"5%", y:"18%", w:"22%", h:"39%" });
 
                                                                                             if (donneesPowerPoint.top3ReachMois.length >= 2) {
                                                                                                 slide.addText([
@@ -797,7 +793,7 @@
                                                                                                         { text: '% Taux d\'interaction', options: {bold:true}}
                                                                                                     ],  { x:'40%', y:'84%', w:'100%', color:'000000', fontSize:10 });
 
-                                                                                                slide.addImage({ data:dataUrl6, x:"40%", y:"18%", w:"22%", h:"39%" });
+                                                                                                slide.addImage({ data:imgTop2Reach, x:"40%", y:"18%", w:"22%", h:"39%" });
 
                                                                                             }
                                                                                             
@@ -826,7 +822,7 @@
                                                                                                         { text: '% Taux d\'interaction', options: {bold:true}}
                                                                                                     ],  { x:'75%', y:'84%', w:'100%', color:'000000', fontSize:10 });
 
-                                                                                                slide.addImage({ data:dataUrl7, x:"75%", y:"18%", w:"22%", h:"39%" });
+                                                                                                slide.addImage({ data:imgTop3Reach, x:"75%", y:"18%", w:"22%", h:"39%" });
 
                                                                                             }
                                                                                             
@@ -863,7 +859,7 @@
                                                                                                     { text: ((donneesPowerPoint.top3FlopReach[0].interaction/donneesPowerPoint.top3FlopReach[0].reach)*100).toFixed(2), options: {}},
                                                                                                     { text: '% Taux d\'interaction', options: {bold:true}}
                                                                                                 ],  { x:'5%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                                            slide.addImage({ data:dataUrl8, x:"5%", y:"18%", w:"22%", h:"39%" });
+                                                                                            slide.addImage({ data:imgFlop1Reach, x:"5%", y:"18%", w:"22%", h:"39%" });
                                                                                             if (donneesPowerPoint.top3FlopReach.length >=2) {
                                                                                                 slide.addText([
                                                                                                     { text: 'Date du post : ', options: {bold:true}},
@@ -889,7 +885,7 @@
                                                                                                         { text: '% Taux d\'interaction', options: {bold:true}}
                                                                                                     ],  { x:'40%', y:'84%', w:'100%', color:'000000', fontSize:10 });
                                                                                                 
-                                                                                                slide.addImage({ data:dataUrl9, x:"40%", y:"18%", w:"22%", h:"39%" });
+                                                                                                slide.addImage({ data:imgFlop2Reach, x:"40%", y:"18%", w:"22%", h:"39%" });
                                                                                             }
                                                                                             
                                                                                             if (donneesPowerPoint.top3FlopReach.length >=3) {
@@ -917,7 +913,7 @@
                                                                                                         { text: '% Taux d\'interaction', options: {bold:true}}
                                                                                                     ],  { x:'75%', y:'84%', w:'100%', color:'000000', fontSize:10 });
                                                                                                 
-                                                                                                slide.addImage({ data:dataUrl10, x:"75%", y:"18%", w:"22%", h:"39%" });
+                                                                                                slide.addImage({ data:imgFlop3Reach, x:"75%", y:"18%", w:"22%", h:"39%" });
                                                                                             }
                                                                                             
                                                                                             //dixième page CONCLUSION
