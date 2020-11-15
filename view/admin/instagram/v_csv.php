@@ -50,26 +50,26 @@
                     </div>
                     <form id='bilan'>
                         <div class="form-group row">
-                            <label for="example-page-input" class="col-lg-2 col-form-label">Pages disponible</label>
+                            <label class="col-lg-2 col-form-label">Pages disponible</label>
                             <div class="col-lg-10">
-                            <select class="form-control" id='choixPageInsta' style="max-width: 300px;" required>
-                            <option value="null"  data-nom=""> </option>
-                            <?php
-                                echo $selectPageInsta;
-                            ?>
-                            </select>
+                                <select class="form-control" id='choixPageInsta' style="max-width: 300px;" required>
+                                <option value="null"  data-nom=""> </option>
+                                    <?php
+                                        echo $selectPageInsta;
+                                    ?>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group row" >
-                            <label for="example-date-input" class="col-lg-2 col-form-label">Date minimum</label>
+                            <label class="col-lg-2 col-form-label">Date minimum</label>
                             <div class="col-lg-10">
-                            <input class="form-control" type="date" value="<?php echo date('Y-m-d'); ?>" id="dateDebut" style="max-width: 300px;">
+                                <input class="form-control" type="date" id="dateDebut" style="max-width: 300px;">
                             </div>
                         </div> 
                         <div class="form-group row" >
-                            <label for="example-date-input" class="col-lg-2 col-form-label">Date maximum</label>
+                            <label class="col-lg-2 col-form-label">Date maximum</label>
                             <div class="col-lg-10">
-                            <input class="form-control" type="date" value="<?php echo date('Y-m-d'); ?>" id="dateFin" style="max-width: 300px;">
+                                <input class="form-control" type="date" value="<?php echo date('Y-m-d'); ?>" id="dateFin" style="max-width: 300px;">
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Generer CSV
@@ -124,79 +124,51 @@
                                                     if (media.timestamp >= dateDebut && media.timestamp <= dateFin) {
                                                         nbMedia++;
                                                         var msg = media.caption;
-                                                        var mediaType = media.media_type;
                                                         var dateMedia = dateFormatte;
                                                         var nbLike = media.like_count;
                                                         var nbComments = media.comments_count;
-                                                        var idMedia = media.id;
                                                         switch (media.media_type) {
                                                             case 'VIDEO':
-                                                            var img = media.thumbnail_url;
-                                                            var url =`https://graph.facebook.com/v8.0/${idMedia}/insights?metric=impressions,reach,video_views&access_token=${token}`;
-                                                            $.ajax({
-                                                                url: url,
-                                                                dataType: "json",
-                                                                async: false,
-                                                                success: function (response) {
-                                                                    var impression = response.data[0].values[0].value;
-                                                                    var reach = response.data[1].values[0].value;
-                                                                    var nbVue = response.data[2].values[0].value;
-                                                                    itemsNotFormatted.push({
-                                                                        type: mediaType,
-                                                                        date: dateFormatte,
-                                                                        nom: '"' + msg.replace(/,/g, '.').replace(/\n/g, '').replace(/;/g, '.').substr(0, 50) + '"',
-                                                                        depense: "",
-                                                                        interet: "",
-                                                                        age: "",
-                                                                        reachTotal: reach,
-                                                                        objectif: "",
-                                                                        impression: impression,
-                                                                        engagement: (((nbLike + nbComments) / reach) * 100).toFixed(2).replace(/,/g, '.'),
-                                                                        like: nbLike,
-                                                                        com: nbComments,
-                                                                        nbVues: nbVue
-                                                                    });
-                                                                }
-                                                            });
-                                                            break;
-                                                        
+                                                                var url =`https://graph.facebook.com/v8.0/${media.id}/insights?metric=impressions,reach,video_views&access_token=${token}`;
+                                                                
+                                                                break;
                                                             default:
-                                                            var img = media.media_url;
-                                                            var url =`https://graph.facebook.com/v8.0/${idMedia}/insights?metric=impressions,reach&access_token=${token}`;
-                                                            $.ajax({
-                                                                url: url,
-                                                                dataType: "json",
-                                                                async: false,
-                                                                success: function (response) {
-                                                                    var impression = response.data[0].values[0].value;
-                                                                    var reach = response.data[1].values[0].value;
-                                                                    itemsNotFormatted.push({
-                                                                        type: mediaType,
-                                                                        date: dateFormatte,
-                                                                        nom: '"' + msg.replace(/,/g, '.').replace(/\n/g, '').replace(/;/g, '.').substr(0, 50) + '"',
-                                                                        depense: "",
-                                                                        interet: "",
-                                                                        age: "",
-                                                                        reachTotal: reach,
-                                                                        objectif: "",
-                                                                        impression: impression,
-                                                                        engagement: (((nbLike + nbComments) / reach) * 100).toFixed(2).replace(/,/g, '.'),
-                                                                        like: nbLike,
-                                                                        com: nbComments,
-                                                                        nbVues: 0
-                                                                    });
-                                                                }
-                                                            });
-                                                            break;
+                                                                var url =`https://graph.facebook.com/v8.0/${media.id}/insights?metric=impressions,reach&access_token=${token}`;
+                                                                break;
                                                         }
+                                                        $.ajax({
+                                                            url: url,
+                                                            dataType: "json",
+                                                            async: false,
+                                                            success: function (response) {
+                                                                var impression = response.data[0].values[0].value;
+                                                                var reach = response.data[1].values[0].value;
+                                                                var nbVue = 0;
+                                                                if (response.data.length >= 3) {
+                                                                    nbVue = response.data[2].values[0].value;
+                                                                }
+                                                                itemsNotFormatted.push({
+                                                                    type: mediaType,
+                                                                    date: dateFormatte,
+                                                                    nom: '"' + msg.replace(/,/g, '.').replace(/\n/g, '').replace(/;/g, '.').substr(0, 50) + '"',
+                                                                    depense: "",
+                                                                    interet: "",
+                                                                    age: "",
+                                                                    reachTotal: reach,
+                                                                    objectif: "",
+                                                                    impression: impression,
+                                                                    engagement: (((nbLike + nbComments) / reach) * 100).toFixed(2).replace(/,/g, '.'),
+                                                                    like: nbLike,
+                                                                    com: nbComments,
+                                                                    nbVues: nbVue
+                                                                });
+                                                            }
+                                                        });
                                                     }
                                                 });
                                                 $("#progress_bar").val("50");
-                                                
-
                                                 if (nbMedia == 0) {
                                                     $('#erreur').html(msgErreur('Aucun post pour cette periode, veuillez choisir une date plus ancienne'));
-                                                    
                                                 } else {
                                                     function convertToCSV(objArray) {
                                                         var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
@@ -258,9 +230,7 @@
                                                         like: "Nb Like.",
                                                         com: "Nb com.",
                                                         nbVues: "Nb vues (vidéo)"
-
                                                     };
-
                                                     var itemsFormatted = [];
 
                                                     // format the data
