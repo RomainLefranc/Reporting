@@ -105,13 +105,12 @@
                             }
                             $("#progress_bar").val("10");
 
-                            var url = `https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`;
                             if (dateDebut >= dateFin || dateFin <= dateDebut) {
                                 $('#erreur').html(msgErreur("Veuillez selectionner une periode valide"));
                             } else if ($('#choixPageInsta').find('option:selected').data('nom') == '') {
                                 $('#erreur').html(msgErreur("Veuillez selectionner une page Instagram"));
                             } else {
-                                $.get(url, function (data, textStatus) {
+                                $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`, function (data, textStatus) {
                                     switch (textStatus) { 
                                         case 'success':
                                             $("#progress_bar").val("20");
@@ -148,7 +147,7 @@
                                                                     nbVue = response.data[2].values[0].value;
                                                                 }
                                                                 itemsNotFormatted.push({
-                                                                    type: mediaType,
+                                                                    type: media.media_type,
                                                                     date: dateFormatte,
                                                                     nom: '"' + msg.replace(/,/g, '.').replace(/\n/g, '').replace(/;/g, '.').substr(0, 50) + '"',
                                                                     depense: "",
