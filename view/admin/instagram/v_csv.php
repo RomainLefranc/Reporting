@@ -53,20 +53,20 @@
                             <label class="col-lg-2 col-form-label">Pages disponible</label>
                             <div class="col-lg-10">
                                 <select class="form-control" id='choixPageInsta' style="max-width: 300px;" required>
-                                <option value="null"  data-nom=""> </option>
+                                <option value="null" data-nom=""> </option>
                                     <?php
                                         echo $selectPageInsta;
                                     ?>
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group row" >
+                        <div class="form-group row">
                             <label class="col-lg-2 col-form-label">Date minimum</label>
                             <div class="col-lg-10">
                                 <input class="form-control" type="date" id="dateDebut" style="max-width: 300px;">
                             </div>
                         </div> 
-                        <div class="form-group row" >
+                        <div class="form-group row">
                             <label class="col-lg-2 col-form-label">Date maximum</label>
                             <div class="col-lg-10">
                                 <input class="form-control" type="date" value="<?php echo date('Y-m-d'); ?>" id="dateFin" style="max-width: 300px;">
