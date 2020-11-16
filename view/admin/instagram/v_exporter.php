@@ -251,6 +251,7 @@
                                                 media.reach = response.data[1].values[0].value
                                                 totalReachMensuel += response.data[1].values[0].value
                                                 media.interaction = response.data[2].values[0].value
+                                                media.TauxInteraction = ((media.interaction / media.reach)*100).toFixed(2);
                                                 if (response.data.length == 4) {
                                                     media.nbVueVideo = response.data[3].values[0].value
                                                 }
@@ -679,7 +680,7 @@
                                                                                                     { text: ' Personnes atteintes', options: {bold:true}}
                                                                                                 ],  { x:'55%', y:'60%', w:'100%', color:'0088CC', fontSize:15 });
                                                                                             slide.addText([
-                                                                                                    { text: ((donneesPowerPoint.topPostMois.interaction/donneesPowerPoint.topPostMois.reach)*100).toFixed(2), options: {}},
+                                                                                                    { text: donneesPowerPoint.topPostMois.TauxInteraction, options: {}},
                                                                                                     { text: '% Taux d\'interaction', options: {bold:true}}
                                                                                                 ],  { x:'55%', y:'65%', w:'100%', color:'000000', fontSize:15 });
 
@@ -711,7 +712,7 @@
                                                                                                     { text: ' Personnes atteintes', options: {bold:true}}
                                                                                                 ],  { x:'5%', y:'80%', w:'100%', color:'000000', fontSize:10 });
                                                                                             slide.addText([
-                                                                                                    { text: ((donneesPowerPoint.top3Interaction[0].interaction/donneesPowerPoint.top3Interaction[0].reach)*100).toFixed(2), options: {}},
+                                                                                                    { text: donneesPowerPoint.top3Interaction[0].TauxInteraction, options: {}},
                                                                                                     { text: ' % Taux d\'interaction', options: {bold:true}}
                                                                                                 ],  { x:'5%', y:'84%', w:'100%', color:'0088CC', fontSize:10 });
                                                                                                 slide.addImage({ data:imgTop1Interaction, x:"5%", y:"18%", w:"22%", h:"39%" });
@@ -736,7 +737,7 @@
                                                                                                         { text: ' Personnes atteintes', options: {bold:true}}
                                                                                                     ],  { x:'40%', y:'80%', w:'100%', color:'000000', fontSize:10 });
                                                                                                 slide.addText([
-                                                                                                        { text: ((donneesPowerPoint.top3Interaction[1].interaction/donneesPowerPoint.top3Interaction[1].reach)*100).toFixed(2), options: {}},
+                                                                                                        { text: donneesPowerPoint.top3Interaction[1].TauxInteraction, options: {}},
                                                                                                         { text: ' % Taux d\'interaction', options: {bold:true}}
                                                                                                     ],  { x:'40%', y:'84%', w:'100%', color:'0088CC', fontSize:10 });
                                                                                                 
@@ -763,7 +764,7 @@
                                                                                                         { text: ' Personnes atteintes', options: {bold:true}}
                                                                                                     ],  { x:'75%', y:'80%', w:'100%', color:'000000', fontSize:10 });
                                                                                                 slide.addText([
-                                                                                                        { text: ((donneesPowerPoint.top3Interaction[2].interaction/donneesPowerPoint.top3Interaction[2].reach)*100).toFixed(2), options: {}},
+                                                                                                        { text: donneesPowerPoint.top3Interaction[2].TauxInteraction, options: {}},
                                                                                                         { text: ' % Taux d\'interaction', options: {bold:true}}
                                                                                                     ],  { x:'75%', y:'84%', w:'100%', color:'0088CC', fontSize:10 });
                                                                                                 
@@ -800,7 +801,7 @@
                                                                                                     { text: ' Personnes atteintes', options: {bold:true}}
                                                                                                 ],  { x:'5%', y:'80%', w:'100%', color:'0088CC', fontSize:10 });
                                                                                             slide.addText([
-                                                                                                    { text: ((donneesPowerPoint.top3ReachMois[0].interaction/donneesPowerPoint.top3ReachMois[0].reach)*100).toFixed(2), options: {}},
+                                                                                                    { text: donneesPowerPoint.top3ReachMois[0].TauxInteraction, options: {}},
                                                                                                     { text: ' % Taux d\'interaction', options: {bold:true}}
                                                                                                 ],  { x:'5%', y:'84%', w:'100%', color:'000000', fontSize:10 });
                                                                                             slide.addImage({ data:imgTop1Reach, x:"5%", y:"18%", w:"22%", h:"39%" });
@@ -826,7 +827,7 @@
                                                                                                         { text: ' Personnes atteintes', options: {bold:true}}
                                                                                                     ],  { x:'40%', y:'80%', w:'100%', color:'0088CC', fontSize:10 });
                                                                                                 slide.addText([
-                                                                                                        { text: ((donneesPowerPoint.top3ReachMois[1].interaction/donneesPowerPoint.top3ReachMois[1].reach)*100).toFixed(2), options: {}},
+                                                                                                        { text: donneesPowerPoint.top3ReachMois[1].TauxInteraction, options: {}},
                                                                                                         { text: '% Taux d\'interaction', options: {bold:true}}
                                                                                                     ],  { x:'40%', y:'84%', w:'100%', color:'000000', fontSize:10 });
 
@@ -855,7 +856,7 @@
                                                                                                         { text: ' Personnes atteintes', options: {bold:true}}
                                                                                                     ],  { x:'75%', y:'80%', w:'100%', color:'0088CC', fontSize:10 });
                                                                                                 slide.addText([
-                                                                                                        { text: ((donneesPowerPoint.top3ReachMois[2].interaction/donneesPowerPoint.top3ReachMois[2].reach)*100).toFixed(2), options: {}},
+                                                                                                        { text: donneesPowerPoint.top3ReachMois[2].TauxInteraction,options: {}},
                                                                                                         { text: '% Taux d\'interaction', options: {bold:true}}
                                                                                                     ],  { x:'75%', y:'84%', w:'100%', color:'000000', fontSize:10 });
 
@@ -893,7 +894,7 @@
                                                                                                     { text: ' Personnes atteintes', options: {bold:true}}
                                                                                                 ],  { x:'5%', y:'80%', w:'100%', color:'0088CC', fontSize:10 });
                                                                                             slide.addText([
-                                                                                                    { text: ((donneesPowerPoint.top3FlopReach[0].interaction/donneesPowerPoint.top3FlopReach[0].reach)*100).toFixed(2), options: {}},
+                                                                                                    { text: donneesPowerPoint.top3FlopReach[0].TauxInteraction, options: {}},
                                                                                                     { text: '% Taux d\'interaction', options: {bold:true}}
                                                                                                 ],  { x:'5%', y:'84%', w:'100%', color:'000000', fontSize:10 });
                                                                                             slide.addImage({ data:imgFlop1Reach, x:"5%", y:"18%", w:"22%", h:"39%" });
@@ -918,7 +919,7 @@
                                                                                                         { text: ' Personnes atteintes', options: {bold:true}}
                                                                                                     ],  { x:'40%', y:'80%', w:'100%', color:'0088CC', fontSize:10 });
                                                                                                 slide.addText([
-                                                                                                        { text: ((donneesPowerPoint.top3FlopReach[1].interaction/donneesPowerPoint.top3FlopReach[1].reach)*100).toFixed(2), options: {}},
+                                                                                                        { text: donneesPowerPoint.top3FlopReach[1].TauxInteraction, options: {}},
                                                                                                         { text: '% Taux d\'interaction', options: {bold:true}}
                                                                                                     ],  { x:'40%', y:'84%', w:'100%', color:'000000', fontSize:10 });
                                                                                                 
@@ -946,7 +947,7 @@
                                                                                                         { text: ' Personnes atteintes', options: {bold:true}}
                                                                                                     ],  { x:'75%', y:'80%', w:'100%', color:'0088CC', fontSize:10 });
                                                                                                 slide.addText([
-                                                                                                        { text: ((donneesPowerPoint.top3FlopReach[2].interaction/donneesPowerPoint.top3FlopReach[2].reach)*100).toFixed(2), options: {}},
+                                                                                                        { text: donneesPowerPoint.top3FlopReach[2].TauxInteraction, options: {}},
                                                                                                         { text: '% Taux d\'interaction', options: {bold:true}}
                                                                                                     ],  { x:'75%', y:'84%', w:'100%', color:'000000', fontSize:10 });
                                                                                                 
