@@ -3,7 +3,6 @@
 session_start();
 
 require_once __DIR__ . '/Facebook/autoload.php';
-
 $navigations = array (
     ['action' => "c",    "NiveauAcces" => 0,  "controller" => "c_connexion",                      "view" => "v_connexion"            ],
     ['action' => "a",    "NiveauAcces" => 1,  "controller" => "c_admin",                          "view" => "v_admin"                ],
