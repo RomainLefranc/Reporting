@@ -15,6 +15,7 @@
     <script src="vendor/jquery/jquery.min.js"></script>
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 
 </head>
 
@@ -91,6 +92,7 @@
                             $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`, function (data, textStatus) {
                                 switch (textStatus) {
                                     case 'success':
+                                        console.log(data);
                                         nbMedia = 0
                                         data.media.data.forEach(media => {
                                             var date = new Date(media.timestamp);
@@ -189,24 +191,9 @@
         include 'view/admin/footer.php';
     ?>
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Pret à partir ?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Voulez vous vous deconnecter ?</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Annuler</button>
-                    <a class="btn btn-primary" href="index.php?a=d">Se deconnecter</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php
+        include 'view/admin/modalDeconnexion.php'
+    ?>
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

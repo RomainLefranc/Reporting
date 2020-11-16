@@ -11,14 +11,18 @@
 
             $id = htmlspecialchars($_POST['id']);
             $mdp = htmlspecialchars($_POST['mdp']);
-
-            if (Connexion($id, $mdp)) {
-                $id_utilisateur = getIdUtilisateur($id,$mdp);
-                $_SESSION["user"] = getPseudoUser($id_utilisateur);
-                header ('location: index.php?a=a');
-            } else {
+            $user = getUsers($id);
+            if (empty($user)) {
                 $_POST["erreur"] = 1;
+            } else {
+                if (password_verify($mdp,$user[0]['mdp'])) {
+                    $_SESSION["user"] = $user[0]['pseudo'];
+                    header ('location: index.php?a=a'); 
+                } else {
+                    $_POST["erreur"] = 1;
+                }
             }
+
         } else {
             $_POST["erreur"] = 2;
         }

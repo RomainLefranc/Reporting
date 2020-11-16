@@ -79,134 +79,132 @@
                     </div>
                     <?php
                         $fb = new Facebook\Facebook([
-                            'app_id' => '941052469578811',
-                            'app_secret' => 'a4b8c333c1be79a3376c8cc148bb508e',
+                            'app_id'                => '941052469578811',
+                            'app_secret'            => 'a4b8c333c1be79a3376c8cc148bb508e',
                             'default_graph_version' => 'v4.0',
-                            ]);
-                            if (isset($_GET['token'])) {
-                                $token = htmlspecialchars($_GET['token']);
-                                $json = file_get_contents('https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=941052469578811&client_secret=a4b8c333c1be79a3376c8cc148bb508e&fb_exchange_token=' . $token);
-                                $token = $parsed_json = json_decode($json);
-                                try {
-                                    // Retourne l'objet de `Facebook\FacebookResponse`
-                                    $response = $fb->get('/me?fields=id,name', $token->access_token);
-                                } catch(Facebook\Exceptions\FacebookResponseException $e) {
-                                    echo 'Graph retourne une erreur: ' . $e->getMessage();
-                                    exit;
-                                } catch(Facebook\Exceptions\FacebookSDKException $e) {
-                                    echo 'Facebook SDK retourne une erreur: ' . $e->getMessage();
-                                    exit;
+                        ]);
+                        if (isset($_GET['token'])) {
+                            $token = htmlspecialchars($_GET['token']);
+                            $json = file_get_contents('https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=941052469578811&client_secret=a4b8c333c1be79a3376c8cc148bb508e&fb_exchange_token=' . $token);
+                            $token = $parsed_json = json_decode($json);
+                            try {
+                                // Retourne l'objet de `Facebook\FacebookResponse`
+                                $response = $fb->get('/me?fields=id,name', $token->access_token);
+                            } catch(Facebook\Exceptions\FacebookResponseException $e) {
+                                echo 'Graph retourne une erreur: ' . $e->getMessage();
+                                exit;
+                            } catch(Facebook\Exceptions\FacebookSDKException $e) {
+                                echo 'Facebook SDK retourne une erreur: ' . $e->getMessage();
+                                exit;
+                            }
+                    
+                            $user = $response->getGraphUser();
+                    
+                            //on récupère toutes les pages que l'utilisateur connecté nous a autorisé à ajouter
+                            $json = file_get_contents('https://graph.facebook.com/v4.0/' . $user['id'] . '/accounts?fields=name,picture&access_token='. $token->access_token);
+                            $listePageFB = $parsed_json = json_decode($json, true);
+                            $listePageFB = $listePageFB['data'];
+                    
+                            $listeComptesFB = getListeComptesFB();
+                            $compteFBtrouver = false;
+                    
+                            foreach ($listeComptesFB as $compteFB) {
+                                if ($compteFB['id'] == $user['id']) {
+                                    $compteFBtrouver = true;
                                 }
-                        
-                                $user = $response->getGraphUser();
-                        
-                                //on récupère toutes les pages que l'utilisateur connecté nous a autorisé à ajouter
-                                $json = file_get_contents('https://graph.facebook.com/v4.0/' . $user['id'] . '/accounts?fields=name,picture&access_token='. $token->access_token);
-                                $listePageFB = $parsed_json = json_decode($json, true);
-                                $listePageFB = $listePageFB['data'];
-                        
-                                $listeComptesFB = getListeComptesFB();
-                                $compteFBtrouver = false;
-                        
-                                foreach ($listeComptesFB as $compteFB) {
-                                    if ($compteFB['id'] == $user['id']) {
-                                        $compteFBtrouver = true;
-                                    }
+                            }
+                            if (!$compteFBtrouver) {
+                                ajouterCompteFB($user['id'],$user['name'],$token->access_token);
+                            } else {
+                                $token_BDD = getToken($user['id']);
+                                if (empty($token_BDD) || $token_BDD != $token->access_token) {
+                                    setToken($user['id'], $token->access_token);
                                 }
-                                if (!$compteFBtrouver) {
-                                    ajouterCompteFB($user['id'],$user['name'],$token->access_token);
-                                } else {
-                                    $token_BDD = getToken($user['id']);
-                                    if (empty($token_BDD) || $token_BDD != $token->access_token) {
-                                        setToken($user['id'], $token->access_token);
-                                    }
-                                }
-                        
-                                echo "<h2>Voici la liste des pages récupérées :</h2>"; 
-                                $listePageFBrecupere = 'Facebook :<br/>';
-                                $listePageInstarecupere = 'Instagram :<br/>';
+                            }
+                    
+                            echo "<h2>Voici la liste des pages récupérées :</h2>"; 
+                            $listePageFBrecupere = 'Facebook :<br/>';
+                            $listePageInstarecupere = 'Instagram :<br/>';
 
-                                foreach ($listePageFB as $pageFB) {
-                                    $nomPageFB = $pageFB['name'];
-                                    $idPageFB = $pageFB['id'];
-                                    $imgPageFB = $pageFB['picture']['data']['url'];
-                                    $listePageFBrecupere.= "<img src='" . $imgPageFB . "' width='25' height='25' style='border-radius:30px'> ".$nomPageFB.'<br>';
-                            
-                                    $json = file_get_contents('https://graph.facebook.com/v8.0/'.$pageFB['id'].'?fields=instagram_business_account&access_token='.$token->access_token);
+                            foreach ($listePageFB as $pageFB) {
+                                $nomPageFB = $pageFB['name'];
+                                $idPageFB = $pageFB['id'];
+                                $imgPageFB = $pageFB['picture']['data']['url'];
+                                $listePageFBrecupere.= "<img src='" . $imgPageFB . "' width='25' height='25' style='border-radius:30px'> ".$nomPageFB.'<br>';
+                        
+                                $json = file_get_contents('https://graph.facebook.com/v8.0/'.$pageFB['id'].'?fields=instagram_business_account&access_token='.$token->access_token);
+                                $parsed_json = json_decode($json, true);
+                                $pageInsta = $parsed_json = json_decode($json, true);
+                    
+                                if (array_key_exists('instagram_business_account', $pageInsta)) {
+                                    $idPageInsta = $pageInsta['instagram_business_account']['id'];
+                                    $json = file_get_contents('https://graph.facebook.com/v3.2/'.$idPageInsta.'?fields=name,profile_picture_url&access_token='.$token->access_token);
                                     $parsed_json = json_decode($json, true);
-                                    $pageInsta = $parsed_json = json_decode($json, true);
-                        
-                                    if (array_key_exists('instagram_business_account', $pageInsta)) {
-                                        $idPageInsta = $pageInsta['instagram_business_account']['id'];
-                                        $json = file_get_contents('https://graph.facebook.com/v3.2/'.$idPageInsta.'?fields=name,profile_picture_url&access_token='.$token->access_token);
-                                        $parsed_json = json_decode($json, true);
-                                        $nomPageInsta = $parsed_json['name'];
-                                        $imgPageInsta = $parsed_json['profile_picture_url'];
-                                        $listePageInstarecupere.= "<img src='" . $imgPageInsta . "' width='25' height='25' style='border-radius:30px'> ".$nomPageInsta.'<br>';
-                                    }
-                        
-                                  $listepagesFB_BDD = getPagesFB_BDD();
-                                  $trouve = false;
-                                  foreach ($listepagesFB_BDD as $pageFB_BDD) {
+                                    $nomPageInsta = $parsed_json['name'];
+                                    $imgPageInsta = $parsed_json['profile_picture_url'];
+                                    $listePageInstarecupere.= "<img src='" . $imgPageInsta . "' width='25' height='25' style='border-radius:30px'> ".$nomPageInsta.'<br>';
+                                }
+                    
+                                $listepagesFB_BDD = getPagesFB_BDD();
+                                $trouve = false;
+                                foreach ($listepagesFB_BDD as $pageFB_BDD) {
                                     //s'il y a des pages dans la BDD, on vérifie que chaque page de l'utilisateur dans la boucle for se trouve dans notre BDD
                                     if ($pageFB_BDD['id'] == $idPageFB) {
-                                      $trouve = true;
+                                        $trouve = true;
                                     }
-                                  }
-                                  //si la page de l'utilisateur n'a pas été trouvé, on l'ajoute
-                                  if(!$trouve){
-                                    ajouterPageFB($idPageFB,$nomPageFB,$user['id']);
-                                  }
-                        
-                                  $listepagesInsta_BDD = getPagesInsta_BDD();
-                                  $trouve = false;
-                                  foreach ($listepagesInsta_BDD as $pageInsta_BDD) {
-                                    if ($pageInsta_BDD[0] == $idPageInsta) {
-                                      $trouve = true;
-                                    }
-                                  }
-                                  if(!$trouve){
-                                    ajouterPageInsta($idPageFB,$idPageInsta,$nomPageInsta);
-                                  }
                                 }
-                                echo $listePageFBrecupere;
-                                echo '<br>';
-                                echo $listePageInstarecupere;
-
+                                //si la page de l'utilisateur n'a pas été trouvé, on l'ajoute
+                                if(!$trouve){
+                                    ajouterPageFB($idPageFB,$nomPageFB,$user['id']);
+                                }
+                        
+                                $listepagesInsta_BDD = getPagesInsta_BDD();
+                                $trouve = false;
+                                foreach ($listepagesInsta_BDD as $pageInsta_BDD) {
+                                    if ($pageInsta_BDD[0] == $idPageInsta) {
+                                        $trouve = true;
+                                    }
+                                }
+                                if(!$trouve){
+                                    ajouterPageInsta($idPageFB,$idPageInsta,$nomPageInsta);
+                                }
                             }
-                            if(!isset($_GET['token']) && !isset($_GET['pagefb'])){
-                                echo "
+                            echo $listePageFBrecupere;
+                            echo '<br>';
+                            echo $listePageInstarecupere;
+
+                        }
+                        if(!isset($_GET['token']) && !isset($_GET['pagefb'])){
+                            echo "
                                 <script>
                                     function init() {
-                                      FB.getLoginStatus(function(response) {
-                                        if (response.status === 'connected') {
-                            
-                                          window.location.href = \"index.php?a=l&token=\" + response.authResponse.accessToken;
-                                        }
-                                      });
+                                        FB.getLoginStatus(function(response) {
+                                            if (response.status === 'connected') {
+                                                window.location.href = \"index.php?a=l&token=\" + response.authResponse.accessToken;
+                                            }
+                                        });
                                     }
                             
-                                  window.fbAsyncInit = function() {
-                                    FB.init({
-                                      appId            : '941052469578811',
-                                      autoLogAppEvents : true,
-                                      xfbml            : true,
-                                      version          : 'v4.0'
-                                    });
-                                    init();
-                                  };
+                                    window.fbAsyncInit = function() {
+                                        FB.init({
+                                            appId            : '941052469578811',
+                                            autoLogAppEvents : true,
+                                            xfbml            : true,
+                                            version          : 'v4.0'
+                                        });
+                                        init();
+                                    };
                             
-                                  (function(d, s, id){
-                                    var js, fjs = d.getElementsByTagName(s)[0];
-                                    if (d.getElementById(id)) {return;}
-                                    js = d.createElement(s); js.id = id;
-                                    js.src = \"https://connect.facebook.net/fr_FR/sdk.js\";
-                                    fjs.parentNode.insertBefore(js, fjs);
-                                  }(document, 'script', 'facebook-jssdk'));
-                            
-                                  
+                                    (function(d, s, id){
+                                        var js, fjs = d.getElementsByTagName(s)[0];
+                                        if (d.getElementById(id)) {return;}
+                                        js = d.createElement(s); js.id = id;
+                                        js.src = \"https://connect.facebook.net/fr_FR/sdk.js\";
+                                        fjs.parentNode.insertBefore(js, fjs);
+                                    }(document, 'script', 'facebook-jssdk'));
+
                                 </script>";
-                              }
+                        }
                         
                     ?>
                 </div>

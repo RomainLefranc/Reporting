@@ -105,167 +105,161 @@
                             }
                             $("#progress_bar").val("10");
 
-                            if (dateDebut >= dateFin || dateFin <= dateDebut) {
-                                $('#erreur').html(msgErreur("Veuillez selectionner une periode valide"));
-                            } else if ($('#choixPageInsta').find('option:selected').data('nom') == '') {
-                                $('#erreur').html(msgErreur("Veuillez selectionner une page Instagram"));
-                            } else {
+                            if (dateFin > dateDebut) {
                                 $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`, function (data, textStatus) {
                                     switch (textStatus) { 
                                         case 'success':
-                                            $("#progress_bar").val("20");
+                                            $("#progress_bar").val("25");
                                             nbMedia = 0
                                             var itemsNotFormatted = []
-                                            if (data.media !== undefined ) {
-                                                data.media.data.forEach(media => {
-                                                    var date = new Date(media.timestamp);
-                                                    var dateFormatte = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' à ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
-                                                    if (media.timestamp >= dateDebut && media.timestamp <= dateFin) {
-                                                        nbMedia++;
-                                                        var msg = media.caption;
-                                                        var dateMedia = dateFormatte;
-                                                        var nbLike = media.like_count;
-                                                        var nbComments = media.comments_count;
-                                                        switch (media.media_type) {
-                                                            case 'VIDEO':
-                                                                var url =`https://graph.facebook.com/v8.0/${media.id}/insights?metric=impressions,reach,video_views&access_token=${token}`;
-                                                                
-                                                                break;
-                                                            default:
-                                                                var url =`https://graph.facebook.com/v8.0/${media.id}/insights?metric=impressions,reach&access_token=${token}`;
-                                                                break;
-                                                        }
-                                                        $.ajax({
-                                                            url: url,
-                                                            dataType: "json",
-                                                            async: false,
-                                                            success: function (response) {
-                                                                var impression = response.data[0].values[0].value;
-                                                                var reach = response.data[1].values[0].value;
-                                                                var nbVue = 0;
-                                                                if (response.data.length >= 3) {
-                                                                    nbVue = response.data[2].values[0].value;
-                                                                }
-                                                                itemsNotFormatted.push({
-                                                                    type: media.media_type,
-                                                                    date: dateFormatte,
-                                                                    nom: '"' + msg.replace(/,/g, '.').replace(/\n/g, '').replace(/;/g, '.').substr(0, 50) + '"',
-                                                                    depense: "",
-                                                                    interet: "",
-                                                                    age: "",
-                                                                    reachTotal: reach,
-                                                                    objectif: "",
-                                                                    impression: impression,
-                                                                    engagement: (((nbLike + nbComments) / reach) * 100).toFixed(2).replace(/,/g, '.'),
-                                                                    like: nbLike,
-                                                                    com: nbComments,
-                                                                    nbVues: nbVue
-                                                                });
+                                            data.media.data.forEach(media => {
+                                                var date = new Date(media.timestamp);
+                                                var dateFormatte = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' à ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
+                                                if (media.timestamp >= dateDebut && media.timestamp <= dateFin) {
+                                                    nbMedia++;
+                                                    var msg = media.caption;
+                                                    var dateMedia = dateFormatte;
+                                                    var nbLike = media.like_count;
+                                                    var nbComments = media.comments_count;
+                                                    switch (media.media_type) {
+                                                        case 'VIDEO':
+                                                            var url =`https://graph.facebook.com/v8.0/${media.id}/insights?metric=impressions,reach,video_views&access_token=${token}`;
+                                                            
+                                                            break;
+                                                        default:
+                                                            var url =`https://graph.facebook.com/v8.0/${media.id}/insights?metric=impressions,reach&access_token=${token}`;
+                                                            break;
+                                                    }
+                                                    $.ajax({
+                                                        url: url,
+                                                        dataType: "json",
+                                                        async: false,
+                                                        success: function (response) {
+                                                            var impression = response.data[0].values[0].value;
+                                                            var reach = response.data[1].values[0].value;
+                                                            var nbVue = 0;
+                                                            if (response.data.length >= 3) {
+                                                                nbVue = response.data[2].values[0].value;
                                                             }
-                                                        });
-                                                    }
-                                                });
-                                                $("#progress_bar").val("50");
-                                                if (nbMedia == 0) {
-                                                    $('#erreur').html(msgErreur('Aucun post pour cette periode, veuillez choisir une date plus ancienne'));
-                                                } else {
-                                                    function convertToCSV(objArray) {
-                                                        var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-                                                        var str = '';
-
-                                                        for (var i = 0; i < array.length; i++) {
-                                                        var line = '';
-                                                        for (var index in array[i]) {
-                                                            if (line != '') line += ','
-
-                                                            line += array[i][index];
+                                                            itemsNotFormatted.push({
+                                                                type: media.media_type,
+                                                                date: dateFormatte,
+                                                                nom: '"' + msg.replace(/,/g, '.').replace(/\n/g, '').replace(/;/g, '.').substr(0, 50) + '"',
+                                                                depense: "",
+                                                                interet: "",
+                                                                age: "",
+                                                                reachTotal: reach,
+                                                                objectif: "",
+                                                                impression: impression,
+                                                                engagement: (((nbLike + nbComments) / reach) * 100).toFixed(2).replace(/,/g, '.'),
+                                                                like: nbLike,
+                                                                com: nbComments,
+                                                                nbVues: nbVue
+                                                            });
                                                         }
-
-                                                        str += line + '\r\n';
-                                                        }
-
-                                                        return str;
-                                                    }
-                                                    function exportCSVFile(headers, items, fileTitle) {
-                                                        if (headers) {
-                                                            items.unshift(headers);
-                                                        }
-
-                                                        // Convert Object to JSON
-                                                        var jsonObject = JSON.stringify(items);
-
-                                                        var csv = convertToCSV(jsonObject);
-
-                                                        var exportedFilenmae = fileTitle + '.csv' || 'export.csv';
-
-                                                        var blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-                                                        if (navigator.msSaveBlob) { // IE 10+
-                                                            navigator.msSaveBlob(blob, exportedFilenmae);
-                                                        } else {
-                                                            var link = document.createElement("a");
-                                                            if (link.download !== undefined) { // feature detection
-                                                                // Browsers that support HTML5 download attribute
-                                                                var url = URL.createObjectURL(blob);
-                                                                link.setAttribute("href", url);
-                                                                link.setAttribute("download", exportedFilenmae);
-                                                                link.style.visibility = 'hidden';
-                                                                document.body.appendChild(link);
-                                                                link.click();
-                                                                document.body.removeChild(link);
-                                                            }
-                                                        }
-                                                    }
-                                                    var headers = {
-                                                        type: "Type",
-                                                        date: 'Date de campagne',
-                                                        nom: "Nom de la campagne",
-                                                        depense: "Dépensé",
-                                                        interet: "Centre d'intérêt",
-                                                        age: "Âge",
-                                                        reachTotal: "Reach Total",
-                                                        objectif: "Objectif",
-                                                        impression: "Impression",
-                                                        engagement: "Taux engagement",
-                                                        like: "Nb Like.",
-                                                        com: "Nb com.",
-                                                        nbVues: "Nb vues (vidéo)"
-                                                    };
-                                                    var itemsFormatted = [];
-
-                                                    // format the data
-                                                    itemsNotFormatted.forEach((item) => {
-                                                        itemsFormatted.push({
-                                                        type: item.type,
-                                                        date: item.date,
-                                                        nom: item.nom,
-                                                        depense: item.depense,
-                                                        interet: item.interet,
-                                                        age: item.age,
-                                                        reachTotal: item.reachTotal,
-                                                        objectif: item.objectif,
-                                                        impression: item.impression,
-                                                        engagement: item.engagement,
-                                                        like: item.like,
-                                                        com: item.com,
-                                                        nbVues: item.nbVues
-                                                        });
                                                     });
-
-                                                var fileTitle = 'orders'; // or 'my-unique-title'
-                                                $("#progress_bar").val("75");
-                                                exportCSVFile(headers, itemsFormatted,fileTitle); // call the exportCSVFile() function to process the JSON and trigger the download
-                                                $("#progress_bar").val("100");
                                                 }
+                                            });
+                                            $("#progress_bar").val("50");
+                                            if (nbMedia == 0) {
+                                                $('#erreur').html(msgErreur('Aucun post pour cette periode, veuillez choisir une date plus ancienne'));
                                             } else {
-                                            $('#erreur').html(msgErreur(`Il n'y a aucun post sur cette page !`));
+                                                function convertToCSV(objArray) {
+                                                    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+                                                    var str = '';
+
+                                                    for (var i = 0; i < array.length; i++) {
+                                                    var line = '';
+                                                    for (var index in array[i]) {
+                                                        if (line != '') line += ','
+
+                                                        line += array[i][index];
+                                                    }
+
+                                                    str += line + '\r\n';
+                                                    }
+
+                                                    return str;
+                                                }
+                                                function exportCSVFile(headers, items, fileTitle) {
+                                                    if (headers) {
+                                                        items.unshift(headers);
+                                                    }
+
+                                                    // Convert Object to JSON
+                                                    var jsonObject = JSON.stringify(items);
+
+                                                    var csv = convertToCSV(jsonObject);
+
+                                                    var exportedFilenmae = fileTitle + '.csv' || 'export.csv';
+
+                                                    var blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+                                                    if (navigator.msSaveBlob) { // IE 10+
+                                                        navigator.msSaveBlob(blob, exportedFilenmae);
+                                                    } else {
+                                                        var link = document.createElement("a");
+                                                        if (link.download !== undefined) { // feature detection
+                                                            // Browsers that support HTML5 download attribute
+                                                            var url = URL.createObjectURL(blob);
+                                                            link.setAttribute("href", url);
+                                                            link.setAttribute("download", exportedFilenmae);
+                                                            link.style.visibility = 'hidden';
+                                                            document.body.appendChild(link);
+                                                            link.click();
+                                                            document.body.removeChild(link);
+                                                        }
+                                                    }
+                                                }
+                                                var headers = {
+                                                    type: "Type",
+                                                    date: 'Date de campagne',
+                                                    nom: "Nom de la campagne",
+                                                    depense: "Dépensé",
+                                                    interet: "Centre d'intérêt",
+                                                    age: "Âge",
+                                                    reachTotal: "Reach Total",
+                                                    objectif: "Objectif",
+                                                    impression: "Impression",
+                                                    engagement: "Taux engagement",
+                                                    like: "Nb Like.",
+                                                    com: "Nb com.",
+                                                    nbVues: "Nb vues (vidéo)"
+                                                };
+                                                var itemsFormatted = [];
+
+                                                // format the data
+                                                itemsNotFormatted.forEach((item) => {
+                                                    itemsFormatted.push({
+                                                    type: item.type,
+                                                    date: item.date,
+                                                    nom: item.nom,
+                                                    depense: item.depense,
+                                                    interet: item.interet,
+                                                    age: item.age,
+                                                    reachTotal: item.reachTotal,
+                                                    objectif: item.objectif,
+                                                    impression: item.impression,
+                                                    engagement: item.engagement,
+                                                    like: item.like,
+                                                    com: item.com,
+                                                    nbVues: item.nbVues
+                                                    });
+                                                });
+
+                                            var fileTitle = 'orders'; // or 'my-unique-title'
+                                            $("#progress_bar").val("75");
+                                            exportCSVFile(headers, itemsFormatted,fileTitle); // call the exportCSVFile() function to process the JSON and trigger the download
+                                            $("#progress_bar").val("100");
                                             }
                                             break;
                                         
                                         default:
                                             $('#erreur').html(msgErreur("Serveur indisponible ! Veuillez réessayer plus tard ou reliez votre compte à l'application"));      
                                             break;
-                                    }  
+                                    }
                                 });
+                            } else {
+                                $('#erreur').html(msgErreur("Veuillez selectionner une periode valide"));
                             }
                         });
                     </script>
@@ -300,24 +294,9 @@
         include 'view/admin/footer.php';
     ?>
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Pret à partir ?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Voulez vous vous deconnecter ?</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Annuler</button>
-                    <a class="btn btn-primary" href="index.php?a=d">Se deconnecter</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php
+        include 'view/admin/modalDeconnexion.php'
+    ?>
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

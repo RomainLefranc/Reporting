@@ -3,7 +3,7 @@
         $username = htmlspecialchars($_SESSION['user']);
         include 'admin/'.$controller.'.php';
     } else {
-        $view = '403';
+        $view = '../public/v_403';
     }
 ?>
 

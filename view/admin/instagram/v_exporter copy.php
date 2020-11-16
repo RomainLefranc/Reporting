@@ -36,9 +36,6 @@
     <script src="https://rawgit.com/gitbrent/PptxGenJS/master/dist/pptxgen.bundle.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS/dist/pptxgen.shapes.js"></script>
 
-    <script src="https://www.amcharts.com/lib/4/core.js"></script>
-    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
-    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
 </head>
 
@@ -74,10 +71,10 @@
                     </div>
                     <form id='bilan'>
                         <div class="form-group row">
-                            <label class="col-lg-2 col-form-label">Pages disponible</label>
+                            <label for="example-page-input" class="col-lg-2 col-form-label">Pages disponible</label>
                             <div class="col-lg-10">
                                 <select class="form-control" id='choixPageInsta' style="max-width: 300px;" required>
-                                    <option value=""  data-nom=""> </option>
+                                    <option value="" data-nom=""></option>
                                     <?php
                                         echo $selectPageInsta;
                                     ?>
@@ -85,12 +82,9 @@
                             </div>
                         </div>
                         <div class="form-group row" >
-                            <label class="col-lg-2 col-form-label">1er Mois</label>
+                            <label for="example-date-input" class="col-lg-2 col-form-label">Mois 1</label>
                             <div class="col-lg-10">
                                 <input class="form-control" type="month" id="dateDebut" style="max-width: 300px;" required>
-                                <small class="form-text text-muted">
-                                    Selectionner le mois de depart, la periode sera de 3 mois à compter du 1er mois choisi (ex : je choisie janvier 2020, le bilan se fera sur Janvier, Février et Mars)
-                                </small>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Generer PowerPoint
@@ -118,7 +112,13 @@
                             <div id="chartdiv" style='width: 100%;height: 500px;'></div>
                         </div>
                     </div>
-        
+
+                    <!-- Resources -->
+                    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+                    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+                    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
                     <script>
                         function msgErreur(texte) {
                             var alert = `
@@ -187,6 +187,7 @@
                                 tabMois[index].dateUntil = dateUntil;
 
                             }
+                            console.log(tabMois);
                             
                             $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`, function (data) {
                                 var tabDateMedia = [];
@@ -468,33 +469,44 @@
                                         }); 
                                         $("#progress_bar").val("40");
                                     });
-
+                                    
                                     tabMois.forEach((mois,index) => {
-                                        $.ajax({
-                                            type: "GET",
-                                            async: false,
-                                            url: `https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`,
-                                            dataType: "json",
-                                            success: function (response) {
+                                        $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`,
+                                            function (data, textStatus, jqXHR) {
                                                 var nbMediaMensuel = 0;
                                                 var totalInteractionMensuel = 0;
                                                 var totalReachMensuel = 0
                                                 var totalImpressionMensuel = 0;
                                                 var followergagneMensuel = 0;
-                                                response.media.data.reverse();
-                                                response.media.data.forEach(media => {
+                                                data.media.data.reverse();
+                                                data.media.data.forEach(media => {
                                                     var dateMedia = new Date(media.timestamp);
                                                     if (dateMedia >= mois.dateDebut && dateMedia <= mois.dateFin) {
                                                         nbMediaMensuel++;
+                                                        var idMedia = media.id;
+                                                        var url =`https://graph.facebook.com/v8.0/${idMedia}/insights?metric=impressions,reach,engagement&access_token=${token}`;
                                                         $.ajax({
                                                             type: "GET",
-                                                            url: `https://graph.facebook.com/v8.0/${media.id}/insights?metric=impressions,reach,engagement&access_token=${token}`,
+                                                            url: url,
                                                             async: false,
                                                             dataType: "json",
                                                             success: function (response) {
                                                                 totalImpressionMensuel += response.data[0].values[0].value
                                                                 totalReachMensuel += response.data[1].values[0].value
                                                                 totalInteractionMensuel += response.data[2].values[0].value
+                                                                $.ajax({
+                                                                    type: "GET",
+                                                                    async: false,
+                                                                    url: `https://graph.facebook.com/v4.0/${idPageInsta}/insights?metric=follower_count,reach,impressions&period=day&since=${mois.dateSince}&until=${mois.dateUntil}&access_token=${token}`,
+                                                                    dataType: "json",
+                                                                    success: function (response) {
+                                                                        response.data[0].values.forEach(element => {
+                                                                            followergagneMensuel += element.value
+                                                                            trimestre.totalFollowerGagne += element.value
+                                                                        });
+                                                                        
+                                                                    }
+                                                                });
                                                             }
                                                         });
                                                     }
@@ -502,28 +514,12 @@
                                                 mois.nbMediaMensuel = nbMediaMensuel;
                                                 mois.totalInteractionMensuel = totalInteractionMensuel;
                                                 mois.totalReachMensuel = totalReachMensuel;
-                                                mois.totalImpressionMensuel = totalImpressionMensuel;
-                                                if (totalReachMensuel == 0) {
-                                                    mois.tauxInteraction = 0
-                                                } else {
-                                                    mois.tauxInteraction = ((totalInteractionMensuel / totalReachMensuel)*100).toFixed(2);
-                                                } 
-                                            }
-                                        });
-                                        $.ajax({
-                                            type: "GET",
-                                            async: false,
-                                            url: `https://graph.facebook.com/v4.0/${idPageInsta}/insights?metric=follower_count,reach,impressions&period=day&since=${mois.dateSince}&until=${mois.dateUntil}&access_token=${token}`,
-                                            dataType: "json",
-                                            success: function (response) {
-                                                var followergagneMensuel = 0;
-                                                response.data[0].values.forEach(element => {
-                                                    followergagneMensuel += element.value
-                                                    trimestre.totalFollowerGagne += element.value
-                                                });
+                                                mois.totalImpressionMensuel = totalImpressionMensuel;   
                                                 mois.totalFollowerGagneMensuel = followergagneMensuel; 
+                                                mois.tauxInteraction = ((totalInteractionMensuel / totalReachMensuel)*100).toFixed(2)
                                             }
-                                        });
+
+                                        );
                                     });
 
                                     var donneesPowerPoint = [];
@@ -533,6 +529,7 @@
                                     donneesPowerPoint.top3ReachMois = tabReach;
                                     donneesPowerPoint.top3Interaction = tabInteraction;
                                     donneesPowerPoint.top3FlopReach = flopReach;
+
                                     $("#progress_bar").val("60");
 
                                     function toDataURL(url, callback) {
@@ -551,16 +548,34 @@
                                     var imageMeilleurPost = donneesPowerPoint.topPostMois.media_url;
 
                                     var imgTop1Interaction = donneesPowerPoint.top3Interaction[0].media_url;
-                                    var imgTop2Interaction = (donneesPowerPoint.top3Interaction.length >= 2 ? donneesPowerPoint.top3Interaction[1].media_url : "")
-                                    var imgTop3Interaction = (donneesPowerPoint.top3Interaction.length >= 3 ? donneesPowerPoint.top3Interaction[2].media_url : "")
+                                    var imgTop2Interaction = '';
+                                    var imgTop3Interaction = '';
+                                    if (donneesPowerPoint.top3Interaction.length >= 2) {
+                                        imgTop2Interaction = donneesPowerPoint.top3Interaction[1].media_url;
+                                    }
+                                    if (donneesPowerPoint.top3Interaction.length == 3) {
+                                        imgTop3Interaction = donneesPowerPoint.top3Interaction[2].media_url;
+                                    }
                                     
                                     var imgTop1Reach = donneesPowerPoint.top3ReachMois[0].media_url;
-                                    var imgTop2Reach = (donneesPowerPoint.top3ReachMois.length >= 2 ? donneesPowerPoint.top3ReachMois[1].media_url : "")
-                                    var imgTop3Reach = (donneesPowerPoint.top3ReachMois.length >= 3 ? donneesPowerPoint.top3ReachMois[2].media_url : "")
+                                    var imgTop2Reach = '';
+                                    var imgTop3Reach = '';
+                                    if (donneesPowerPoint.top3ReachMois.length >= 2) {
+                                        imgTop2Reach = donneesPowerPoint.top3ReachMois[1].media_url;
+                                    }
+                                    if (donneesPowerPoint.top3ReachMois.length >= 3) {
+                                        imgTop3Reach = donneesPowerPoint.top3ReachMois[2].media_url;
+                                    }
                                     
                                     var imgFlop1Reach = donneesPowerPoint.top3FlopReach[0].media_url;
-                                    var imgFlop2Reach = (donneesPowerPoint.top3FlopReach.length >= 2 ? donneesPowerPoint.top3FlopReach[1].media_url : "")
-                                    var imgFlop3Reach = (donneesPowerPoint.top3FlopReach.length >= 3 ? donneesPowerPoint.top3FlopReach[2].media_url : "")
+                                    var imgFlop2Reach = '';
+                                    var imgFlop3Reach = '';
+                                    if (donneesPowerPoint.top3FlopReach.length >= 2) {
+                                        imgFlop2Reach = donneesPowerPoint.top3FlopReach[1].media_url;
+                                    }
+                                    if (donneesPowerPoint.top3FlopReach.length >= 3) {
+                                        imgFlop3Reach = donneesPowerPoint.top3FlopReach[2].media_url;
+                                    }
                                     $("#progress_bar").val("70");
                                     toDataURL(imageMeilleurPost, function(imageMeilleurPost) {
                                         toDataURL(imgTop1Interaction, function(imgTop1Interaction) {
@@ -693,7 +708,7 @@
                                                                                             slide.addText([
                                                                                                 { text: donneesPowerPoint.mois[1].totalInteractionMensuel.toString(), options: {bold:true, fontSize:12}},
                                                                                                 { text: ' interactions', options: {}},
-                                                                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'60%', y:'52%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'60%', y:'25%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                                                         } else {
                                                                                             slide.addText([
                                                                                                 { text: donneesPowerPoint.mois[1].totalInteractionMensuel.toString(), options: {bold:true, fontSize:12}},
@@ -1072,7 +1087,7 @@
                                                                                         $("#progress_bar").val("100");
 
                                                                                         //on enregistre le powerpoint
-                                                                                        pptx.writeFile('bilan-reporting-Instagram ' + donneesPowerPoint.mois[0].mois + ' - ' + donneesPowerPoint.mois[1].mois  + ' - ' + donneesPowerPoint.mois[2].mois + ' ' +  nomPageInsta);
+                                                                                        pptx.writeFile('bilan-reporting-Instagram ' + nomMois + ' ' + nomPageInsta);
                                                                                     }).catch(function (error) {
                                                                                         console.error('oops, something went wrong!', error);
                                                                                     });
@@ -1096,6 +1111,7 @@
                                             });
                                         });
                                     });
+                                    
                                 }
                             });
                         });
@@ -1131,9 +1147,24 @@
         include 'view/admin/footer.php';
     ?>
     <!-- Logout Modal-->
-    <?php
-        include 'view/admin/modalDeconnexion.php'
-    ?>
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Pret à partir ?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Voulez vous vous deconnecter ?</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Annuler</button>
+                    <a class="btn btn-primary" href="index.php?a=d">Se deconnecter</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

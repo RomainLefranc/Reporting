@@ -88,34 +88,31 @@
                         ?>
 
                         <button class="btn btn-primary" id="btnfan">Valider</button>
-                        </div>
+                    </div>
 
-                        <div id="erreur"></div>
+                    <div id="erreur"></div>
                         
 
-                        <div class="col-lg-12">
-                            <div class="card mb-3 mt-2">
-                                <div class="card-header">
-                                <i class="fas fa-chart-bar"></i>
-                                Comparatif du nombre de follower par page</div>
-                                <div class="card-body">
-                                <canvas id="myBarChart" width="100%" height="50"></canvas>
-                                </div>
+                    <div class="col-lg-12">
+                        <div class="card mb-3 mt-2">
+                            <div class="card-header">
+                            <i class="fas fa-chart-bar"></i>
+                            Comparatif du nombre de follower par page</div>
+                            <div class="card-body">
+                            <canvas id="myBarChart" width="100%" height="50"></canvas>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- HTML -->
-                        <div id="chartdiv"></div>
-                        <div id="editor"></div><br/>
-                        
-                        
-                        <!------------------------SCRIPT permettant l'affichage de graphique----------------------------->
+                    <!-- HTML -->
+                    <div id="chartdiv"></div>
+                    <div id="editor"></div><br/>
+                    <!------------------------SCRIPT permettant l'affichage de graphique----------------------------->
 
-                        <!-- Chart code -->
-                        <script>
-                            //au click sur le bouton, on lance la fonction qui activera les deux graphiques
-                            $("#btnfan").click(function(){
-                            
+                    <!-- Chart code -->
+                    <script>
+                        //au click sur le bouton, on lance la fonction qui activera les deux graphiques
+                        $("#btnfan").click(function(){
                             var pagesArrays = [];
                             var count = $('input:checkbox:checked').length;
                             var lesPages = [];
@@ -228,9 +225,8 @@
 
                             }
 
-                            });
-                                
-                        </script>
+                        });
+                    </script>
                 </div>
                 <!-- /.container-fluid -->
 
@@ -262,24 +258,9 @@
         include 'view/admin/footer.php';
     ?>
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Pret à partir ?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Voulez vous vous deconnecter ?</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Annuler</button>
-                    <a class="btn btn-primary" href="index.php?a=d">Se deconnecter</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php
+        include 'view/admin/modalDeconnexion.php'
+    ?>
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
