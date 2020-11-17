@@ -61,9 +61,9 @@ INSERT INTO `pagesFB` (`id`, `nom`, `id_comptes`) VALUES
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(3) NOT NULL AUTO_INCREMENT,
-  `pseudo` varchar(50) NOT NULL,
-  `login` varchar(50) DEFAULT NULL,
-  `mdp` varchar(50) DEFAULT NULL,
+  `pseudo` varchar(255) NOT NULL,
+  `login` varchar(255) DEFAULT NULL,
+  `mdp` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE (login)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
