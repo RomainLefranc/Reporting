@@ -1017,21 +1017,78 @@
                                                     ],  { x:'75%', y:'84%', w:'100%', color:'000000', fontSize:10 });
                                                     slide.addImage({ path:donneesPowerPoint.top3FlopReach[2].media_url, x:"75%", y:"18%", w:"22%", h:"39%" });
                                                 }
+                                                slide = pptx.addSlide();
+                                                slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
 
-                                                tabPost.forEach(post => {
-                                                    slide = pptx.addSlide();
-                                                    slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
-                                                    slide.addImage({ path: post.media_url, x:"30%", y:"18%", w:"40%", h:"65%" });
-                                                    slide.addText([
-                                                        { text:  post.reach, options: {}},
-                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                    ],  { x:'40%', y:'85%', w:'100%', color:'0088CC', fontSize:15 });
-                                                    slide.addText([
-                                                        { text: ((post.interaction/post.reach)*100).toFixed(2), options: {}},
-                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                    ],  { x:'40%', y:'90%', w:'100%', color:'000000', fontSize:15 });
-                                                });
+                                                slide.addImage({ path: tabPost[0].media_url, x:"10%", y:"15%", w:"10%", h:"20%" });
+                                                slide.addImage({ path: tabPost[1].media_url, x:"10%", y:"36%", w:"10%", h:"20%" });
+                                                slide.addImage({ path: tabPost[2].media_url, x:"10%", y:"57%", w:"10%", h:"20%" });
+                                                slide.addImage({ path: tabPost[3].media_url, x:"10%", y:"78%", w:"10%", h:"20%" });
+                                                slide.addText([
+                                                        { text:  tabPost[0].reach, options: {}},
+                                                        { text: ' reach', options: {bold:true}}
+                                                    ],  { x:'21%', y:'24%', w:'100%', color:'0088CC', fontSize:15 });
+                                                slide.addText([
+                                                        { text:  tabPost[1].reach, options: {}},
+                                                        { text: ' reach', options: {bold:true}}
+                                                    ],  { x:'21%', y:'45%', w:'100%', color:'0088CC', fontSize:15 });
+                                                slide.addText([
+                                                    { text:  tabPost[2].reach, options: {}},
+                                                    { text: ' reach', options: {bold:true}}
+                                                ],  { x:'21%', y:'66%', w:'100%', color:'0088CC', fontSize:15 });
 
+                                                slide.addText([
+                                                    { text:  tabPost[3].reach, options: {}},
+                                                    { text: ' reach', options: {bold:true}}
+                                                ],  { x:'21%', y:'87%', w:'100%', color:'0088CC', fontSize:15 });
+
+                                                slide.addImage({ path: tabPost[4].media_url, x:"40%", y:"15%", w:"10%", h:"20%" });
+                                                slide.addImage({ path: tabPost[5].media_url, x:"40%", y:"36%", w:"10%", h:"20%" });
+                                                slide.addImage({ path: tabPost[6].media_url, x:"40%", y:"57%", w:"10%", h:"20%" });
+                                                slide.addImage({ path: tabPost[7].media_url, x:"40%", y:"78%", w:"10%", h:"20%" });
+
+                                                slide.addText([
+                                                        { text:  tabPost[4].reach, options: {}},
+                                                        { text: ' reach', options: {bold:true}}
+                                                    ],  { x:'51%', y:'24%', w:'100%', color:'0088CC', fontSize:15 });
+                                                slide.addText([
+                                                        { text:  tabPost[5].reach, options: {}},
+                                                        { text: ' reach', options: {bold:true}}
+                                                    ],  { x:'51%', y:'45%', w:'100%', color:'0088CC', fontSize:15 });
+
+                                                slide.addText([
+                                                    { text:  tabPost[6].reach, options: {}},
+                                                    { text: ' reach', options: {bold:true}}
+                                                ],  { x:'51%', y:'66%', w:'100%', color:'0088CC', fontSize:15 });
+
+                                                slide.addText([
+                                                    { text:  tabPost[7].reach, options: {}},
+                                                    { text: ' reach', options: {bold:true}}
+                                                ],  { x:'51%', y:'87%', w:'100%', color:'0088CC', fontSize:15 });
+
+                                                slide.addImage({ path: tabPost[8].media_url, x:"70%", y:"15%", w:"10%", h:"20%" });
+                                                slide.addImage({ path: tabPost[6].media_url, x:"70%", y:"36%", w:"10%", h:"20%" });
+                                                slide.addImage({ path: tabPost[6].media_url, x:"70%", y:"57%", w:"10%", h:"20%" });
+                                                slide.addImage({ path: tabPost[6].media_url, x:"70%", y:"78%", w:"10%", h:"20%" });
+
+                                                slide.addText([
+                                                        { text:  tabPost[8].reach, options: {}},
+                                                        { text: ' reach', options: {bold:true}}
+                                                    ],  { x:'81%', y:'24%', w:'100%', color:'0088CC', fontSize:15 });
+                                                slide.addText([
+                                                        { text:  tabPost[0].reach, options: {}},
+                                                        { text: ' reach', options: {bold:true}}
+                                                    ],  { x:'81%', y:'45%', w:'100%', color:'0088CC', fontSize:15 });
+
+                                                slide.addText([
+                                                    { text:  tabPost[0].reach, options: {}},
+                                                    { text: ' reach', options: {bold:true}}
+                                                ],  { x:'81%', y:'66%', w:'100%', color:'0088CC', fontSize:15 });
+
+                                                slide.addText([
+                                                    { text:  tabPost[0].reach, options: {}},
+                                                    { text: ' reach', options: {bold:true}}
+                                                ],  { x:'81%', y:'87%', w:'100%', color:'0088CC', fontSize:15 });
                                                 // page List post
                                         
                                                 //dixième page CONCLUSION
