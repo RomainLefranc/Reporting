@@ -1,6 +1,4 @@
 
-
-
 <?php
 include 'model/m_pagesInsta.php';
 include 'model/m_pagesFB.php';
