@@ -15,6 +15,7 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 
 </head>
 
@@ -42,9 +43,77 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <?php
-                    include 'content.php';
-                ?>
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                    </div>
+                    <?php
+                        if (empty($listePagesFB)) {
+                            echo `
+                            <div class="alert alert-danger" role="alert">
+                                Veuillez lier votre compte Facebook <a href="index.php?a=l">ici</a>
+                            </div>`;
+                        }
+                    ?>
+                    
+                    <!-- Content Row -->
+                    <div class="row">
+                        <!-- Facebook -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card border-left-primary shadow py-2 ">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Liste page Facebook</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fab fa-facebook-square fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <?php
+                                    if (empty($listePagesFB)) {
+                                        echo 'Aucune page Facebook trouvé';
+                                    } else {
+                                        echo '<ul class="list">';
+                                        foreach ($listePagesFB as $pageFB) {
+                                            echo '<li class="list-item">'.$pageFB['nom'].'</li>';
+                                        }
+                                        echo '</ul>';
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Instagram -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card border-left-warning shadow py-2 ">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Liste page Instagram</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fab fa-instagram fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <?php
+                                        if (empty($listePagesInsta)) {
+                                            echo 'Aucune page instagram trouvé';
+                                        } else {
+                                            echo '<ul class="list">';
+                                            foreach ($listePagesInsta as $pageInsta) {
+                                                echo '<li class="list-item">'.$pageInsta['nom'].'</li>';
+                                            }
+                                            echo '</ul>';
+                                        }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- /.container-fluid -->
 
             </div>
