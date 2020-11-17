@@ -64,7 +64,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `pseudo` varchar(50) NOT NULL,
   `login` varchar(50) DEFAULT NULL,
   `mdp` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE (login)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 INSERT INTO `users` (`id`,`pseudo`, `login`, `mdp`) VALUES
