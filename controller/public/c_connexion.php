@@ -8,7 +8,6 @@
      
         $resp = $recaptcha->verify($_POST['g-recaptcha-response']);
         if ($resp->isSuccess()) {
-
             $id = htmlspecialchars($_POST['id']);
             $mdp = htmlspecialchars($_POST['mdp']);
             $user = getUsers($id);
@@ -22,7 +21,6 @@
                     $_POST["erreur"] = 1;
                 }
             }
-
         } else {
             $_POST["erreur"] = 2;
         }
