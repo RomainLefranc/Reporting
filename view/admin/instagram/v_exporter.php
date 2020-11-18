@@ -190,7 +190,7 @@
 
                             $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`, function (data) {
                                 var tabDateMedia = [];
-                                var tabEngagementMedia = [];
+                                var TabLikeMedia = [];
                                 var nbMediaTrimestre = 0;
                                 var totalInteractionTrimestre = 0;
                                 var totalReachTrimestre = 0
@@ -204,7 +204,7 @@
                                         nbMediaTrimestre++;
                                         media.date = formatterDate(dateMedia)
                                         tabDateMedia.push(media.date);
-                                        tabEngagementMedia.push(media.like_count + media.comments_count);
+                                        TabLikeMedia.push(media.like_count);
                                         totalInteractionTrimestre += media.like_count + media.comments_count;
                                         var idMedia = media.id;
                                         switch (media.media_type) {
@@ -269,14 +269,14 @@
                                     flopReach = flopReach.slice(0,3);
 
                                     /* affichage charts */
-                                    var max = Math.ceil(Math.max(...tabEngagementMedia)) + 5;
+                                    var max = Math.ceil(Math.max(...TabLikeMedia)) + 5;
                                     var ctx = document.getElementById("myAreaChart2");
                                     var myLineChart = new Chart(ctx, {
                                         type: 'line',
                                         data: {
                                             labels: tabDateMedia,
                                             datasets: [{
-                                                label: "Engagement",
+                                                label: "like",
                                                 lineTension: 0.3,
                                                 backgroundColor: "rgba(2,117,216,0.2)",
                                                 borderColor: "rgba(2,117,216,1)",
@@ -287,7 +287,7 @@
                                                 pointHoverBackgroundColor: "rgba(2,117,216,1)",
                                                 pointHitRadius: 50,
                                                 pointBorderWidth: 2,
-                                                data: tabEngagementMedia,
+                                                data: TabLikeMedia,
                                             }],
                                         },
                                         options: {
@@ -608,7 +608,7 @@
                                                 slide.addText('LE COMPTE INSTAGRAM',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                 slide.addImage({ path:screenPage, x:"18%", y:"18%", w:"64%", h:"55%" });
                                                 
-                                                // 3eme paga 
+                                                // 3eme page Chiffre clés 
                                                 slide = pptx.addSlide();
                                                 slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                 slide.addText('CHIFFRES CLES',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
@@ -656,10 +656,10 @@
 
                                                 }
                                                 
-                                                //quatrième page FOCUS FANS
+                                                //quatrième page FOCUS FOLLOWER
                                                 slide = pptx.addSlide();
                                                 slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
-                                                slide.addText('FOCUS FANS',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
+                                                slide.addText('FOCUS FOLLOWER',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                 slide.addImage({ data:img5.src, x:1, y:1, w:8, h:4 });
 
                                                 //cinquième page FOCUS LIKE
@@ -882,7 +882,7 @@
                                                                         ],  { x:posXText + '%', y: posYText + '%', w:'100%', color:'0088CC', fontSize:10 });
                                                                     slide.addText([
                                                                         { text: ((tabPost[numMedia-1].interaction/tabPost[numMedia-1].reach)*100).toFixed(2), options: {}},
-                                                                        { text: '% Taux', options: {bold:true}}
+                                                                        { text: ' % Taux', options: {bold:true}}
                                                                     ],  { x:posXText + '%', y:(posYText + 5) +'%', w:'100%', color:'000000', fontSize:10 }); 
                                                                 }
                                                                 /*  */
