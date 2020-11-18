@@ -2,16 +2,21 @@
 CREATE DATABASE IF NOT EXISTS nautilusv2 CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 USE nautilusv2;
 
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(3) NOT NULL AUTO_INCREMENT,
+  `pseudo` varchar(255) NOT NULL,
+  `login` varchar(255) DEFAULT NULL,
+  `mdp` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE (login)
+)
 CREATE TABLE IF NOT EXISTS `comptesFB` (
   `id` varchar(50) NOT NULL,
   `nom` varchar(50) DEFAULT NULL,
   `jeton` varchar(250) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+) 
 
-INSERT INTO `comptesFB` (`id`,`nom`,`jeton`) VALUES
-	('10156975604778178', 'Sim On','EAANX4doqDDsBAOBQszs1wRZCIUG5SEQaArSVtofdWwdZA6ivaIvn6JnvaMFfIyHN7AynqP2Sf9gfeSFKXFDGIJEupHBB0wiyZArFt5hIodzJPreTYqZBK4tO7408TQhiiaqc20hJuuYZC6cT0Fjl4xug8CWLb6APtZCWOGYX2jvgZDZD'),
-	('454172598774501', 'Thomas Lemoine','EAANX4doqDDsBAFjo5yb1gPfWzZAQ7TGlzxRVl5CtDilGpYFi9E9kuvzfrFkALgZAE43JiPQiJPilWtvqzV42Lszgkz1X6PbXsK4NeXSI3lwWmuiPCwMDEcdG9oQ6yoApQQysoig3xsDvreLwO6ZCTHZCfeEhjoukj4If7q0ZCq9YPB89s1xhN');
 
 CREATE TABLE IF NOT EXISTS `pagesFB` (
   `id` varchar(100) NOT NULL,
@@ -19,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `pagesFB` (
   `id_comptes` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_pages_id_comptes` FOREIGN KEY (`id_comptes`) REFERENCES `comptesFB` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+)
 
 CREATE TABLE IF NOT EXISTS `pagesInsta` (
   `id` varchar(100) NOT NULL,
@@ -27,7 +32,14 @@ CREATE TABLE IF NOT EXISTS `pagesInsta` (
   `id_pagesFB` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_pages_1` FOREIGN KEY (`id_pagesFB`) REFERENCES `pagesFB` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+)
+INSERT INTO `comptesFB` (`id`,`nom`,`jeton`) VALUES
+	('10156975604778178', 'Sim On','EAANX4doqDDsBAOBQszs1wRZCIUG5SEQaArSVtofdWwdZA6ivaIvn6JnvaMFfIyHN7AynqP2Sf9gfeSFKXFDGIJEupHBB0wiyZArFt5hIodzJPreTYqZBK4tO7408TQhiiaqc20hJuuYZC6cT0Fjl4xug8CWLb6APtZCWOGYX2jvgZDZD'),
+	('454172598774501', 'Thomas Lemoine','EAANX4doqDDsBAFjo5yb1gPfWzZAQ7TGlzxRVl5CtDilGpYFi9E9kuvzfrFkALgZAE43JiPQiJPilWtvqzV42Lszgkz1X6PbXsK4NeXSI3lwWmuiPCwMDEcdG9oQ6yoApQQysoig3xsDvreLwO6ZCTHZCfeEhjoukj4If7q0ZCq9YPB89s1xhN');
+
+INSERT INTO `users` (`pseudo`, `login`, `mdp`) VALUES
+	('admin','supernautilus', '$2y$10$uzLHCF/52Qhyp2Z7TC7EJOLN3Jow7DaP/aSb4Hdye/l1PZ4ontRaS'),
+	('admin', 'toto', '$2y$10$tP3XL0r1d3qIzSX1ymBpkOBQ0iAh2d1Aea6Xg7PyPDvtLPfvu8xOq');
 
 INSERT INTO `pagesFB` (`id`, `nom`, `id_comptes`) VALUES
 	('106656610804614', 'Double Test', '454172598774501'),
@@ -57,17 +69,3 @@ INSERT INTO `pagesFB` (`id`, `nom`, `id_comptes`) VALUES
 	('847952655326491', 'Air Austral', '10156975604778178'),
 	('874873169357426', 'Austral Voyages', '10156975604778178'),
 	('886436244863904', 'Citro', '10156975604778178');
-
-
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(3) NOT NULL AUTO_INCREMENT,
-  `pseudo` varchar(255) NOT NULL,
-  `login` varchar(255) DEFAULT NULL,
-  `mdp` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE (login)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
-
-INSERT INTO `users` (`id`,`pseudo`, `login`, `mdp`) VALUES
-	(1, 'admin','supernautilus', 'b09c600fddc573f117449b3723f23d64'),
-	(2,'admin', 'toto', 'f71dbe52628a3f83a77ab494817525c6');
