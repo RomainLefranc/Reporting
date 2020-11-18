@@ -3,6 +3,7 @@
 session_start();
 
 require_once __DIR__ . '/Facebook/autoload.php';
+
 $navigations = array (
     ['action' => "c",    "NiveauAcces" => 0,  "controller" => "c_connexion",                      "view" => "v_connexion"            ],
     ['action' => "a",    "NiveauAcces" => 1,  "controller" => "c_admin",                          "view" => "v_admin"                ],
@@ -21,9 +22,7 @@ $navigations = array (
     ['action' => "ff",   "NiveauAcces" => 1,  "controller" => "facebook/c_facebook_comparatif" ,  "view" => "facebook/v_comparatif"  ],
     ['action' => "fr",   "NiveauAcces" => 1,  "controller" => "facebook/c_facebook_rapport" ,     "view" => "facebook/v_rapport"     ]
 );
-/* if (isset($_SESSION['user'])) {
-    header("location: index.php?a=a");
-} else */if (isset($_GET["a"])) {
+if (isset($_GET["a"])) {
     $actionEstValide = false;
 
     $action = htmlspecialchars($_GET["a"]);
