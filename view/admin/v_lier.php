@@ -87,9 +87,10 @@
                             $token = htmlspecialchars($_GET['token']);
                             $json = file_get_contents('https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=941052469578811&client_secret=a4b8c333c1be79a3376c8cc148bb508e&fb_exchange_token=' . $token);
                             $token = $parsed_json = json_decode($json);
+                            $token = $token->access_token;
                             try {
                                 // Retourne l'objet de `Facebook\FacebookResponse`
-                                $response = $fb->get('/me?fields=id,name', $token->access_token);
+                                $response = $fb->get('/me?fields=id,name', $token);
                             } catch(Facebook\Exceptions\FacebookResponseException $e) {
                                 echo 'Graph retourne une erreur: ' . $e->getMessage();
                                 exit;
@@ -99,12 +100,29 @@
                             }
                     
                             $user = $response->getGraphUser();
-                    
+                            function httpPost($url, $data){
+                                $options = array(
+                                    'http' => array(
+                                        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                                        'method'  => 'POST',
+                                        'content' => http_build_query($data)
+                                    )
+                                );
+                                $context  = stream_context_create($options);
+                                return file_get_contents($url, false, $context);
+                            }
                             //on récupère toutes les pages que l'utilisateur connecté nous a autorisé à ajouter
-                            $json = file_get_contents('https://graph.facebook.com/v4.0/' . $user['id'] . '/accounts?fields=name,picture&access_token='. $token->access_token);
+                            $json = file_get_contents('https://graph.facebook.com/v4.0/' . $user['id'] . '/accounts?fields=access_token,name,picture&access_token='. $token);
                             $listePageFB = $parsed_json = json_decode($json, true);
                             $listePageFB = $listePageFB['data'];
-                    
+                            foreach ($listePageFB as $pageFB) {
+                                $idPageFB = $pageFB['id'];
+                                $tokenPageFb = $pageFB['access_token'];
+                                $url = 'https://graph.facebook.com/v9.0/'.$idPageFB.'/subscribed_apps?subscribed_fields=feed&access_token='.$tokenPageFb;
+                                httpPost($url, []);
+                            }
+                            die();
+                            
                             $listeComptesFB = getListeComptesFB();
                             $compteFBtrouver = false;
                     
@@ -114,11 +132,11 @@
                                 }
                             }
                             if (!$compteFBtrouver) {
-                                ajouterCompteFB($user['id'],$user['name'],$token->access_token);
+                                ajouterCompteFB($user['id'],$user['name'],$token);
                             } else {
                                 $token_BDD = getToken($user['id']);
-                                if (empty($token_BDD) || $token_BDD != $token->access_token) {
-                                    setToken($user['id'], $token->access_token);
+                                if (empty($token_BDD) || $token_BDD != $token) {
+                                    setToken($user['id'], $token);
                                 }
                             }
                     
@@ -132,13 +150,13 @@
                                 $imgPageFB = $pageFB['picture']['data']['url'];
                                 $listePageFBrecupere.= "<img src='" . $imgPageFB . "' width='25' height='25' style='border-radius:30px'> ".$nomPageFB.'<br>';
                         
-                                $json = file_get_contents('https://graph.facebook.com/v8.0/'.$pageFB['id'].'?fields=instagram_business_account&access_token='.$token->access_token);
+                                $json = file_get_contents('https://graph.facebook.com/v8.0/'.$pageFB['id'].'?fields=instagram_business_account&access_token='.$token);
                                 $parsed_json = json_decode($json, true);
                                 $pageInsta = $parsed_json = json_decode($json, true);
                     
                                 if (array_key_exists('instagram_business_account', $pageInsta)) {
                                     $idPageInsta = $pageInsta['instagram_business_account']['id'];
-                                    $json = file_get_contents('https://graph.facebook.com/v3.2/'.$idPageInsta.'?fields=name,profile_picture_url&access_token='.$token->access_token);
+                                    $json = file_get_contents('https://graph.facebook.com/v3.2/'.$idPageInsta.'?fields=name,profile_picture_url&access_token='.$token);
                                     $parsed_json = json_decode($json, true);
                                     $nomPageInsta = $parsed_json['name'];
                                     $imgPageInsta = $parsed_json['profile_picture_url'];
