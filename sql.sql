@@ -16,8 +16,6 @@ CREATE TABLE IF NOT EXISTS `comptesFB` (
   `jeton` varchar(250) NOT NULL,
   PRIMARY KEY (`id`)
 ) 
-
-
 CREATE TABLE IF NOT EXISTS `pagesFB` (
   `id` varchar(100) NOT NULL,
   `nom` varchar(50) DEFAULT NULL,
@@ -25,25 +23,22 @@ CREATE TABLE IF NOT EXISTS `pagesFB` (
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_pagesFB_id_comptes` FOREIGN KEY (`id_comptes`) REFERENCES `comptesFB` (`id`)
 )
-
 CREATE TABLE IF NOT EXISTS `pagesInsta` (
-  `id` varchar(100) NOT NULL,
+  `id` VARCHAR(17) NOT NULL,
   `nom` varchar(100) DEFAULT NULL,
   `id_pagesFB` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_pagesInsta_id_pagesFB` FOREIGN KEY (`id_pagesFB`) REFERENCES `pagesFB` (`id`)
 )
-
 CREATE TABLE IF NOT EXISTS `storiesInsta` (
-  `id` INT(17) NOT NULL, /* media id */
-  `id_pagesInsta` varchar(100) NOT NULL, /* id */
+  `id` VARCHAR(17) NOT NULL, /* media id */
+  `id_pagesInsta` VARCHAR(17) NOT NULL, /* id */
   `date` INT(11) NOT NULL, /* times */
   `impression` INT NOT NULL, /* impression */
   `reach` INT NOT NULL,	/* reach */
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_storiesInsta_id_pagesInsta` FOREIGN KEY (`id_pagesInsta`) REFERENCES `pagesInsta` (`id`)
-)
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 INSERT INTO `comptesFB` (`id`,`nom`,`jeton`) VALUES
 	('10156975604778178', 'Sim On','EAANX4doqDDsBAOBQszs1wRZCIUG5SEQaArSVtofdWwdZA6ivaIvn6JnvaMFfIyHN7AynqP2Sf9gfeSFKXFDGIJEupHBB0wiyZArFt5hIodzJPreTYqZBK4tO7408TQhiiaqc20hJuuYZC6cT0Fjl4xug8CWLb6APtZCWOGYX2jvgZDZD'),
 	('454172598774501', 'Thomas Lemoine','EAANX4doqDDsBAFjo5yb1gPfWzZAQ7TGlzxRVl5CtDilGpYFi9E9kuvzfrFkALgZAE43JiPQiJPilWtvqzV42Lszgkz1X6PbXsK4NeXSI3lwWmuiPCwMDEcdG9oQ6yoApQQysoig3xsDvreLwO6ZCTHZCfeEhjoukj4If7q0ZCq9YPB89s1xhN');
