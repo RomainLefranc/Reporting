@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `pagesFB` (
   `nom` varchar(50) DEFAULT NULL,
   `id_comptes` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_pages_id_comptes` FOREIGN KEY (`id_comptes`) REFERENCES `comptesFB` (`id`)
+  CONSTRAINT `FK_pagesFB_id_comptes` FOREIGN KEY (`id_comptes`) REFERENCES `comptesFB` (`id`)
 )
 
 CREATE TABLE IF NOT EXISTS `pagesInsta` (
@@ -31,8 +31,19 @@ CREATE TABLE IF NOT EXISTS `pagesInsta` (
   `nom` varchar(100) DEFAULT NULL,
   `id_pagesFB` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_pages_1` FOREIGN KEY (`id_pagesFB`) REFERENCES `pagesFB` (`id`)
+  CONSTRAINT `FK_pagesInsta_id_pagesFB` FOREIGN KEY (`id_pagesFB`) REFERENCES `pagesFB` (`id`)
 )
+
+CREATE TABLE IF NOT EXISTS `storiesInsta` (
+  `id` INT(17) NOT NULL, /* media id */
+  `id_pagesInsta` varchar(100) NOT NULL, /* id */
+  `date` INT(11) NOT NULL, /* times */
+  `impression` INT NOT NULL, /* impression */
+  `reach` INT NOT NULL,	/* reach */
+  PRIMARY KEY (`id`),
+  CONSTRAINT `FK_storiesInsta_id_pagesInsta` FOREIGN KEY (`id_pagesInsta`) REFERENCES `pagesInsta` (`id`)
+)
+
 INSERT INTO `comptesFB` (`id`,`nom`,`jeton`) VALUES
 	('10156975604778178', 'Sim On','EAANX4doqDDsBAOBQszs1wRZCIUG5SEQaArSVtofdWwdZA6ivaIvn6JnvaMFfIyHN7AynqP2Sf9gfeSFKXFDGIJEupHBB0wiyZArFt5hIodzJPreTYqZBK4tO7408TQhiiaqc20hJuuYZC6cT0Fjl4xug8CWLb6APtZCWOGYX2jvgZDZD'),
 	('454172598774501', 'Thomas Lemoine','EAANX4doqDDsBAFjo5yb1gPfWzZAQ7TGlzxRVl5CtDilGpYFi9E9kuvzfrFkALgZAE43JiPQiJPilWtvqzV42Lszgkz1X6PbXsK4NeXSI3lwWmuiPCwMDEcdG9oQ6yoApQQysoig3xsDvreLwO6ZCTHZCfeEhjoukj4If7q0ZCq9YPB89s1xhN');
