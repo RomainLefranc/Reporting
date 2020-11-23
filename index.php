@@ -21,6 +21,7 @@ $navigations = array (
     ['action' => "fe",   "NiveauAcces" => 1,  "controller" => "facebook/c_facebook_exporter" ,    "view" => "facebook/v_exporter"    ],
     ['action' => "ff",   "NiveauAcces" => 1,  "controller" => "facebook/c_facebook_comparatif" ,  "view" => "facebook/v_comparatif"  ],
     ['action' => "fr",   "NiveauAcces" => 1,  "controller" => "facebook/c_facebook_rapport" ,     "view" => "facebook/v_rapport"     ],
+    /* API */
     ['action' => "api",   "NiveauAcces" => 0, "controller" => "c_api",                            "view" => "v_api"                       ]
 
 );

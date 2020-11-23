@@ -246,11 +246,12 @@
                                     trimestre.totalReach = totalReachTrimestre;
                                     trimestre.totalImpression = totalImpressionTrimestre;
                                     trimestre.totalFollowerGagne = 0;
-                                    var url = `http://localhost/Projet_Reporting_v2/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${tabMois[0].dateSince}&dateFin=${tabMois[2].dateUntil}`
-                                    console.log(url);
-                                    $.get(url,
+                                    var tabStorie = [];
+                                    $.get(`http://localhost/Projet_Reporting_v2/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${tabMois[0].dateSince}&dateFin=${tabMois[2].dateUntil}`,
                                         function (data) {
-                                            console.log(data);
+                                            data.resultat.stories.forEach(storie => {
+                                                tabStorie.push(storie);
+                                            });
                                         }
                                     );
                                     $("#progress_bar").val("10");
@@ -551,6 +552,8 @@
                                     donneesPowerPoint.top3Reach = tabReach;
                                     donneesPowerPoint.top3Interaction = tabInteraction;
                                     donneesPowerPoint.top3FlopReach = flopReach;
+                                    donneesPowerPoint.storieInsta = tabStorie;
+                                    console.log(donneesPowerPoint);
                                     $("#progress_bar").val("70");
 
                                     /* Export PPTX */
