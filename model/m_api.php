@@ -13,7 +13,7 @@
                 impression, 
                 reach
                 FROM storiesInsta 
-                WHERE id_pagesInsta = id_pagesInsta AND date BETWEEN ":dateDebut" AND ":dateFin"
+                WHERE id_pagesInsta = :id_pagesInsta AND date BETWEEN :dateDebut AND :dateFin
                 ORDER BY date
         ');
         $requete->execute([
@@ -21,7 +21,7 @@
             "dateDebut" => $dateDebut,
             "dateFin" => $dateFin
         ]);
-        $resultat = $requete->fetchall(); 
+        $resultat = $requete->fetchAll(PDO::FETCH_ASSOC);
         $retour['success'] = true;
         $retour['message'] = "Voici les stories";
         $retour['resultat']['nb'] = count($resultat);

@@ -11,6 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $timestamp = $json['entry'][0]['time'];
     date_default_timezone_set('Indian/Reunion');
     $date = date("Y-m-d H:i:s", $timestamp);
+    $date = new DateTime($date);
+    $date->sub(new DateInterval('P1D'));
+    $date = $date->format('Y-m-d H:i:s');
     $impression = $json['entry'][0]['changes'][0]['value']['impressions'];
     $reach = $json['entry'][0]['changes'][0]['value']['reach'];
 

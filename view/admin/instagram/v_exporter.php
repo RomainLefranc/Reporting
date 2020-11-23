@@ -187,7 +187,6 @@
                                 tabMois[index].dateUntil = dateUntil;
                             }
                             /* Fin Récuperation trimestre */
-
                             $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`, function (data) {
                                 var tabDateMedia = [];
                                 var TabLikeMedia = [];
@@ -239,13 +238,21 @@
                                 });
 
                                 if (nbMediaTrimestre == 0) {
-                                    $('#erreur').html(msgErreur('Aucun post trouvé dans ce mois'));
+                                    $('#erreur').html(msgErreur('Aucun post trouvé dans cet periode'));
                                 } else {
+
                                     trimestre.nbMedia = nbMediaTrimestre;
                                     trimestre.totalInteraction = totalInteractionTrimestre;
                                     trimestre.totalReach = totalReachTrimestre;
                                     trimestre.totalImpression = totalImpressionTrimestre;
                                     trimestre.totalFollowerGagne = 0;
+                                    var url = `http://localhost/Projet_Reporting_v2/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${tabMois[0].dateSince}&dateFin=${tabMois[2].dateUntil}`
+                                    console.log(url);
+                                    $.get(url,
+                                        function (data) {
+                                            console.log(data);
+                                        }
+                                    );
                                     $("#progress_bar").val("10");
 
                                     /* Tableau top 3 interaction */
