@@ -17,6 +17,9 @@
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+
+
 </head>
 
 <body id="page-top">
@@ -26,7 +29,7 @@
 
         <!-- Sidebar -->
         <?php
-            include 'view/admin/sidebar.php'
+            include 'view/admin/inc/sidebar.php'
         ?>
         <!-- End of Sidebar -->
 
@@ -38,7 +41,7 @@
 
                 <!-- Topbar -->
                 <?php
-                    include 'view/admin/navbar.php'
+                    include 'view/admin/inc/navbar.php'
                 ?>
                 <!-- End of Topbar -->
 
@@ -391,11 +394,11 @@
     </a>
 
     <?php
-        include 'view/admin/footer.php';
+        include 'view/admin/inc/footer.php';
     ?>
     <!-- Logout Modal-->
     <?php
-        include 'view/admin/modalDeconnexion.php'
+        include 'view/admin/inc/modalDeconnexion.php'
     ?>
 
     <!-- Bootstrap core JavaScript-->

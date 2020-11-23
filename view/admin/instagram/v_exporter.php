@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <title>Nautilus Social Manager - Export PPTX Instagral</title>
-
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <script src="vendor/jquery/jquery.min.js"></script>
+
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
-
     <script src="vendor/chart.js/Chart.min.js"></script>
 
     <!-- Bundle: Easiest to use, supports all browsers -->
@@ -26,11 +22,11 @@
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@2.6.0/libs/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@2.6.0/dist/pptxgen.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
 
     <script type="module" src="js/html2canvas.esm.js"></script>
-    <script src="js/html2canvas.js"></script>
+    <!-- <script src="js/html2canvas.js"></script> -->
     <script src="js/html2canvas.min.js"></script>
 
     <script src="https://rawgit.com/gitbrent/PptxGenJS/master/dist/pptxgen.bundle.js"></script>
@@ -39,35 +35,29 @@
     <script src="https://www.amcharts.com/lib/4/core.js"></script>
     <script src="https://www.amcharts.com/lib/4/charts.js"></script>
     <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+
 
 </head>
-
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
-
         <!-- Sidebar -->
         <?php
-            include 'view/admin/sidebar.php'
+            include 'view/admin/inc/sidebar.php'
         ?>
         <!-- End of Sidebar -->
-
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
-
             <!-- Main Content -->
             <div id="content">
-
                 <!-- Topbar -->
                 <?php
-                    include 'view/admin/navbar.php'
+                    include 'view/admin/inc/navbar.php'
                 ?>
                 <!-- End of Topbar -->
-
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Generation PowerPoint Instagram</h1>
@@ -133,7 +123,7 @@
                             return date.getFullYear() + '-' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '-' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate()));
                         }
                         function formatterDate(date) {
-                            return ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
+                            return ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' à ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
                         }
                         $('#bilan').submit(function (e) {
                             e.preventDefault();
@@ -247,13 +237,20 @@
                                     trimestre.totalImpression = totalImpressionTrimestre;
                                     trimestre.totalFollowerGagne = 0;
                                     var tabStorie = [];
-                                    $.get(`http://localhost/Projet_Reporting_v2/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${tabMois[0].dateSince}&dateFin=${tabMois[2].dateUntil}`,
-                                        function (data) {
-                                            data.resultat.stories.forEach(storie => {
+                                    $.ajax({
+                                        type: "GET",
+                                        url: `http://localhost/Projet_Reporting_v2/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${tabMois[0].dateSince}&dateFin=${tabMois[2].dateUntil}`,
+                                        async: false,
+                                        dataType: "json",
+                                        success: function (response) {
+                                            response.resultat.stories.forEach(storie => {
+                                                storie.date = new Date(storie.date);
+                                                storie.date = formatterDate(storie.date);
                                                 tabStorie.push(storie);
                                             });
                                         }
-                                    );
+                                    });
+                                    
                                     $("#progress_bar").val("10");
 
                                     /* Tableau top 3 interaction */
@@ -275,6 +272,11 @@
                                     var flopReach = [...tabPost];
                                     flopReach.sort((a,b) => a.reach - b.reach);
                                     flopReach = flopReach.slice(0,3);
+
+                                    var top3ReachStories = [...tabStorie];
+                                    top3ReachStories.sort((a,b) => b.reach - a.reach);
+                                    top3ReachStories = top3ReachStories.slice(0,3);
+                                    console.log(top3ReachStories);
 
                                     /* affichage charts */
                                     var max = Math.ceil(Math.max(...TabLikeMedia)) + 5;
@@ -544,7 +546,7 @@
                                         });
                                     });
                                     /* Fin Récupétation info mensuel */
-
+                                    
                                     var donneesPowerPoint = [];
                                     donneesPowerPoint.trimestre = trimestre;
                                     donneesPowerPoint.mois = tabMois
@@ -553,7 +555,9 @@
                                     donneesPowerPoint.top3Interaction = tabInteraction;
                                     donneesPowerPoint.top3FlopReach = flopReach;
                                     donneesPowerPoint.storieInsta = tabStorie;
-                                    console.log(donneesPowerPoint);
+                                    donneesPowerPoint.top3ReachStories = top3ReachStories;
+                                    
+
                                     $("#progress_bar").val("70");
 
                                     /* Export PPTX */
@@ -588,10 +592,9 @@
                                                 slide.addText('BILAN trimestriel',  { x:'30%', y:'57%', w:4, color:'FFFFFF', align: 'center', fontFace:'Avenir 85 Heavy', fontSize:30 });
                                                 slide.addText(donneesPowerPoint.mois[0].mois + ' / ' + donneesPowerPoint.mois[1].mois + ' / ' + donneesPowerPoint.mois[2].mois + ' 2020',  { x:'25%', y:'72%', w:5, color:'FFFFFF', fontFace:'Avenir 85 Heavy', align: 'center', fontSize:22 });
 
-
                                                 $("#progress_bar").val("85");
                                                 
-                                                //seconde page "LA PAGE FACEBOOK"
+                                                // INFO TRIMESTRIEL
                                                 slide = pptx.addSlide();
                                                 slide.addText([
                                                     { text:  ((donneesPowerPoint.trimestre.totalInteraction/donneesPowerPoint.trimestre.totalReach)*100).toFixed(2) + ' %', options: {bold:true, fontSize:12}},
@@ -618,7 +621,7 @@
                                                 slide.addText('LE COMPTE INSTAGRAM',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                 slide.addImage({ path:screenPage, x:"18%", y:"18%", w:"64%", h:"55%" });
                                                 
-                                                // 3eme page Chiffre clés 
+                                                // Chiffre clés MOIS PAR MOIS
                                                 slide = pptx.addSlide();
                                                 slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                 slide.addText('CHIFFRES CLES',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
@@ -666,20 +669,20 @@
 
                                                 }
                                                 
-                                                //quatrième page FOCUS FOLLOWER
+                                                // FOCUS FOLLOWER
                                                 slide = pptx.addSlide();
                                                 slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                 slide.addText('FOCUS FOLLOWER',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                 slide.addImage({ data:img5.src, x:1, y:1, w:8, h:4 });
 
-                                                //cinquième page FOCUS LIKE
+                                                // FOCUS LIKE
                                                 slide = pptx.addSlide();
                                                 slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                 slide.addText('FOCUS LIKE',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                 slide.addImage({ data:img.src, x:0.2, y:1, w:6.1, h:2.5 });
                                                 slide.addImage({ path:screenPost, x:"67%", y:"18%", w:"28%", h:"42%" });
                                                 
-                                                //sixième page TOP POST
+                                                // TOP POST
                                                 slide = pptx.addSlide();
                                                 slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                 slide.addText('TOP POST',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
@@ -689,8 +692,6 @@
                                                 slide.addText([
                                                     { text: 'TOP INTERACTION*', options: {}}
                                                 ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'55%', y:'25%', w:2.2, h:0.4, fill:'0088CC', line:'006699', lineSize:2 , fontSize:13, color:'FFFFFF'});
-                                                
-                                                /* top 1 all */
                                                 slide.addImage({ path:donneesPowerPoint.topPostMois.media_url, x:"10%", y:"18%", w:"40%", h:"65%" });
                                                 slide.addText([
                                                     { text: 'Date du post : ', options: {bold:true}},
@@ -715,7 +716,7 @@
                                                     { text: '% Taux d\'interaction', options: {bold:true}}
                                                 ],  { x:'55%', y:'65%', w:'100%', color:'000000', fontSize:15 });
 
-                                                //septième page TOP 3 (taux d'interaction)
+                                                // TOP 3 TAUX D'INTERACTION
                                                 slide = pptx.addSlide();
                                                 slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                 slide.addText('TOP 3',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
@@ -767,7 +768,7 @@
 
                                                 }
                                                 
-                                                //huitième page TOP 3 (personnes atteintes)
+                                                // TOP 3 REACH
                                                 slide = pptx.addSlide();
                                                 slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                 slide.addText('TOP 3',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
@@ -819,7 +820,7 @@
 
                                                 }
                                                 
-                                                //neuvième page FLOP POST
+                                                // FLOP 3 REACH
                                                 slide = pptx.addSlide();
                                                 slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                 slide.addText('FLOP POST',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
@@ -871,7 +872,7 @@
 
                                                 }
 
-                                                /* Page liste Poste */
+                                                // LISTE DES POST
                                                 var numMedia = 1;
                                                 for (let diapo = 0; diapo < 3; diapo++) {
                                                     var posXImage = 10
@@ -909,17 +910,59 @@
                                                         }
                                                     }
                                                 }
-                                                //dixième page CONCLUSION
+
+                                                // TOP 3 REACH STORIES
+                                                if (donneesPowerPoint.top3ReachStories.length > 0) {
+                                                    slide = pptx.addSlide();
+                                                    slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
+                                                    slide.addText('TOP 3 Storie',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
+                                                    var numMedia = 1;
+                                                    var posXImage = 5
+                                                    var posYImage = 18
+                                                    var posXText = 5
+                                                    var posYText = 60;
+
+                                                    for (let index = 0; index < 3; index++) {
+                                                        if (donneesPowerPoint.top3ReachStories.length >= numMedia) {
+                                                            slide.addImage({ path:screenPost, x:posXImage + "%", y: posYImage + "%", w:"22%", h:"39%" });
+                                                            
+                                                            slide.addText([
+                                                                { text: 'Date de la storie : ', options: {bold:true}},
+                                                                { text: donneesPowerPoint.top3ReachStories[numMedia-1].date, options: {}}
+                                                            ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                            posYText+=4;
+                                                            slide.addText('Thème : ',  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                            posYText+=4;
+                                                            slide.addText('Format : ',  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                            posYText+=4;
+                                                            slide.addText([
+                                                                { text: donneesPowerPoint.top3ReachStories[numMedia-1].reach.toString(), options: {}},
+                                                                { text: ' Personnes atteintes', options: {bold:true}}
+                                                            ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'0088CC', fontSize:10 });
+                                                            posYText+=4;
+                                                            slide.addText([
+                                                                { text: donneesPowerPoint.top3ReachStories[numMedia-1].impression.toString(), options: {}},
+                                                                { text: ' vues', options: {bold:true}}
+                                                            ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'0088CC', fontSize:10 });
+                                                        }
+                                                        posYText = 60
+                                                        posXText += 35
+                                                        posXImage += 35
+                                                        numMedia++;
+                                                    }
+                                                }
+                                                
+                                                // CONCLUSION
                                                 slide = pptx.addSlide();
                                                 slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                 slide.addText('CONCLUSION',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
 
-                                                //onxième page CONCLUSION ET RECOMMANDATIONS
+                                                // CONCLUSION ET RECOMMANDATIONS
                                                 slide = pptx.addSlide();
                                                 slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                 slide.addText('CONCLUSION ET RECOMMANDATIONS',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
 
-                                                //douzième page FIN
+                                                // FIN
                                                 slide = pptx.addSlide();
                                                 slide.addImage({ path:fin, x:0, y:0, w:'100%', h:'100%' });
                                                 slide.addText('Merci',  { x:'35%', y:'40%', w:3, color:'FFFFFF', align: 'center', fontFace:'Avenir 85 Heavy', fontSize:35 });
@@ -945,10 +988,8 @@
                     </script>
                 </div>
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
-
             <!-- Footer -->
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
@@ -958,34 +999,26 @@
                 </div>
             </footer>
             <!-- End of Footer -->
-
         </div>
         <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
-
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-
     <?php
-        include 'view/admin/footer.php';
+        include 'view/admin/inc/footer.php';
     ?>
     <!-- Logout Modal-->
     <?php
-        include 'view/admin/modalDeconnexion.php'
+        include 'view/admin/inc/modalDeconnexion.php'
     ?>
-
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
 </body>
-
 </html>

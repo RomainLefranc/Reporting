@@ -2,7 +2,7 @@
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php?a=a">
         <div class="sidebar-brand-icon">
-            <img src="media\44767108_2196185164002161_3379978518505979904_n.jpg" class="rounded img-fluid" width='45' height='45' >
+            <img src="images\44767108_2196185164002161_3379978518505979904_n.jpg" class="rounded img-fluid" width='45' height='45' >
         </div>
         <div class="sidebar-brand-text mx-3">Nautilus</div>
     </a>
@@ -23,8 +23,7 @@
     </div>
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-            aria-expanded="true" aria-controls="collapseTwo">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
             <i class="fab fa-facebook-square"></i>
             <span>Facebook</span>
         </a>
@@ -41,13 +40,11 @@
     </li>
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-            aria-expanded="true" aria-controls="collapseUtilities">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
             <i class="fab fa-instagram"></i>
             <span>Instagram</span>
         </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-            data-parent="#accordionSidebar">
+        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Instagram :</h6>
                 <a class="collapse-item" href="index.php?a=ir">Rapport</a>
@@ -61,15 +58,10 @@
     <!-- Divider -->
     <hr class="sidebar-divider">
     <!-- Heading -->
-    <div class="sidebar-heading">
-        Options
-    </div>
+    <div class="sidebar-heading">Options</div>
     <!-- Nav Item - Charts -->
     <li class="nav-item">
-        <a class="nav-link" href="index.php?a=l">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Lier un compte</span>
-        </a>
+        <a class="nav-link" href="index.php?a=l"><i class="fas fa-fw fa-chart-area"></i><span>Lier un compte</span></a>
     </li>
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

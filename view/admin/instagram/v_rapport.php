@@ -15,38 +15,30 @@
     <script src="vendor/jquery/jquery.min.js"></script>
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 
     <!-- Page level plugin JavaScript-->
     <script src="vendor/chart.js/Chart.min.js"></script>
-
 </head>
-
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
-
         <!-- Sidebar -->
         <?php
-            include 'view/admin/sidebar.php'
+            include 'view/admin/inc/sidebar.php'
         ?>
         <!-- End of Sidebar -->
-
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
-
             <!-- Main Content -->
             <div id="content">
-
                 <!-- Topbar -->
                 <?php
-                    include 'view/admin/navbar.php'
+                    include 'view/admin/inc/navbar.php'
                 ?>
                 <!-- End of Topbar -->
-
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Rapport Instagram</h1>
@@ -92,9 +84,7 @@
                             <button type="submit" class="btn btn-primary">Rapport</button>
                         </form>
                     </div>
-
                     <div id="erreur"></div>
-
                     <!-- Area Chart Example-->
                     <div class="card mb-3 mt-2">
                         <div class="card-header">
@@ -222,7 +212,6 @@
                 </script>
             </div>
             <!-- End of Main Content -->
-
             <!-- Footer -->
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
@@ -232,32 +221,25 @@
                 </div>
             </footer>
             <!-- End of Footer -->
-
         </div>
         <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
-
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-
     <?php
-        include 'view/admin/footer.php';
+        include 'view/admin/inc/footer.php';
     ?>
     <!-- Logout Modal-->
     <?php
-        include 'view/admin/modalDeconnexion.php'
+        include 'view/admin/inc/modalDeconnexion.php'
     ?>
-
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
 </body>
