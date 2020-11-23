@@ -7,13 +7,25 @@
      */
     function getStories($idCompteInstagram,$dateDebut,$dateFin) {
         global $pdo;
-        $requete = $pdo->prepare('SELECT libQuest, reponse FROM qdp INNER JOIN equipier ON qdp.codeEq = equipier.codeEq WHERE equipier.codeEq = :codeEq');
-        $requete->execute(["codeEq" => $codeEq]);
+        $requete = $pdo->prepare('
+            SELECT 
+                date, 
+                impression, 
+                reach
+                FROM storiesInsta 
+                WHERE id_pagesInsta = id_pagesInsta AND date BETWEEN ":dateDebut" AND ":dateFin"
+                ORDER BY date
+        ');
+        $requete->execute([
+            "id_pagesInsta" => $idCompteInstagram,
+            "dateDebut" => $dateDebut,
+            "dateFin" => $dateFin
+        ]);
         $resultat = $requete->fetchall(); 
         $retour['success'] = true;
         $retour['message'] = "Voici les stories";
         $retour['resultat']['nb'] = count($resultat);
-        $retour['resultat']['qdp'] = $resultat;
+        $retour['resultat']['stories'] = $resultat;
         return $retour;
     }
 ?>

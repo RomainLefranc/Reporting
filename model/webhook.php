@@ -8,7 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $idPageInsta = $json['entry'][0]['id'];
     $idMedia = $json['entry'][0]['changes'][0]['value']['media_id'];
-    $date = $json['entry'][0]['time'];
+    $timestamp = $json['entry'][0]['time'];
+    date_default_timezone_set('Indian/Reunion');
+    $date = date("Y-m-d H:i:s", $timestamp);
     $impression = $json['entry'][0]['changes'][0]['value']['impressions'];
     $reach = $json['entry'][0]['changes'][0]['value']['reach'];
 
