@@ -79,7 +79,7 @@
                             <div class="col-lg-10">
                                 <input class="form-control" type="month" id="dateDebut" style="max-width: 300px;" required>
                                 <small class="form-text text-muted">
-                                    Selectionner le mois de depart, la periode sera de 3 mois à compter du 1er mois choisi (ex : je choisie janvier 2020, le bilan se fera sur Janvier, Février et Mars)
+                                Sélectionner le mois de départ, la période sera de 3 mois à compter du mois choisi (ex : je choisis janvier 2020, le bilan se fera sur Janvier, Février et Mars)
                                 </small>
                             </div>
                         </div>
@@ -273,6 +273,7 @@
                                     flopReach.sort((a,b) => a.reach - b.reach);
                                     flopReach = flopReach.slice(0,3);
 
+                                    /* Tableau top 3 stories */
                                     var top3ReachStories = [...tabStorie];
                                     top3ReachStories.sort((a,b) => b.reach - a.reach);
                                     top3ReachStories = top3ReachStories.slice(0,3);
@@ -875,9 +876,9 @@
                                                 // LISTE DES POST
                                                 var numMedia = 1;
                                                 for (let diapo = 0; diapo < 3; diapo++) {
-                                                    var posXImage = 10
+                                                    var posXImage = 7
                                                     var posYImage = 15
-                                                    var posXText = 21
+                                                    var posXText = 18
                                                     var posYText = 22;
                                                     if (tabPost.length >= numMedia) {
                                                         slide = pptx.addSlide();
@@ -889,11 +890,11 @@
                                                                     slide.addImage({ path: tabPost[numMedia-1].media_url, x:posXImage + "%", y:posYImage + "%", w:"10%", h:"20%" });
                                                                     slide.addText([
                                                                             { text:  tabPost[numMedia-1].reach, options: {}},
-                                                                            { text: ' reach', options: {bold:true}}
+                                                                            { text: ' personnes atteintes', options: {bold:true}}
                                                                         ],  { x:posXText + '%', y: posYText + '%', w:'100%', color:'0088CC', fontSize:10 });
                                                                     slide.addText([
                                                                         { text: ((tabPost[numMedia-1].interaction/tabPost[numMedia-1].reach)*100).toFixed(2), options: {}},
-                                                                        { text: ' % Taux', options: {bold:true}}
+                                                                        { text: ' % Taux d\'interaction', options: {bold:true}}
                                                                     ],  { x:posXText + '%', y:(posYText + 5) +'%', w:'100%', color:'000000', fontSize:10 }); 
                                                                 }
                                                                 /*  */
@@ -915,7 +916,7 @@
                                                 if (donneesPowerPoint.top3ReachStories.length > 0) {
                                                     slide = pptx.addSlide();
                                                     slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
-                                                    slide.addText('TOP 3 Storie',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
+                                                    slide.addText('TOP 3 Stories',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                     var numMedia = 1;
                                                     var posXImage = 5
                                                     var posYImage = 18
@@ -927,7 +928,7 @@
                                                             slide.addImage({ path:screenPost, x:posXImage + "%", y: posYImage + "%", w:"22%", h:"39%" });
                                                             
                                                             slide.addText([
-                                                                { text: 'Date de la storie : ', options: {bold:true}},
+                                                                { text: 'Date story : ', options: {bold:true}},
                                                                 { text: donneesPowerPoint.top3ReachStories[numMedia-1].date, options: {}}
                                                             ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
                                                             posYText+=4;
