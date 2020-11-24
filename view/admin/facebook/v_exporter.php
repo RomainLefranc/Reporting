@@ -215,16 +215,16 @@
                             var dateDebut = new Date(mois.getFullYear(), mois.getMonth() + index, 1);
                             var dateSince = formatterDateAPI(dateDebut);
 
-                            var dateFin = new Date(mois.getFullYear(), mois.getMonth() + index + 1, 0);
+                            var dateFin = new Date(mois.getFullYear(), mois.getMonth() + index + 1, 1);
+                            
                             var dateUntil = formatterDateAPI(dateFin);
-
+                            console.log(dateUntil);
                             tabMois[index].mois = nomMois;
                             tabMois[index].dateDebut = dateDebut;
                             tabMois[index].dateSince = dateSince;
                             tabMois[index].dateFin = dateFin;
                             tabMois[index].dateUntil = dateUntil;
                         }
-                        console.log(tabMois);
                         $.get(`https://graph.facebook.com/${idUser}/accounts?limit=50&access_token=${token}`,
                             function (data, textStatus) {
                                 switch (textStatus) {
@@ -235,6 +235,7 @@
                                                 tokenPageFB = post.access_token;
                                             }
                                         });
+
                                         $.get(`https://graph.facebook.com/v4.0/${idPageFB}?fields=id,name,posts.limit(70).since(${tabMois[0].dateSince}).until(${tabMois[2].dateUntil}){id,full_picture,message,reactions.summary(true),created_time,comments.summary(true).limit(0),shares},fan_count&access_token=${token}`,
                                             function (data) {
                                                 var lesDates = [];
@@ -547,44 +548,54 @@
                                                         $.ajax({
                                                             type: "GET",
                                                             async: false,
-                                                            url: `https://graph.facebook.com/v8.0/${idPageFB}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`,
+                                                            url: `https://graph.facebook.com/v4.0/${idPageFB}?fields=id,name,posts.limit(70).since(${mois.dateSince}).until(${mois.dateUntil}){id,full_picture,message,reactions.summary(true),created_time,comments.summary(true).limit(0),shares},fan_count&access_token=${token}`,
                                                             dataType: "json",
                                                             success: function (response) {
-                                                                var nbMediaMensuel = 0;
-                                                                var totalInteractionMensuel = 0;
-                                                                var totalReachMensuel = 0
-                                                                var totalImpressionMensuel = 0;
-                                                                var followergagneMensuel = 0;
-                                                                response.media.data.reverse();
-                                                                response.media.data.forEach(media => {
-                                                                    var dateMedia = new Date(media.timestamp);
-                                                                    if (dateMedia >= mois.dateDebut && dateMedia <= mois.dateFin) {
-                                                                        nbMediaMensuel++;
+                                                                var nbMedia = 0;
+                                                                var totalInteraction = 0;
+                                                                var totalReachUnique = 0
+                                                                var totalReachUniqueOrganique = 0
+                                                                var totalClics = 0;
+                                                                response.posts.data.reverse();
+                                                                response.posts.data.forEach(media => {
+                                                                    if (media.created_time >= mois.dateSince && media.created_time <= mois.dateUntil) {
+                                                                        nbMedia++;
                                                                         $.ajax({
                                                                             type: "GET",
-                                                                            url: `https://graph.facebook.com/v8.0/${media.id}/insights?metric=impressions,reach,engagement&access_token=${token}`,
+                                                                            url: `https://graph.facebook.com/v4.0/${media.id}/insights/post_engaged_users,post_impressions_unique,post_impressions_organic_unique,post_clicks?access_token=${tokenPageFB}`,
                                                                             async: false,
                                                                             dataType: "json",
                                                                             success: function (response) {
-                                                                                totalImpressionMensuel += response.data[0].values[0].value
-                                                                                totalReachMensuel += response.data[1].values[0].value
-                                                                                totalInteractionMensuel += response.data[2].values[0].value
+                                                                                totalInteraction += response.data[0].values[0].value
+                                                                                totalReachUnique += response.data[1].values[0].value
+                                                                                totalReachUniqueOrganique += response.data[2].values[0].value
+                                                                                totalClics += response.data[3].values[0].value
                                                                             }
                                                                         });
                                                                     }
                                                                 });
-                                                                mois.nbMediaMensuel = nbMediaMensuel;
-                                                                mois.totalInteractionMensuel = totalInteractionMensuel;
-                                                                mois.totalReachMensuel = totalReachMensuel;
-                                                                mois.totalImpressionMensuel = totalImpressionMensuel;
-                                                                if (totalReachMensuel == 0) {
+                                                                mois.nbMedia = nbMedia;
+                                                                mois.interaction = totalInteraction;
+                                                                mois.reach = totalReachUnique;
+                                                                mois.reachOrganique = totalReachUniqueOrganique;
+                                                                mois.clics = totalClics;
+                                                                if (totalReachUnique == 0) {
                                                                     mois.tauxInteraction = 0
                                                                 } else {
-                                                                    mois.tauxInteraction = ((totalInteractionMensuel / totalReachMensuel)*100).toFixed(2);
-                                                                } 
+                                                                    mois.tauxInteraction = ((totalInteraction / totalReachUnique)*100).toFixed(2);
+                                                                }
                                                             }
                                                         });
                                                     });
+
+                                                    var donneesPowerPoint = [];
+                                                    donneesPowerPoint.trimestre = trimestre;
+                                                    donneesPowerPoint.mois = tabMois
+                                                    donneesPowerPoint.topPost = topPost;
+                                                    donneesPowerPoint.top3Reach = top3Reach;
+                                                    donneesPowerPoint.top3Interaction = top3Interaction;
+                                                    donneesPowerPoint.top3FlopReach = flop3Reach;
+                                                    console.log(donneesPowerPoint);
                                                     var pptx = new PptxGenJS();
                                                     var slide = pptx.addSlide();
                                                     
