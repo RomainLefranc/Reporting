@@ -81,6 +81,12 @@
                                 </small>
                             </div>
                         </div>
+                        <div class="form-group row" >
+                            <label class="col-lg-2 col-form-label">3eme Mois</label>
+                            <div class="col-lg-10">
+                                <input class="form-control" type="month" id="dateFin" style="max-width: 300px;" required readOnly>
+                            </div>
+                        </div>
                         <button type="submit" class="btn btn-primary">Generer PowerPoint
                             <section>
                                 <progress value="0" max="100" id="progress_bar"></progress>
@@ -123,6 +129,13 @@
                         function formatterDate(date) {
                             return ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' à ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
                         }
+                        $('#dateDebut').change(function () { 
+                            var mois = $('#dateDebut').val();
+                            mois = new Date(mois);
+                            var dernierMois = new Date(mois.getFullYear(), mois.getMonth() + 2)
+                            dernierMois = dernierMois.getFullYear() + '-' + ((dernierMois.getMonth() > 8) ? (dernierMois.getMonth() + 1) : ('0' + (dernierMois.getMonth() + 1)))
+                            $('#dateFin').val(dernierMois);
+                        });
                         $('#bilan').submit(function (e) {
                             e.preventDefault();
 
@@ -181,6 +194,7 @@
                                 tabMois[index].dateFin = dateFin;
                                 tabMois[index].dateUntil = dateUntil;
                             }
+
 
                             /* Récuperation de tout les post de la page Instagram choisi */
                             $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`, function (data) {
@@ -249,11 +263,13 @@
                                     /* Récuperation de tout les storie Instagram pendant la periode */
                                     $.ajax({
                                         type: "GET",
-                                        url: `http://localhost/Projet_Reporting_v2/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${tabMois[0].dateSince}&dateFin=${tabMois[2].dateUntil}`,
+                                        url: `https://localhost/Projet_Reporting_v2/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${tabMois[0].dateSince}&dateFin=${tabMois[2].dateUntil}`,
                                         async: false,
                                         dataType: "json",
                                         success: function (response) {
+                                            console.log(response);
                                             response.resultat.stories.forEach(storie => {
+                                                
                                                 storie.date = new Date(storie.date);
                                                 storie.date = formatterDate(storie.date);
                                                 tabStorie.push(storie);

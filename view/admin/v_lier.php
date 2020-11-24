@@ -81,30 +81,12 @@
                                 echo 'Facebook SDK retourne une erreur: ' . $e->getMessage();
                                 exit;
                             }
-                    
+                
                             $user = $response->getGraphUser();
-                            function httpPost($url, $data){
-                                $options = array(
-                                    'http' => array(
-                                        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-                                        'method'  => 'POST',
-                                        'content' => http_build_query($data)
-                                    )
-                                );
-                                $context  = stream_context_create($options);
-                                return file_get_contents($url, false, $context);
-                            }
                             //on récupère toutes les pages que l'utilisateur connecté nous a autorisé à ajouter
                             $json = file_get_contents('https://graph.facebook.com/v4.0/' . $user['id'] . '/accounts?fields=access_token,name,picture&access_token='. $token);
                             $listePageFB = $parsed_json = json_decode($json, true);
                             $listePageFB = $listePageFB['data'];
-                            foreach ($listePageFB as $pageFB) {
-                                $idPageFB = $pageFB['id'];
-                                $tokenPageFb = $pageFB['access_token'];
-                                $url = 'https://graph.facebook.com/v9.0/'.$idPageFB.'/subscribed_apps?subscribed_fields=feed&access_token='.$tokenPageFb;
-                                httpPost($url, []);
-                            }
-                            die();
                             
                             $listeComptesFB = getListeComptesFB();
                             $compteFBtrouver = false;
