@@ -4,6 +4,7 @@ session_start();
 
 require_once __DIR__ . '/vendor/Facebook/autoload.php';
 
+/* Tableau de parametrage des route */
 $navigations = array (
     ['action' => "c",    "NiveauAcces" => 0,  "controller" => "c_connexion",                      "view" => "v_connexion"            ],
     ['action' => "a",    "NiveauAcces" => 1,  "controller" => "c_admin",                          "view" => "v_admin"                ],
@@ -22,8 +23,7 @@ $navigations = array (
     ['action' => "ff",   "NiveauAcces" => 1,  "controller" => "facebook/c_facebook_comparatif" ,  "view" => "facebook/v_comparatif"  ],
     ['action' => "fr",   "NiveauAcces" => 1,  "controller" => "facebook/c_facebook_rapport" ,     "view" => "facebook/v_rapport"     ],
     /* API */
-    ['action' => "api",   "NiveauAcces" => 0, "controller" => "c_api",                            "view" => "v_api"                       ]
-
+    ['action' => "api",   "NiveauAcces" => 0, "controller" => "c_api",                            "view" => "v_api"                  ]
 );
 if (isset($_GET["a"])) {
     $actionEstValide = false;

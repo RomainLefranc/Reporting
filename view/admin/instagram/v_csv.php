@@ -72,14 +72,22 @@
                     <script>
                         $('#bilan').submit(function (e) { 
                             e.preventDefault();
+
+                            /* Initialisation à zero des erreurs et des affichages */
                             $('#result').html('');
                             $('#erreur').html('');
                             $("#progress_bar").val("0");
+                            
+                            /* Récuperation de l'id de la page Instagram choisi */
                             var idPageInsta = $('#choixPageInsta').val();
 
+                            /* Récuperation du token utilisateur */
                             var token = $('#choixPageInsta').find('option:selected').data('value');
 
+                            /* Récuperation de la date de debut choisi */
                             var dateDebut = $('#dateDebut').val();
+                            
+                            /* Récuperation de la date de Fin choisi */
                             var dateFin = $('#dateFin').val();
 
                             function msgErreur(texte) {
@@ -92,10 +100,13 @@
                                 </div>`;
                                 return alert;
                             }
-                            $("#progress_bar").val("10");
 
+                            $("#progress_bar").val("10");
+                            /* Verification de la validité de la période choisi */
                             if (dateFin > dateDebut) {
+                                /* Récuperation des post de la page Instagram */
                                 $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`, function (data, textStatus) {
+                                    /* Vérification de la reponse de l'API */
                                     switch (textStatus) { 
                                         case 'success':
                                             $("#progress_bar").val("25");
@@ -104,8 +115,10 @@
                                             data.media.data.forEach(media => {
                                                 var date = new Date(media.timestamp);
                                                 var dateFormatte = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' à ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
+                                                /* Vérification de la date du post */
                                                 if (media.timestamp >= dateDebut && media.timestamp <= dateFin) {
                                                     nbMedia++;
+                                                    /* Récuperation des données */
                                                     var msg = media.caption;
                                                     var dateMedia = dateFormatte;
                                                     var nbLike = media.like_count;
@@ -124,12 +137,14 @@
                                                         dataType: "json",
                                                         async: false,
                                                         success: function (response) {
+                                                            /* Récuperation des insights du post */
                                                             var impression = response.data[0].values[0].value;
                                                             var reach = response.data[1].values[0].value;
                                                             var nbVue = 0;
                                                             if (response.data.length >= 3) {
                                                                 nbVue = response.data[2].values[0].value;
                                                             }
+                                                            /* Push des données du post dans un tableau */
                                                             itemsNotFormatted.push({
                                                                 type: media.media_type,
                                                                 date: dateFormatte,
@@ -199,6 +214,7 @@
                                                         }
                                                     }
                                                 }
+                                                /* Définition des titres de colonnes du fichier csv */
                                                 var headers = {
                                                     type: "Type",
                                                     date: 'Date de campagne',
@@ -234,11 +250,13 @@
                                                     nbVues: item.nbVues
                                                     });
                                                 });
-
-                                            var fileTitle = 'orders'; // or 'my-unique-title'
-                                            $("#progress_bar").val("75");
-                                            exportCSVFile(headers, itemsFormatted,fileTitle); // call the exportCSVFile() function to process the JSON and trigger the download
-                                            $("#progress_bar").val("100");
+                                                
+                                                /* Définition du nom de fichier */
+                                                var fileTitle = 'orders';
+                                                $("#progress_bar").val("75");
+                                                /* Export CSV */
+                                                exportCSVFile(headers, itemsFormatted,fileTitle); // call the exportCSVFile() function to process the JSON and trigger the download
+                                                $("#progress_bar").val("100");
                                             }
                                             break;
                                         

@@ -22,11 +22,9 @@
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@2.6.0/libs/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@2.6.0/dist/pptxgen.min.js"></script>
 
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
 
     <script type="module" src="js/html2canvas.esm.js"></script>
-    <!-- <script src="js/html2canvas.js"></script> -->
     <script src="js/html2canvas.min.js"></script>
 
     <script src="https://rawgit.com/gitbrent/PptxGenJS/master/dist/pptxgen.bundle.js"></script>
@@ -127,23 +125,30 @@
                         }
                         $('#bilan').submit(function (e) {
                             e.preventDefault();
+
+                            /* Initialisation à zero des affichages et des messages */
                             $('#erreur').html('');
                             $("#progress_bar").val("0");
-                            //on réinitialise le contenu de le l'HTML contenant le canvas, évitant un bug d'affichage
                             $("#chartdiv").html('');
                             $("#myAreaChart2").remove();
                             $(".audience").append('<canvas id="myAreaChart2" width="100%" height="30"></canvas>');
 
+
+                            /* Récuperation de l'id de la page Instagram choisi */
                             var idPageInsta = $('#choixPageInsta').val();
+
+                            /* Récuperation du nom de la page Instagram choisi */
                             var nomPageInsta = $('#choixPageInsta').find('option:selected').data('nom');
 
+                            /* Récuperation du token utilisateur */
                             var token = $('#choixPageInsta').find('option:selected').data('value');
 
+                            /* Récuperation du 1er mois choisi */
                             var mois = $('#dateDebut').val();
                             mois = new Date(mois);
 
                             var tabMois = [];
-                            /* Récuperation trimestre */
+                            /* Récuperation de la periode trimestriel à partir du 1er mois choisi */
                             for (let index = 0; index < 3; index++) {
 
                                 tabMois[index] = new Date(mois.getFullYear(), mois.getMonth() + index)
@@ -176,16 +181,20 @@
                                 tabMois[index].dateFin = dateFin;
                                 tabMois[index].dateUntil = dateUntil;
                             }
-                            /* Fin Récuperation trimestre */
+
+                            /* Récuperation de tout les post de la page Instagram choisi */
                             $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`, function (data) {
                                 var tabDateMedia = [];
                                 var TabLikeMedia = [];
+                                var trimestre = [];
+                                var tabPost = [];
+
+                                /* Initialisation à zero des données à récuperer */
                                 var nbMediaTrimestre = 0;
                                 var totalInteractionTrimestre = 0;
                                 var totalReachTrimestre = 0
                                 var totalImpressionTrimestre = 0;
-                                var trimestre = [];
-                                var tabPost = [];
+
                                 data.media.data.reverse();
                                 data.media.data.forEach(media => {
                                     var dateMedia = new Date(media.timestamp);
@@ -237,6 +246,7 @@
                                     trimestre.totalImpression = totalImpressionTrimestre;
                                     trimestre.totalFollowerGagne = 0;
                                     var tabStorie = [];
+                                    /* Récuperation de tout les storie Instagram pendant la periode */
                                     $.ajax({
                                         type: "GET",
                                         url: `http://localhost/Projet_Reporting_v2/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${tabMois[0].dateSince}&dateFin=${tabMois[2].dateUntil}`,
@@ -253,35 +263,36 @@
                                     
                                     $("#progress_bar").val("10");
 
-                                    /* Tableau top 3 interaction */
+                                    /* Tri du tableau des post pour avoir le top 3 des post en taux d'interaction */
                                     var tabInteraction = [...tabPost];
                                     tabInteraction.sort((a,b) => (b.interaction/b.reach) - (a.interaction/a.reach));
                                     tabInteraction = tabInteraction.slice(0,3);
 
-                                    /* Tableau top 3 reach */
+                                    /* Tri du tableau des post pour avoir le top 3 des post en reach */
                                     var tabReach = [...tabPost];
                                     tabReach.sort((a,b) => b.reach - a.reach);
                                     tabReach = tabReach.slice(0,3);
 
-                                    /* top 1 post */
+                                    /* Tri du tableau des post pour avoir le meilleur post de la periode */
                                     var topMedia = [...tabPost];
                                     topMedia.sort((a,b) => b.reach - a.reach || b.interaction - a.interaction);
                                     topMedia = topMedia[0];
 
-                                    /* Tableau top 3 flop reach */
+                                    /* Tri du tableau des post pour avoir le top 3 des pire post en reach */
                                     var flopReach = [...tabPost];
                                     flopReach.sort((a,b) => a.reach - b.reach);
                                     flopReach = flopReach.slice(0,3);
 
-                                    /* Tableau top 3 stories */
+                                    /* Tri du tableau des stories pour avoir le top 3 des stories en reach */
                                     var top3ReachStories = [...tabStorie];
                                     top3ReachStories.sort((a,b) => b.reach - a.reach);
                                     top3ReachStories = top3ReachStories.slice(0,3);
-                                    console.log(top3ReachStories);
 
-                                    /* affichage charts */
+                                    /* Préparation du graphique */
                                     var max = Math.ceil(Math.max(...TabLikeMedia)) + 5;
+                                    /* Récuperation de l'element qui contiendra le graphique */
                                     var ctx = document.getElementById("myAreaChart2");
+                                    /* Création du graphique */
                                     var myLineChart = new Chart(ctx, {
                                         type: 'line',
                                         data: {
@@ -330,12 +341,11 @@
                                             }
                                         }
                                     });
-                                    /* fin affichage charts */
                                     
                                     $("#progress_bar").val("20");
                                     
-                                    /* Affichage audience */
                                     
+                                    /* Récuperation de l'audience de la page Instagram */
                                     $.get(`https://graph.facebook.com/v4.0/${idPageInsta}/insights/audience_gender_age/lifetime?&access_token=${token}`,function (data) {
                                         
                                         function verifValeur(params) {
@@ -345,7 +355,7 @@
                                                 return 0
                                             }
                                         }
-
+                                        /* Récuperation de toute les données nécessaire à la création du graphique */
                                         totalFans = 0;
                                         totalFans += verifValeur(data.data[0].values[0].value["F.13-17"]);
                                         totalFans += verifValeur(data.data[0].values[0].value["F.18-24"]);
@@ -377,6 +387,7 @@
                                         homme55 = verifValeur(data.data[0].values[0].value["M.55-64"]);
                                         homme65 = verifValeur(data.data[0].values[0].value["M.65+"]);
 
+                                        /* Definition et affichage du graphique */
                                         am4core.ready(function() {
 
                                             // Themes begin
@@ -485,11 +496,10 @@
                                         }); 
                                         $("#progress_bar").val("40");
                                     });
-                                    /* Fin Affichage audience */
 
                                     $("#progress_bar").val("50");
 
-                                    /* Récuperation info mensuel */
+                                    /* Récuperation des informations sur la page Instagram mensuellement*/
                                     tabMois.forEach((mois,index) => {
                                         $.ajax({
                                             type: "GET",
@@ -546,8 +556,8 @@
                                             }
                                         });
                                     });
-                                    /* Fin Récupétation info mensuel */
-                                    
+
+                                    /* Définition d'un objet qui regroupe toute les données utilisé dans la géneration du PPTX */
                                     var donneesPowerPoint = [];
                                     donneesPowerPoint.trimestre = trimestre;
                                     donneesPowerPoint.mois = tabMois
@@ -558,11 +568,11 @@
                                     donneesPowerPoint.storieInsta = tabStorie;
                                     donneesPowerPoint.top3ReachStories = top3ReachStories;
                                     
-
                                     $("#progress_bar").val("70");
 
-                                    /* Export PPTX */
+                                    /* Création du powerpoint */
                                     var pptx = new PptxGenJS();
+                                    /* Ajout d'une diapositive */
                                     var slide = pptx.addSlide();
                                     
                                     html2canvas(document.body).then(function(canvas) {

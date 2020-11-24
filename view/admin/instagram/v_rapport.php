@@ -112,19 +112,32 @@
                     }
                     $('#rapport').submit(function (e) { 
                         e.preventDefault();
+
+                        /* Initialisation à zero des affichages et des erreurs */
                         $('#myAreaChart').remove();
                         $('.rapport').append('<canvas id="myAreaChart" width="100%" height="30"></canvas>');
                         $("#msg").html("");
+
+                        /* Récuperation de l'id de la page Instagram */
                         var idPageInsta = $("#pageInsta").val();
+
+                        /* Récuperation du type de tri */
                         var typeTri = $('#tri').val();
+
+                        /* Récuperation du token utilisateur */
                         var token = $('#pageInsta').find('option:selected').data('value');
+
+                        /* Récuperation de la date de debut */
                         var dateDebut = $('#dateDebut').val();
                         dateDebut = new Date(dateDebut);
-                        
+
+                        /* Récuperation de la date de fin */
                         var dateFin = $('#dateFin').val();
                         dateFin = new Date(dateFin);
 
+                        /* Verification de la validité de la periode choisi */
                         if (dateFin > dateDebut) {
+                            /* Récuperation des post de la page Instagram */
                             $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,caption,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`,
                                 function (data) {
                                     var tabDates = [];
@@ -133,6 +146,7 @@
                                     data.media.data.reverse();
                                     data.media.data.forEach(media => {
                                         var dateMedia = new Date(media.timestamp);
+                                        /* Verification de la validité de la date du post */
                                         if (dateMedia >= dateDebut && dateMedia <= dateFin) {
                                             nbMedia++;
                                             dateMedia = formatterDate(dateMedia);
@@ -143,16 +157,17 @@
                                     if (nbMedia == 0) {
                                         $('#erreur').html(msgErreur('Aucun post trouvé'));
                                     } else {
-                                        //on défini l'échelle maximale de notre graphique
+                                        // Definition de l'echelle du graphique
                                         var max = Math.ceil(Math.max(...tabInteraction)) + 5;
 
-                                        // Set new default font family and font color to mimic Bootstrap's default styling
+                                        // Definition de la police et de la chouleur du fond du graphe
                                         Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
                                         Chart.defaults.global.defaultFontColor = '#292b2c';
 
-                                        // Area Chart Example
-
+                                        /* Récuperation de l'element qui deviendra le graphique */
                                         var ctx = document.getElementById("myAreaChart");
+
+                                        /* Création du graphique */
                                         var myLineChart = new Chart(ctx, {
                                             type: 'line',
                                             data: {

@@ -64,12 +64,22 @@
                     <div id="result" class="row mt-2"></div>
                     <script>
                         $('#bilan').submit(function (e) { 
+
                             e.preventDefault();
+
+                            /* Initialisation à zero des erreurs et des affichages */
                             $('#result').html('');
                             $('#erreur').html('');
+
+                            /* Récuperation de l'id de la page instagram */
                             var idPageInsta = $('#choixPageInsta').val();
+
+                            /* Récuperation du token utilisateur */
                             var token = $('#choixPageInsta').find('option:selected').data('value');
-                            var dateDebut = $('#dateDebut').val();  
+
+                            /* Récuperation de la date de debut choisi par l'utilisateur */
+                            var dateDebut = $('#dateDebut').val(); 
+
                             function msgErreur(texte) {
                                 var alert = `
                                 <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" >
@@ -80,13 +90,18 @@
                                 </div>`;
                                 return alert;
                             }
+                            /* Récuperation de tout les post Instagram de la page insta */
                             $.get(`https://graph.facebook.com/v8.0/${idPageInsta}?fields=id,media{id,like_count,media_type,comments_count,thumbnail_url,media_url,timestamp}&access_token=${token}`, function (data, textStatus) {
+                                /* Verification de la reponse de l'API */
                                 switch (textStatus) {
                                     case 'success':
-                                        console.log(data);
+                                        
                                         nbMedia = 0
+
                                         data.media.data.forEach(media => {
+
                                             var date = new Date(media.timestamp);
+
                                             var dateFormatte = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' à ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
                                             if (media.timestamp > dateDebut) {
                                                 nbMedia++;
@@ -105,36 +120,39 @@
                                                         var url =`https://graph.facebook.com/v8.0/${idMedia}/insights?metric=impressions,reach&access_token=${token}`;
                                                         break;
                                                 }
+                                                /* Récuperation des insight du post */
                                                 $.ajax({
                                                     url: url,
                                                     dataType: "json",
                                                     async: false,
                                                     success: function (response) {
-                                                    var impression = response.data[0].values[0].value;
-                                                    var reach = response.data[1].values[0].value;
-                                                    var ligne = ""
-                                                    var nbVue = 0;
-                                                    if (response.data.length >= 3) {
-                                                        nbVue = response.data[2].values[0].value
-                                                        ligne = `<strong>Vue videos : </strong>${nbVue}<br>`
-                                                    }
-                                                    var carte = `
-                                                        <div class="card m-2" style="width: 18rem;">
-                                                            <img class="card-img-top" src="${img}">
-                                                            <div class="card-body">
-                                                                <p class="card-text">
-                                                                    <strong>Date : </strong>${dateFormatte}<br>
-                                                                    <strong>like : </strong>${nbLike}<br>
-                                                                    <strong>Commentaire : </strong>${nbComments}<br>
-                                                                    <strong>Impression : </strong>${impression}<br>
-                                                                    ${ligne}
-                                                                    <strong>Reach : </strong>${reach}<br>
-                                                                    <strong>Taux d'engagement </strong>${(((nbLike + nbComments)/reach)*100).toFixed(2)+' %'}
-                                                                </p>
+                                                        var impression = response.data[0].values[0].value;
+                                                        var reach = response.data[1].values[0].value;
+                                                        var ligne = ""
+                                                        var nbVue = 0;
+                                                        if (response.data.length >= 3) {
+                                                            nbVue = response.data[2].values[0].value
+                                                            ligne = `<strong>Vue videos : </strong>${nbVue}<br>`
+                                                        }
+                                                        /* Préparation de la carte */
+                                                        var carte = `
+                                                            <div class="card m-2" style="width: 18rem;">
+                                                                <img class="card-img-top" src="${img}">
+                                                                <div class="card-body">
+                                                                    <p class="card-text">
+                                                                        <strong>Date : </strong>${dateFormatte}<br>
+                                                                        <strong>like : </strong>${nbLike}<br>
+                                                                        <strong>Commentaire : </strong>${nbComments}<br>
+                                                                        <strong>Impression : </strong>${impression}<br>
+                                                                        ${ligne}
+                                                                        <strong>Reach : </strong>${reach}<br>
+                                                                        <strong>Taux d'engagement </strong>${(((nbLike + nbComments)/reach)*100).toFixed(2)+' %'}
+                                                                    </p>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        `;
-                                                    $( "#result" ).append(carte);
+                                                            `;
+                                                        /* Ajout de la carte au html */
+                                                        $( "#result" ).append(carte);
                                                     }
                                                 });
                                             }
