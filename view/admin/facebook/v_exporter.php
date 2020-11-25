@@ -579,7 +579,6 @@
                                                                 mois.totalInteractionMensuel = totalInteractionMensuel;
                                                                 mois.totalReachMensuel = totalReachMensuel;
                                                                 mois.totalImpressionMensuel = totalImpressionMensuel;
-                                                                mois.fans = tabFanMois[index];
                                                                 if (totalReachMensuel == 0) {
                                                                     mois.tauxInteraction = 0
                                                                 } else {
