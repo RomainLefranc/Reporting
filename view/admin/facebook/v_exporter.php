@@ -579,7 +579,10 @@
                                                                 mois.totalInteractionMensuel = totalInteractionMensuel;
                                                                 mois.totalReachMensuel = totalReachMensuel;
                                                                 mois.totalImpressionMensuel = totalImpressionMensuel;
+<<<<<<< HEAD
                                                                 mois.fans = tabFanMois[index];
+=======
+>>>>>>> parent of 6505695... v1.1
                                                                 if (totalReachMensuel == 0) {
                                                                     mois.tauxInteraction = 0
                                                                 } else {
@@ -588,6 +591,7 @@
                                                             }
                                                         });
                                                     });
+<<<<<<< HEAD
 
                                                     var donneesPowerPoint = [];
                                                     donneesPowerPoint.trimestre = trimestre;
@@ -598,6 +602,8 @@
                                                     donneesPowerPoint.top3FlopReach = flop3Reach;
                                                     console.log(donneesPowerPoint);
                                                     
+=======
+>>>>>>> parent of 6505695... v1.1
                                                     var pptx = new PptxGenJS();
                                                     var slide = pptx.addSlide();
                                                     
