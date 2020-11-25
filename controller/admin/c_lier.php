@@ -1,10 +1,9 @@
 <?php
-
+  /* Dependances de la page*/
   include 'model/m_utilisateurs.php';
   include 'model/m_compteFB.php';
   include 'model/m_pagesInsta.php';
   include 'model/m_pagesFB.php';
-
 
   if(!isset($_GET['token']) && !isset($_GET['pagefb'])){
     echo "

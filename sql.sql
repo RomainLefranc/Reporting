@@ -5,30 +5,30 @@ USE nautilusv2;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(3) NOT NULL AUTO_INCREMENT,
   `pseudo` varchar(255) NOT NULL,
-  `login` varchar(255) DEFAULT NULL,
-  `mdp` varchar(255) DEFAULT NULL,
+  `login` varchar(255) NOT NULL,
+  `mdp` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE (login)
 )
 CREATE TABLE IF NOT EXISTS `comptesFB` (
   `id` varchar(50) NOT NULL,
-  `nom` varchar(50) DEFAULT NULL,
+  `nom` varchar(50) NOT NULL,
   `jeton` varchar(250) NOT NULL,
   PRIMARY KEY (`id`)
 ) 
 CREATE TABLE IF NOT EXISTS `pagesFB` (
   `id` varchar(100) NOT NULL,
-  `nom` varchar(50) DEFAULT NULL,
-  `id_comptes` varchar(50) DEFAULT NULL,
+  `nom` varchar(50) NOT NULL,
+  `id_comptes` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_pagesFB_id_comptes` FOREIGN KEY (`id_comptes`) REFERENCES `comptesFB` (`id`)
+  CONSTRAINT `FK_pagesFB_1` FOREIGN KEY (`id_comptes`) REFERENCES `comptesFB` (`id`)
 )
 CREATE TABLE IF NOT EXISTS `pagesInsta` (
   `id` VARCHAR(17) NOT NULL,
-  `nom` varchar(100) DEFAULT NULL,
+  `nom` varchar(100) NOT NULL,
   `id_pagesFB` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_pagesInsta_id_pagesFB` FOREIGN KEY (`id_pagesFB`) REFERENCES `pagesFB` (`id`)
+  CONSTRAINT `FK_pagesInsta_1` FOREIGN KEY (`id_pagesFB`) REFERENCES `pagesFB` (`id`)
 )
 CREATE TABLE IF NOT EXISTS `storiesInsta` (
   `id` VARCHAR(17) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `storiesInsta` (
   `impression` INT NOT NULL,
   `reach` INT NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_storiesInsta_id_pagesInsta` FOREIGN KEY (`id_pagesInsta`) REFERENCES `pagesInsta` (`id`)
+  CONSTRAINT `FK_storiesInsta_1` FOREIGN KEY (`id_pagesInsta`) REFERENCES `pagesInsta` (`id`)
 )
 
 INSERT INTO `comptesFB` (`id`,`nom`,`jeton`) VALUES

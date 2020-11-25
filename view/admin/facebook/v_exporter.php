@@ -96,7 +96,7 @@
                             </div>
                         </div>
                         <div class="form-group row" >
-                            <label class="col-lg-2 col-form-label">1er Mois</label>
+                            <label class="col-lg-2 col-form-label">De</label>
                             <div class="col-lg-10">
                                 <input class="form-control" type="month" id="dateDebut" style="max-width: 300px;" required>
                                 <small class="form-text text-muted">
@@ -105,7 +105,7 @@
                             </div>
                         </div>
                         <div class="form-group row" >
-                            <label class="col-lg-2 col-form-label">3eme Mois</label>
+                            <label class="col-lg-2 col-form-label">À</label>
                             <div class="col-lg-10">
                                 <input class="form-control" type="month" id="dateFin" style="max-width: 300px;" required readOnly>
                             </div>
@@ -248,7 +248,6 @@
 
                                                 data.posts.data.reverse();
                                                 data.posts.data.forEach(post => {
-                                                    var nbPost = 0;
                                                     if (post.created_time >= tabMois[0].dateSince && post.created_time <= tabMois[2].dateUntil) {
                                                         nbMediaTrimestre++;
                                                         post.created_time = formatterDate(new Date(post.created_time));
@@ -276,6 +275,7 @@
                                                 if (nbMediaTrimestre == 0) {
                                                     $('#erreur').html(msgErreur("Aucun post Facebook n'a été trouvé"));
                                                 } else {
+                                                    $("#progress_bar").val("10");
                                                     var tabFanMois = [];
                                                     $.ajax({
                                                         type: "GET",
@@ -299,32 +299,41 @@
                                                             }
                                                             tabFanMois.push( response.data[0].values[i-1].value );
                                                         }
-                                                        
                                                     });
-
+                                                    $("#progress_bar").val("20");
                                                     trimestre.interaction = totalInteractionTrimestre
                                                     trimestre.reachTotal = totalReachTrimestre
                                                     trimestre.reachOrganique = totalImpressionTrimestre
                                                     trimestre.tauxInteraction = ((totalInteractionTrimestre/totalReachTrimestre)*100).toFixed(2)
                                                     trimestre.nbPost = nbMediaTrimestre;
                                                     trimestre.nbFan = tabFanMois[2];
-
+                                                    trimestre.interactionParPost = (trimestre.interaction/trimestre.nbPost).toFixed(0)
+                                                    trimestre.tauxReachOrganique = ((100*trimestre.reachOrganique)/trimestre.reachTotal).toFixed(1)
+                                                    
                                                     var top3Reach = [...tabPost];
                                                     top3Reach.sort((a,b) => b.reach - a.reach)
                                                     top3Reach = top3Reach.slice(0,3);
 
+                                                    $("#progress_bar").val("30");
+
                                                     var top3Interaction = [...tabPost];
-                                                    top3Interaction.sort((a,b) => (b.engagement/b.reach) - (a.engagement/a.reach));
+                                                    top3Interaction.sort((a,b) => (b.tauxInteraction) - (a.tauxInteraction));
                                                     top3Interaction = top3Interaction.slice(0,3);
+                                                    
+                                                    $("#progress_bar").val("40");
 
                                                     var topPost = [...tabPost];
-                                                    topPost.sort((a,b) => b.reach - a.reach || b.engagement - a.engagement);
+                                                    topPost.sort((a,b) => b.reach - a.reach || b.tauxInteraction - a.tauxInteraction);
                                                     topPost = topPost[0];
+
+                                                    $("#progress_bar").val("50");
 
                                                     var flop3Reach = [...tabPost];
                                                     flop3Reach.sort((a,b) => a.reach - b.reach);
                                                     flop3Reach = flop3Reach.slice(0,3);
 
+                                                    $("#progress_bar").val("60");
+                                                    
                                                     //on défini l'échelle maximale de notre graphique
                                                     var max = Math.ceil(Math.max(...lesFans)) + 5;
 
@@ -339,7 +348,7 @@
                                                         data: {
                                                             labels: lesDates,
                                                             datasets: [{
-                                                                label: "Sessions",
+                                                                label: "like",
                                                                 lineTension: 0.3,
                                                                 backgroundColor: "rgba(2,117,216,0.2)",
                                                                 borderColor: "rgba(2,117,216,1)",
@@ -383,6 +392,7 @@
                                                         }
                                                     });
 
+                                                    $("#progress_bar").val("70");
                                                     $.get(`https://graph.facebook.com/v4.0/${idPageFB}/insights/page_fans_gender_age?since=${tabMois[0].dateSince}&until=${tabMois[2].dateUntil}&access_token=${tokenPageFB}`,
                                                         function (data) {
                                                             if (typeof data.data[0] != "undefined") {
@@ -579,6 +589,8 @@
                                                                 mois.reach = totalReachUnique;
                                                                 mois.reachOrganique = totalReachUniqueOrganique;
                                                                 mois.clics = totalClics;
+                                                                mois.fan = tabFanMois[index];
+                                                                mois.interactionParPost = (mois.interaction/mois.nbMedia).toFixed(0)
                                                                 if (totalReachUnique == 0) {
                                                                     mois.tauxInteraction = 0
                                                                 } else {
@@ -587,7 +599,7 @@
                                                             }
                                                         });
                                                     });
-
+                                                    $("#progress_bar").val("80");
                                                     var donneesPowerPoint = [];
                                                     donneesPowerPoint.trimestre = trimestre;
                                                     donneesPowerPoint.mois = tabMois
@@ -599,7 +611,7 @@
                                                     
                                                     var pptx = new PptxGenJS();
                                                     var slide = pptx.addSlide();
-                                                    
+                                                    $("#progress_bar").val("90");
                                                     html2canvas(document.body).then(function(canvas) {
                                                         //on récupère les graphiques de la page et les images dans notre dossier
                                                         var node = document.getElementById('myAreaChart2');
@@ -626,133 +638,96 @@
                                                                 slide.addText( nomPageFB ,  { x:'30%', y:'25%', w:4, color:'FFFFFF', fontFace:'Avenir 85 Heavy', align: 'center', fontSize:45 });
                                                                 slide.addText('PAGE FACEBOOK',  { x:'35%', y:'40%', w:3, color:'FFFFFF', fontFace:'Avenir 85 Heavy', align: 'center', fontSize:22 });
                                                                 slide.addText('BILAN Trimestriel',  { x:'30%', y:'57%', w:4, color:'FFFFFF', align: 'center', fontFace:'Avenir 85 Heavy', fontSize:30 });
-                                                                slide.addText('(' + tabMois[0].mois + ' / ' + tabMois[1].mois + ' / ' + tabMois[2].mois + ') 2020',  { x:'25%', y:'72%', w:5, color:'FFFFFF', fontFace:'Avenir 85 Heavy', align: 'center', fontSize:22 });
+                                                                slide.addText('(' + donneesPowerPoint.mois[0].mois + ' / ' + donneesPowerPoint.mois[1].mois + ' / ' + donneesPowerPoint.mois[2].mois + ') 2020',  { x:'25%', y:'72%', w:5, color:'FFFFFF', fontFace:'Avenir 85 Heavy', align: 'center', fontSize:22 });
 
-                                                                $("#progress_selectionne").val("85");
                                                                 
                                                                 //seconde page "LA PAGE FACEBOOK"
                                                                 slide = pptx.addSlide();
                                                                 slide.addText([
-                                                                        { text: taux.toFixed(2) + ' %', options: {bold:true, fontSize:12}},
+                                                                        { text: donneesPowerPoint.trimestre.tauxInteraction.toString() + ' %', options: {bold:true, fontSize:12}},
                                                                         { text: ' Taux d\'interaction', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'10%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'7%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                                 slide.addText([
-                                                                        { text: fans.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
+                                                                        { text: donneesPowerPoint.trimestre.nbFan.toLocaleString(), options: {bold:true, fontSize:12}},
                                                                         { text: ' fans', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'25%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'22%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                                 slide.addText([
-                                                                        { text: nbPosts, options: {bold:true, fontSize:12}},
+                                                                        { text: donneesPowerPoint.trimestre.nbPost.toString(), options: {bold:true, fontSize:12}},
                                                                         { text: ' posts', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'40%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'37%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                                 slide.addText([
-                                                                        { text: mesInteractions.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
+                                                                        { text: donneesPowerPoint.trimestre.interaction.toLocaleString(), options: {bold:true, fontSize:12}},
                                                                         { text: ' interactions soit une moyenne de ', options: {}},
-                                                                        { text: intParPost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + '/post', options: {bold:true}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'55%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                        { text: donneesPowerPoint.trimestre.interactionParPost + '/post', options: {bold:true}}
+                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'52%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                                 slide.addText([
-                                                                        { text: mesReach.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
+                                                                        { text: donneesPowerPoint.trimestre.reachTotal.toLocaleString(), options: {bold:true, fontSize:12}},
                                                                         { text: ' reach total posts', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'70%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'67%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                                 slide.addText([
-                                                                        { text: mesReachOrga.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                        { text: ' reach organique soit ' + tauxReachOrganique.toFixed(2) + '%', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'85%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
+                                                                        { text: donneesPowerPoint.trimestre.reachOrganique.toLocaleString(), options: {bold:true, fontSize:12}},
+                                                                        { text: ' reach organique soit ' + donneesPowerPoint.trimestre.tauxReachOrganique + '%', options: {}}
+                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'82%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                                 slide.addText('LA PAGE FACEBOOK',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-                                                                slide.addImage({ path:img6.src, x:"18%", y:"18%", w:"64%", h:"55%" });
+                                                                slide.addImage({ path:screenPage, x:"18%", y:"18%", w:"64%", h:"55%" });
                                                                 
                                                                 //troisième page CHIFFRES CLES
                                                                 slide = pptx.addSlide();
-                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
+                                                                slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                                 slide.addText('CHIFFRES CLES',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-
-                                                                slide.addText(lesMois[0],  { x:'5%', y:'18%', w:'100%', color:'000000', fontSize:18 });
-                                                                slide.addText([
-                                                                        { text: (interacParMois[0]/reachParMois[0]*100).toFixed(2) + ' %', options: {bold:true, fontSize:12}},
+                                                                var posXShape = 15
+                                                                var posYShape = 25
+                                                                var posXTitre = 5;
+                                                                var posYTitre = 18;
+                                                                donneesPowerPoint.mois.forEach(mois => {
+                                                                    slide.addText(mois.mois.toString(),  { x: posXTitre + '%', y:posYTitre + '%', w:'100%', color:'000000', fontSize:18 });
+                                                                    slide.addText([
+                                                                        { text: mois.tauxInteraction.toString() + ' %', options: {bold:true, fontSize:12}},
                                                                         { text: ' Taux d\'interaction', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'15%', y:'25%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addText([
-                                                                        { text: fanMois[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
+                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x: posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                    posXShape += 15
+                                                                    slide.addText([
+                                                                        { text: mois.fan.toLocaleString(), options: {bold:true, fontSize:12}},
                                                                         { text: ' fans', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'30%', y:'25%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addText([
-                                                                        { text: postsParMois[0], options: {bold:true, fontSize:12}},
+                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                    posXShape += 15
+                                                                    slide.addText([
+                                                                        { text: mois.nbMedia.toString(), options: {bold:true, fontSize:12}},
                                                                         { text: ' posts', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'45%', y:'25%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addText([
-                                                                        { text: interacParMois[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
+                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                    posXShape += 15
+                                                                    slide.addText([
+                                                                        { text: mois.interaction.toLocaleString(), options: {bold:true, fontSize:12}},
                                                                         { text: ' interactions soit une moyenne de ', options: {}},
-                                                                        { text: Math.round(interacParMois[0] / postsParMois[0]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + '/post', options: {bold:true}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'60%', y:'25%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addText([
-                                                                        { text: reachParMois[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
+                                                                        { text: mois.interactionParPost.toLocaleString() + '/post', options: {bold:true}}
+                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                    posXShape += 15
+                                                                    slide.addText([
+                                                                        { text: mois.reach.toLocaleString(), options: {bold:true, fontSize:12}},
                                                                         { text: ' reach total posts', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'75%', y:'25%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                                    posXShape = 15
+                                                                    posYShape += 27
+                                                                    posYTitre += 27
+                                                                });
                                                                 
-
-                                                                slide.addText(lesMois[1],  { x:'5%', y:'45%', w:'100%', color:'000000', fontSize:18 });
-                                                                slide.addText([
-                                                                        { text: (interacParMois[1]/reachParMois[1]*100).toFixed(2) + ' %', options: {bold:true, fontSize:12}},
-                                                                        { text: ' Taux d\'interaction', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'15%', y:'52%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addText([
-                                                                        { text: fanMois[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                        { text: ' fans', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'30%', y:'52%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addText([
-                                                                        { text: postsParMois[1], options: {bold:true, fontSize:12}},
-                                                                        { text: ' posts', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'45%', y:'52%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addText([
-                                                                        { text: interacParMois[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                        { text: ' interactions soit une moyenne de ', options: {}},
-                                                                        { text: Math.round(interacParMois[1] / postsParMois[1]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + '/post', options: {bold:true}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'60%', y:'52%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addText([
-                                                                        { text: reachParMois[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                        { text: ' reach total posts', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'75%', y:'52%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-
-                                                                slide.addText(lesMois[2],  { x:'5%', y:'72%', w:'100%', color:'000000', fontSize:18 });
-                                                                slide.addText([
-                                                                        { text: (interacParMois[2]/reachParMois[2]*100).toFixed(2) + ' %', options: {bold:true, fontSize:12}},
-                                                                        { text: ' Taux d\'interaction', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'15%', y:'79%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addText([
-                                                                        { text: fanMois[2].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                        { text: ' fans', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'30%', y:'79%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addText([
-                                                                        { text: postsParMois[2], options: {bold:true, fontSize:12}},
-                                                                        { text: ' posts', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'45%', y:'79%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addText([
-                                                                        { text: interacParMois[2].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                        { text: ' interactions soit une moyenne de ', options: {}},
-                                                                        { text: Math.round(interacParMois[2] / postsParMois[2]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + '/post', options: {bold:true}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'60%', y:'79%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                slide.addText([
-                                                                        { text: reachParMois[2].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                        { text: ' reach total posts', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'75%', y:'79%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                
-
                                                                 //quatrième page FOCUS FANS
                                                                 slide = pptx.addSlide();
-                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
+                                                                slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                                 slide.addText('FOCUS FANS',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                                 slide.addImage({ data:img5.src, x:1, y:1, w:8, h:3 });
 
                                                                 //cinquième page FOCUS LIKE
                                                                 slide = pptx.addSlide();
-                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
+                                                                slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                                 slide.addText('FOCUS LIKE',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                                 slide.addImage({ data:img.src, x:0.2, y:1, w:6.1, h:2.5 });
-                                                                slide.addImage({ path:img7.src, x:"67%", y:"18%", w:"28%", h:"42%" });
+                                                                slide.addImage({ path:screenPost, x:"67%", y:"18%", w:"28%", h:"42%" });
 
                                                                 //sixième page TOP POST
                                                                 slide = pptx.addSlide();
-                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
+                                                                slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                                 slide.addText('TOP POST',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                                 slide.addText([
                                                                         { text: 'TOP REACH', options: {}}
@@ -762,370 +737,265 @@
                                                                     ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'55%', y:'25%', w:2.2, h:0.4, fill:'0088CC', line:'006699', lineSize:2 , fontSize:13, color:'FFFFFF'});
                                                                 slide.addText([
                                                                         { text: 'Date du post : ', options: {bold:true}},
-                                                                        { text: maDate, options: {}}
+                                                                        { text: donneesPowerPoint.topPost.created_time, options: {}}
                                                                     ],  { x:'55%', y:'35%', w:'100%', color:'000000', fontSize:15 });
                                                                 slide.addText('Thème : ',  { x:'55%', y:'40%', w:'100%', color:'000000', fontSize:15 });
                                                                 slide.addText('Format : ',  { x:'55%', y:'45%', w:'100%', color:'000000', fontSize:15 });
                                                                 slide.addText([
-                                                                        { text: (listpost.posts.data[numPost].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numPost].reactions.summary.total_count), options: {}},
+                                                                        { text: donneesPowerPoint.topPost.reactions.summary.total_count ? '0' : donneesPowerPoint.topPost.reactions.summary.total_count.toString(), options: {}},
                                                                         { text: ' Réactions', options: {bold:true}}
                                                                     ],  { x:'55%', y:'50%', w:'100%', color:'000000', fontSize:15 });
                                                                 slide.addText([
-                                                                        { text: (listpost.posts.data[numPost].comments.summary.total_count == "" ? '0' : listpost.posts.data[numPost].comments.summary.total_count), options: {}},
+                                                                        { text: donneesPowerPoint.topPost.comments.summary.total_count ? '0' : donneesPowerPoint.topPost.comments.summary.total_count.toString(), options: {}},
                                                                         { text: ' Commentaires', options: {bold:true}}
                                                                     ],  { x:'55%', y:'55%', w:'100%', color:'000000', fontSize:15 });
                                                                 slide.addText([
-                                                                        { text: (sharesPost == "" ? '0' : sharesPost), options: {}},
+                                                                        { text: donneesPowerPoint.topPost.hasOwnProperty('shares') ? donneesPowerPoint.topPost.shares.count.toString() : '0', options: {}},
                                                                         { text: ' Partages', options: {bold:true}}
                                                                     ],  { x:'55%', y:'60%', w:'100%', color:'000000', fontSize:15 });
                                                                 slide.addText([
-                                                                        { text: (clicsDuPost == "" ? '0' : clicsDuPost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
+                                                                        { text: donneesPowerPoint.topPost.clic == "undefined" ? '0' : donneesPowerPoint.topPost.clic.toString(), options: {}},
                                                                         { text: ' Clics', options: {bold:true}}
                                                                     ],  { x:'55%', y:'65%', w:'100%', color:'000000', fontSize:15 });
                                                                 slide.addText([
-                                                                        { text: (meilleurReach == "" ? '0' : meilleurReach.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
+                                                                        { text: donneesPowerPoint.topPost.reach == "undefined" ? '0' : donneesPowerPoint.topPost.reach.toString(), options: {}},
                                                                         { text: ' Personnes atteintes', options: {bold:true}}
                                                                     ],  { x:'55%', y:'70%', w:'100%', color:'0088CC', fontSize:15 });
                                                                 slide.addText([
-                                                                        { text: tauxReaction, options: {}},
+                                                                        { text: donneesPowerPoint.topPost.tauxInteraction == "undefined" ? '0' : donneesPowerPoint.topPost.tauxInteraction.toString(), options: {}},
                                                                         { text: '% Taux d\'interaction', options: {bold:true}}
                                                                     ],  { x:'55%', y:'75%', w:'100%', color:'000000', fontSize:15 });
 
-                                                                slide.addImage({ data:dataUrl1, x:"10%", y:"18%", w:"40%", h:"65%" });
+                                                                slide.addImage({ path:donneesPowerPoint.topPost.full_picture, x:"10%", y:"18%", w:"40%", h:"65%" });
 
                                                                 //septième page TOP 3 (taux d'interaction)
                                                                 slide = pptx.addSlide();
-                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
+                                                                slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                                 slide.addText('TOP 3',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                                 slide.addText([
-                                                                        { text: 'Top intéraction', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'25%', y:'4%', w:2.5, h:0.3, fill:'0088CC', line:'006699', lineSize:2 , fontSize:15, color:'FFFFFF'});
-                                                                slide.addText([
+                                                                    { text: 'Top intéraction', options: {}}
+                                                                ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'25%', y:'4%', w:2.5, h:0.3, fill:'0088CC', line:'006699', lineSize:2 , fontSize:15, color:'FFFFFF'});
+                                                                var posXImage = 5
+                                                                var posYImage = 18
+                                                                var posXText = 5
+                                                                var posYText = 60;
+                                                                donneesPowerPoint.top3Interaction.forEach(post => {
+                                                                    slide.addImage({ path:post.full_picture, x:posXImage + "%", y:posYImage + "%", w:"22%", h:"39%" });
+                                                                    posXImage += 35
+                                                                    slide.addText([
                                                                         { text: 'Date du post : ', options: {bold:true}},
-                                                                        { text: maDateTaux1, options: {}}
-                                                                    ],  { x:'5%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Thème : ',  { x:'5%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Format : ',  { x:'5%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numTaux1].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numTaux1].reactions.summary.total_count), options: {}},
+                                                                        { text: post.created_time, options: {}}
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText('Thème : ',  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText('Format : ',  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.reactions.summary.total_count == "undefined" ? '0' : post.reactions.summary.total_count.toLocaleString(), options: {}},
                                                                         { text: ' Réactions', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numTaux1].comments.summary.total_count == "" ? '0' : listpost.posts.data[numTaux1].comments.summary.total_count), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.comments.summary.total_count == "undefined" ? '0' : post.comments.summary.total_count.toLocaleString(), options: {}},
                                                                         { text: ' Commentaires', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (sharesPostTaux1 == "" ? '0' : sharesPostTaux1), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.hasOwnProperty('shares') ? post.shares.count.toLocaleString() :'0', options: {}},
                                                                         { text: ' Partages', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (clicTaux1 == "" ? '0' : clicTaux1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.clic == "undefined" ? '0' : post.clic.toLocaleString(), options: {}},
                                                                         { text: ' Clics', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (reachTaux1 == "" ? '0' : reachTaux1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.reach == "undefined" ? '0' : post.reach.toLocaleString(), options: {}},
                                                                         { text: ' Personnes atteintes', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'88%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: taux1.toFixed(2), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.tauxInteraction == "undefined" ? '0' : post.tauxInteraction.toString(), options: {}},
                                                                         { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'92%', w:'100%', color:'0088CC', fontSize:10 });
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'0088CC', fontSize:10 });
+                                                                    posYText = 60
+                                                                    posXText += 35
 
-                                                                slide.addText([
-                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                        { text: maDateTaux2, options: {}}
-                                                                    ],  { x:'40%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Thème : ',  { x:'40%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Format : ',  { x:'40%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numTaux2].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numTaux2].reactions.summary.total_count), options: {}},
-                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numTaux2].comments.summary.total_count == "" ? '0' : listpost.posts.data[numTaux2].comments.summary.total_count), options: {}},
-                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (sharesPostTaux2 == "" ? '0' : sharesPostTaux2), options: {}},
-                                                                        { text: ' Partages', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (clicTaux2 == "" ? '0' : clicTaux2.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                        { text: ' Clics', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (reachTaux2 == "" ? '0' : reachTaux2.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'88%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: taux2.toFixed(2), options: {}},
-                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'92%', w:'100%', color:'0088CC', fontSize:10 });
+                                                                });
 
-                                                                slide.addText([
-                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                        { text: maDateTaux3, options: {}}
-                                                                    ],  { x:'75%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Thème : ',  { x:'75%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Format : ',  { x:'75%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numTaux3].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numTaux3].reactions.summary.total_count), options: {}},
-                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numTaux3].comments.summary.total_count == "" ? '0' : listpost.posts.data[numTaux3].comments.summary.total_count), options: {}},
-                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (sharesPostTaux3 == "" ? '0' : sharesPostTaux3), options: {}},
-                                                                        { text: ' Partages', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (clicTaux3 == "" ? '0' : clicTaux3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                        { text: ' Clics', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (reachTaux3 == "" ? '0' : reachTaux3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'88%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: taux3.toFixed(2), options: {}},
-                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'92%', w:'100%', color:'0088CC', fontSize:10 });
-
-                                                                slide.addImage({ data:dataUrl12, x:"5%", y:"18%", w:"22%", h:"39%" });
-                                                                slide.addImage({ data:dataUrl3, x:"40%", y:"18%", w:"22%", h:"39%" });
-                                                                slide.addImage({ data:dataUrl4, x:"75%", y:"18%", w:"22%", h:"39%" });
-                                                                
-                                                                
                                                                 //huitième page TOP 3 (personnes atteintes)
                                                                 slide = pptx.addSlide();
-                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
+                                                                slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                                 slide.addText('TOP 3',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                                 slide.addText([
-                                                                        { text: 'Top reach', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'25%', y:'4%', w:2.5, h:0.3, fill:'0088CC', line:'006699', lineSize:2 , fontSize:15, color:'FFFFFF'});
-                                                                slide.addText([
+                                                                    { text: 'Top reach', options: {}}
+                                                                ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'25%', y:'4%', w:2.5, h:0.3, fill:'0088CC', line:'006699', lineSize:2 , fontSize:15, color:'FFFFFF'});
+                                                                var posXImage = 5
+                                                                var posYImage = 18
+                                                                var posXText = 5
+                                                                var posYText = 60;
+                                                                donneesPowerPoint.top3Reach.forEach(post => {
+                                                                    slide.addImage({ path:post.full_picture, x:posXImage + "%", y:posYImage + "%", w:"22%", h:"39%" });
+                                                                    posXImage += 35
+                                                                    slide.addText([
                                                                         { text: 'Date du post : ', options: {bold:true}},
-                                                                        { text: maDateReach1, options: {}}
-                                                                    ],  { x:'5%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Thème : ',  { x:'5%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Format : ',  { x:'5%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numReach1].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numReach1].reactions.summary.total_count), options: {}},
+                                                                        { text: post.created_time, options: {}}
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText('Thème : ',  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText('Format : ',  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.reactions.summary.total_count == "undefined" ? '0' : post.reactions.summary.total_count.toLocaleString(), options: {}},
                                                                         { text: ' Réactions', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numReach1].comments.summary.total_count == "" ? '0' : listpost.posts.data[numReach1].comments.summary.total_count), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.comments.summary.total_count == "undefined" ? '0' : post.comments.summary.total_count.toLocaleString(), options: {}},
                                                                         { text: ' Commentaires', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (sharesPostReach1 == "" ? '0' : sharesPostReach1), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.hasOwnProperty('shares') ? post.shares.count.toLocaleString() :'0', options: {}},
                                                                         { text: ' Partages', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (clicReach1 == "" ? '0' : clicReach1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.clic == "undefined" ? '0' : post.clic.toLocaleString(), options: {}},
                                                                         { text: ' Clics', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (reach1 == "" ? '0' : reach1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.reach == "undefined" ? '0' : post.reach.toLocaleString(), options: {}},
                                                                         { text: ' Personnes atteintes', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'88%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: tauxReach1.toFixed(2), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.tauxInteraction == "undefined" ? '0' : post.tauxInteraction.toString(), options: {}},
                                                                         { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'92%', w:'100%', color:'000000', fontSize:10 });
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'0088CC', fontSize:10 });
+                                                                    posYText = 60
+                                                                    posXText += 35
 
-                                                                slide.addText([
-                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                        { text: maDateReach2, options: {}}
-                                                                    ],  { x:'40%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Thème : ',  { x:'40%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Format : ',  { x:'40%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numReach2].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numReach2].reactions.summary.total_count), options: {}},
-                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numReach2].comments.summary.total_count == "" ? '0' : listpost.posts.data[numReach2].comments.summary.total_count), options: {}},
-                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (sharesPostReach2 == "" ? '0' : sharesPostReach2), options: {}},
-                                                                        { text: ' Partages', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (clicReach2 == "" ? '0' : clicReach2.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                        { text: ' Clics', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (reach2 == "" ? '0' : reach2.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'88%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: tauxReach2.toFixed(2), options: {}},
-                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'92%', w:'100%', color:'000000', fontSize:10 });
-
-                                                                slide.addText([
-                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                        { text: maDateReach3, options: {}}
-                                                                    ],  { x:'75%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Thème : ',  { x:'75%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Format : ',  { x:'75%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numReach3].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numReach3].reactions.summary.total_count), options: {}},
-                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numReach3].comments.summary.total_count == "" ? '0' : listpost.posts.data[numReach3].comments.summary.total_count), options: {}},
-                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (sharesPostReach3 == "" ? '0' : sharesPostReach3), options: {}},
-                                                                        { text: ' Partages', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (clicReach3 == "" ? '0' : clicReach3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                        { text: ' Clics', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (reach3 == "" ? '0' : reach3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'88%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: tauxReach3.toFixed(2), options: {}},
-                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'92%', w:'100%', color:'000000', fontSize:10 });
-
-                                                                slide.addImage({ data:dataUrl5, x:"5%", y:"18%", w:"22%", h:"39%" });
-                                                                slide.addImage({ data:dataUrl6, x:"40%", y:"18%", w:"22%", h:"39%" });
-                                                                slide.addImage({ data:dataUrl7, x:"75%", y:"18%", w:"22%", h:"39%" });
-
+                                                                });
 
                                                                 //neuvième page FLOP POST
                                                                 slide = pptx.addSlide();
-                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
+                                                                slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                                 slide.addText('FLOP POST',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                                                 slide.addText([
-                                                                        { text: 'Flop reach', options: {}}
-                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'35%', y:'4%', w:2.5, h:0.3, fill:'0088CC', line:'006699', lineSize:2 , fontSize:15, color:'FFFFFF'});
-                                                                slide.addText([
+                                                                    { text: 'Flop reach', options: {}}
+                                                                ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'35%', y:'4%', w:2.5, h:0.3, fill:'0088CC', line:'006699', lineSize:2 , fontSize:15, color:'FFFFFF'});
+                                                                var posXImage = 5
+                                                                var posYImage = 18
+                                                                var posXText = 5
+                                                                var posYText = 60;
+                                                                donneesPowerPoint.top3FlopReach.forEach(post => {
+                                                                    slide.addImage({ path:post.full_picture, x:posXImage + "%", y:posYImage + "%", w:"22%", h:"39%" });
+                                                                    posXImage += 35
+                                                                    slide.addText([
                                                                         { text: 'Date du post : ', options: {bold:true}},
-                                                                        { text: maDateDernierReach1, options: {}}
-                                                                    ],  { x:'5%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Thème : ',  { x:'5%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Format : ',  { x:'5%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numDernierReach1].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numDernierReach1].reactions.summary.total_count), options: {}},
+                                                                        { text: post.created_time, options: {}}
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText('Thème : ',  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText('Format : ',  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.reactions.summary.total_count == "undefined" ? '0' : post.reactions.summary.total_count.toLocaleString(), options: {}},
                                                                         { text: ' Réactions', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numDernierReach1].comments.summary.total_count == "" ? '0' : listpost.posts.data[numDernierReach1].comments.summary.total_count), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.comments.summary.total_count == "undefined" ? '0' : post.comments.summary.total_count.toLocaleString(), options: {}},
                                                                         { text: ' Commentaires', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (sharesPostDernierReach1 == "" ? '0' : sharesPostDernierReach1), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.hasOwnProperty('shares') ? post.shares.count.toLocaleString() :'0', options: {}},
                                                                         { text: ' Partages', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (clicDernierReach1 == "" ? '0' : clicDernierReach1), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.clic == "undefined" ? '0' : post.clic.toLocaleString(), options: {}},
                                                                         { text: ' Clics', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (dernierReach1 == "" ? '0' : dernierReach1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.reach == "undefined" ? '0' : post.reach.toLocaleString(), options: {}},
                                                                         { text: ' Personnes atteintes', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'88%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: tauxDernierReach1.toFixed(2), options: {}},
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'000000', fontSize:10 });
+                                                                    posYText += 4;
+                                                                    slide.addText([
+                                                                        { text: post.tauxInteraction == "undefined" ? '0' : post.tauxInteraction.toString(), options: {}},
                                                                         { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                    ],  { x:'5%', y:'92%', w:'100%', color:'000000', fontSize:10 });
+                                                                    ],  { x:posXText + '%', y:posYText + '%', w:'100%', color:'0088CC', fontSize:10 });
+                                                                    posYText = 60
+                                                                    posXText += 35
 
-                                                                slide.addText([
-                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                        { text: maDateDernierReach2, options: {}}
-                                                                    ],  { x:'40%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Thème : ',  { x:'40%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Format : ',  { x:'40%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numDernierReach2].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numDernierReach2].reactions.summary.total_count), options: {}},
-                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numDernierReach2].comments.summary.total_count == "" ? '0' : listpost.posts.data[numDernierReach2].comments.summary.total_count), options: {}},
-                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (sharesPostDernierReach2 == "" ? '0' : sharesPostDernierReach2), options: {}},
-                                                                        { text: ' Partages', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (clicDernierReach2 == "" ? '0' : clicDernierReach2), options: {}},
-                                                                        { text: ' Clics', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (dernierReach2 == "" ? '0' : dernierReach2.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'88%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: tauxDernierReach2.toFixed(2), options: {}},
-                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                    ],  { x:'40%', y:'92%', w:'100%', color:'000000', fontSize:10 });
+                                                                });
 
-                                                                slide.addText([
-                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                        { text: maDateDernierReach3, options: {}}
-                                                                    ],  { x:'75%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Thème : ',  { x:'75%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText('Format : ',  { x:'75%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numDernierReach3].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numDernierReach3].reactions.summary.total_count), options: {}},
-                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (listpost.posts.data[numDernierReach3].comments.summary.total_count == "" ? '0' : listpost.posts.data[numDernierReach3].comments.summary.total_count), options: {}},
-                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (sharesPostDernierReach3 == "" ? '0' : sharesPostDernierReach3), options: {}},
-                                                                        { text: ' Partages', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (clicDernierReach3 == "" ? '0' : clicDernierReach3), options: {}},
-                                                                        { text: ' Clics', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: (dernierReach3 == "" ? '0' : dernierReach3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'88%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                slide.addText([
-                                                                        { text: tauxDernierReach3.toFixed(2), options: {}},
-                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                    ],  { x:'75%', y:'92%', w:'100%', color:'000000', fontSize:10 });
+                                                                var nbDiapo = donneesPowerPoint.trimestre.nbPost%12;
+                                                                var numMedia = 1;
+                                                                for (let diapo = 1; diapo < nbDiapo ; diapo++) {
+                                                                    var posXImage = 7
+                                                                    var posYImage = 15
+                                                                    var posXText = 18
+                                                                    var posYText = 22;
+                                                                    if (tabPost.length >= numMedia) {
+                                                                        slide = pptx.addSlide();
+                                                                        slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
+                                                                        for (let index = 0; index < 3; index++) {
 
-                                                                slide.addImage({ data:dataUrl8, x:"5%", y:"18%", w:"22%", h:"39%" });
-                                                                slide.addImage({ data:dataUrl9, x:"40%", y:"18%", w:"22%", h:"39%" });
-                                                                slide.addImage({ data:dataUrl10, x:"75%", y:"18%", w:"22%", h:"39%" });
+                                                                            for (let i = 0; i < 4; i++) {
+                                                                                if (tabPost.length >= numMedia) {
+                                                                                    slide.addImage({ path: tabPost[numMedia-1].full_picture, x:posXImage + "%", y:posYImage + "%", w:"10%", h:"20%" });
+                                                                                    slide.addText([
+                                                                                            { text:  tabPost[numMedia-1].reach.toLocaleString(), options: {}},
+                                                                                            { text: ' personnes atteintes', options: {bold:true}}
+                                                                                        ],  { x:posXText + '%', y: posYText + '%', w:'100%', color:'0088CC', fontSize:10 });
+                                                                                    slide.addText([
+                                                                                        { text: tabPost[numMedia-1].tauxInteraction, options: {}},
+                                                                                        { text: ' % Taux d\'interaction', options: {bold:true}}
+                                                                                    ],  { x:posXText + '%', y:(posYText + 5) +'%', w:'100%', color:'000000', fontSize:10 }); 
+                                                                                }
+                                                                                posYImage += 21;
+                                                                                posYText += 21;
+                                                                                numMedia++;
+                                                                            }
+                                                                        /* Modification de la position de la colonne */
+                                                                        posXImage += 30;
+                                                                        posXText += 30; 
+                                                                        /* Reset pour remonter en haut de la colonne */
+                                                                        posYText = 22; 
+                                                                        posYImage = 15;
+                                                                        }
+                                                                    }
+                                                                }
 
                                                                 //dixième page CONCLUSION
                                                                 slide = pptx.addSlide();
-                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
+                                                                slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                                 slide.addText('CONCLUSION',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
 
                                                                 //onxième page CONCLUSION ET RECOMMANDATIONS
                                                                 slide = pptx.addSlide();
-                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
+                                                                slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                                                 slide.addText('CONCLUSION ET RECOMMANDATIONS',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
 
                                                                 //douzième page FIN
                                                                 slide = pptx.addSlide();
-                                                                slide.addImage({ path:img4.src, x:0, y:0, w:'100%', h:'100%' });
+                                                                slide.addImage({ path:fin, x:0, y:0, w:'100%', h:'100%' });
                                                                 slide.addText('Merci',  { x:'35%', y:'40%', w:3, color:'FFFFFF', align: 'center', fontFace:'Avenir 85 Heavy', fontSize:35 });
                                                                 
-                                                                $("#progress_selectionne").val("100");
 
                                                                 //on enregistre le powerpoint
-                                                                pptx.writeFile('bilan-reporting');
+                                                                $("#progress_bar").val("100");
+                                                                pptx.writeFile('bilan-reporting-Facebook ' + donneesPowerPoint.mois[0].mois + ' - ' + donneesPowerPoint.mois[1].mois  + ' - ' + donneesPowerPoint.mois[2].mois + ' ' +  nomPageFB);
                                                             }).catch(function (error) {
                                                                 console.error('oops, something went wrong!', error);
                                                             });
@@ -1137,998 +1007,8 @@
                                                         //fin du 1er domtoimage
                                                     });
                                                 }
-                                                
-
                                             }
                                         );
-
-
-                                        $("#progress_selectionne").val("75");
-
-                                            //on calcule la progression qui devra être incrémenté a chaque boucle
-                                        /* var progressActuel = 75;
-                                        var progressCount = 20 / listpost.posts.data.length; */
-                                        /* for(var g = 0 ; g < listpost.posts.data.length ; g++ ){ */
-                                            //on récupère les reach et click
-                                            
-                                            /* $.ajax(
-                                                {
-                                                    url : monUrl2,
-                                                    async: false,
-                                                    complete :
-                                                    function(xhr, textStatus){
-                                                        var response = JSON.parse(xhr.responseText);
-
-                                                        progressActuel += progressCount;
-                                                        $("#progress_selectionne").val(progressActuel);
-                                                        
-
-                                                        //s'il y a des données, on initialise nos variables avec nos données sinon, ils prennent la valeur 0
-                                                        if (typeof response.data != "undefined") {
-                                                            var engagedUsers = response.data[0].values[0].value;
-                                                            var impressionUnique = response.data[1].values[0].value;
-                                                            var impressionOrganic = response.data[2].values[0].value;
-                                                            var postClicks = response.data[3].values[0].value;
-                                                        }else{
-                                                            var engagedUsers = 0;
-                                                            var impressionUnique = 0;
-                                                            var impressionOrganic = 0;
-                                                            var postClicks = 0;
-                                                        }
-                                                        //lors de la première boucle, on récupère les valeurs de la boucle pour ensuite procéder a des vérifications, cela correspond a la page Powerpoint pour TOP POST
-                                                        if(g == 0){
-                                                            meilleurReach = impressionUnique;
-                                                            idDuPost = listpost.posts.data[g].id;
-                                                            clicsDuPost = engagedUsers;
-                                                            tauxReaction = (clicsDuPost/meilleurReach*100).toFixed(2);
-                                                            imageMeilleurPost = listpost.posts.data[g].full_picture;
-                                                        }
-                                                        //on récupère la date de la boucle en cours
-                                                        date = new Date(listpost.posts.data[g].created_time);
-                                                        //on vérifie si le taux d'interaction du post de la boucle est suppérieur à l'actuel taux le plus élevé qu'on ait trouvé (taux1)
-                                                        //si c'est trouvé, le 3eme taux le plus élevé prend la valeur du 2eme taux le plus élevé, le 2eme taux prend la valeur du premier et le premier prend la valeur du post qu'on a vérifié
-                                                        //si ce n'est pas trouvé, on vérifie avec les autres taux etc
-                                                        if((engagedUsers / impressionUnique)*100 > taux1){
-                                                            numTaux3 = numTaux2;
-                                                            reachTaux3 = reachTaux2;
-                                                            clicTaux3 = clicTaux2;
-                                                            taux3 = taux2;
-                                                            imgTaux3 = imgTaux2;
-                                                            maDateTaux3 = maDateTaux2;
-
-                                                            numTaux2 = numTaux1;
-                                                            reachTaux2 = reachTaux1;
-                                                            clicTaux2 = clicTaux1;
-                                                            taux2 = taux1;
-                                                            imgTaux2 = imgTaux1;
-                                                            maDateTaux2 = maDateTaux1;
-                                                            
-                                                            numTaux1 = g;
-                                                            reachTaux1 = impressionUnique;
-                                                            clicTaux1 = postClicks;
-                                                            taux1 = (engagedUsers/impressionUnique)*100;
-                                                            imgTaux1 = listpost.posts.data[g].full_picture;
-                                                            
-                                                            maDateTaux1 = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
-                                                        }else if((engagedUsers/response.data[1].values[0].value)*100 > taux2){
-
-                                                            numTaux3 = numTaux2;
-                                                            reachTaux3 = reachTaux2;
-                                                            clicTaux3 = clicTaux2;
-                                                            taux3 = taux2;
-                                                            imgTaux3 = imgTaux2;
-                                                            maDateTaux3 = maDateTaux2;
-                                                            
-                                                            numTaux2 = g;
-                                                            reachTaux2 = impressionUnique;
-                                                            clicTaux2 = postClicks;
-                                                            taux2 = (engagedUsers/impressionUnique)*100;
-                                                            imgTaux2 = listpost.posts.data[g].full_picture;
-                                                            
-                                                            maDateTaux2 = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
-                                                        }else if((engagedUsers/impressionUnique)*100 > taux3){
-                                                            
-                                                            numTaux3 = g;
-                                                            reachTaux3 = impressionUnique;
-                                                            clicTaux3 = postClicks;
-                                                            taux3 = (engagedUsers/impressionUnique)*100;
-                                                            imgTaux3 = listpost.posts.data[g].full_picture;
-                                                            
-                                                            maDateTaux3 = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
-                                                        }
-
-
-                                                        //procédé similaire au taux d'interaction plus haut
-                                                        if(impressionUnique > reach1){
-                                                            reach3 = reach2;
-                                                            numReach3 = numReach2;
-                                                            clicReach3 = clicReach2;
-                                                            tauxReach3 = tauxReach2;
-                                                            imgReach3 = imgReach2;
-                                                            maDateReach3 = maDateReach2;
-
-                                                            reach2 = reach1;
-                                                            numReach2 = numReach1;
-                                                            clicReach2 = clicReach1;
-                                                            tauxReach2 = tauxReach1;
-                                                            imgReach2 = imgReach1;
-                                                            maDateReach2 = maDateReach1;
-
-                                                            reach1 = impressionUnique;
-                                                            numReach1 = g;
-                                                            clicReach1 = postClicks;
-                                                            tauxReach1 = (engagedUsers/impressionUnique*100);
-                                                            imgReach1 = listpost.posts.data[g].full_picture;
-                                                            
-                                                            maDateReach1 = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
-                                                        }else if(impressionUnique > reach2){
-                                                            reach3 = reach2;
-                                                            numReach3 = numReach2;
-                                                            clicReach3 = clicReach2;
-                                                            tauxReach3 = tauxReach2;
-                                                            imgReach3 = imgReach2;
-                                                            maDateReach3 = maDateReach2;
-
-                                                            reach2 = impressionUnique;
-                                                            numReach2 = g;
-                                                            clicReach2 = postClicks;
-                                                            tauxReach2 = (engagedUsers/impressionUnique*100);
-                                                            imgReach2 = listpost.posts.data[g].full_picture;
-                                                            
-                                                            maDateReach2 = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
-                                                        }else if(impressionUnique > reach3){
-                                                            reach3 = impressionUnique;
-                                                            numReach3 = g;
-                                                            clicReach3 = postClicks;
-                                                            tauxReach3 = (engagedUsers/impressionUnique*100);
-                                                            imgReach3 = listpost.posts.data[g].full_picture;
-                                                            
-                                                            maDateReach3 = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
-                                                        }
-
-
-                                                        
-                                                        //procédé similaire au taux d'intéraction et au reach plus haut
-                                                        if(impressionUnique < dernierReach1){
-                                                            dernierReach3 = dernierReach2;
-                                                            numDernierReach3 = numDernierReach2;
-                                                            clicDernierReach3 = clicDernierReach2;
-                                                            tauxDernierReach3 = tauxDernierReach2;
-                                                            maDateDernierReach3 = maDateDernierReach2;
-                                                            imgDernierReach3 = imgDernierReach2;
-
-                                                            dernierReach2 = dernierReach1;
-                                                            numDernierReach2 = numDernierReach1;
-                                                            clicDernierReach2 = clicDernierReach1;
-                                                            tauxDernierReach2 = tauxDernierReach1;
-                                                            maDateDernierReach2 = maDateDernierReach1;
-                                                            imgDernierReach2 = imgDernierReach1
-
-                                                            dernierReach1 = impressionUnique;
-                                                            numDernierReach1 = g;
-                                                            clicDernierReach1 = postClicks;
-                                                            tauxDernierReach1 = (engagedUsers/impressionUnique*100);
-                                                            imgDernierReach1 = listpost.posts.data[g].full_picture;
-                                                            maDateDernierReach1 = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
-                                                        }else if(impressionUnique < dernierReach2){
-                                                            dernierReach3 = dernierReach2;
-                                                            numDernierReach3 = numDernierReach2;
-                                                            clicDernierReach3 = clicDernierReach2;
-                                                            tauxDernierReach3 = tauxDernierReach2;
-                                                            maDateDernierReach3 = maDateDernierReach2;
-                                                            imgDernierReach3 = imgDernierReach2;
-
-                                                            dernierReach2 = impressionUnique;
-                                                            numDernierReach2 = g;
-                                                            clicDernierReach2 = postClicks;
-                                                            tauxDernierReach2 = (engagedUsers/impressionUnique*100);
-                                                            imgDernierReach2 = listpost.posts.data[g].full_picture;
-                                                            maDateDernierReach2 = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
-                                                        }else if(impressionUnique < dernierReach3){
-                                                            dernierReach3 = impressionUnique;
-                                                            numDernierReach3 = g;
-                                                            clicDernierReach3 = postClicks;
-                                                            tauxDernierReach3 = (engagedUsers/impressionUnique*100);
-                                                            imgDernierReach3 = listpost.posts.data[g].full_picture;
-                                                            
-                                                            maDateDernierReach3 = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
-                                                        }
-
-                                                        //si le meilleur reach qu'on ait trouvé est inférieur au reach du post de la boucle, on récupère les valeurs
-                                                        if(meilleurReach < impressionUnique){
-                                                            idDuPost = listpost.posts.data[g].id;
-                                                            meilleurReach = impressionUnique;
-                                                            clicsDuPost = postClicks;
-                                                            numPost = g;
-                                                            tauxReaction = (engagedUsers/impressionUnique*100).toFixed(2);
-                                                            imageMeilleurPost = listpost.posts.data[g].full_picture;
-                                                            
-                                                        }
-                                                        //si le mois n'a pas changé dans la boucle, on incrémente les valeurs
-                                                        //sinon on push notre array correspondant à la totalité des posts, interactions et reach par mois
-                                                        if(moisVerif == lesDates[g].substr(3,2)){
-                                                            cumulPosts += 1;
-                                                            cumulInterac += engagedUsers;
-                                                            cumulReach += impressionUnique;
-                                                        }else{
-                                                            switch (moisVerif) {
-                                                                case '01':
-                                                                    lesMois.push("Janvier");
-                                                                    break;
-                                                                case '02':
-                                                                    lesMois.push("Fevrier");
-                                                                    break;
-                                                                case '03':
-                                                                    lesMois.push("Mars");
-                                                                    break;
-                                                                case '04':
-                                                                    lesMois.push("Avril");
-                                                                    break;
-                                                                case '05':
-                                                                    lesMois.push("Mai");
-                                                                    break;
-                                                                case '06':
-                                                                    lesMois.push("Juin");
-                                                                    break;
-                                                                case '07':
-                                                                    lesMois.push("Juillet");
-                                                                    break;
-                                                                case '08':
-                                                                    lesMois.push("Août");
-                                                                    break;
-                                                                case '09':
-                                                                    lesMois.push("Septembre");
-                                                                    break;
-                                                                case '10':
-                                                                    lesMois.push("Octobre");
-                                                                    break;
-                                                                case '11':
-                                                                    lesMois.push("Novembre");
-                                                                    break;
-                                                                case '12':
-                                                                    lesMois.push("Decembre");
-                                                                    break;
-                                                                default:
-                                                                    lesMois.push("Mois");
-                                                            }
-
-                                                            postsParMois.push(cumulPosts);
-                                                            interacParMois.push(cumulInterac);
-                                                            reachParMois.push(cumulReach);
-                                                            cumulPosts = 1;
-                                                            cumulInterac = engagedUsers;
-                                                            cumulReach = impressionUnique;
-                                                            moisVerif = lesDates[g].substr(3,2);
-                                                        }
-
-                                                        mesReach += impressionUnique;
-                                                        mesReachOrga += impressionOrganic;
-                                                        mesInteractions += engagedUsers;
-                                                        
-                                                        //si on arrive en fin de boucle, on push les dernières données dans nos array
-                                                        if(g == (listpost.posts.data.length - 1)){
-                                                            
-                                                            postsParMois.push(cumulPosts);
-                                                            interacParMois.push(cumulInterac);
-                                                            reachParMois.push(cumulReach);
-                                                            if(moisVerif == lesDates[g].substr(3,2)){
-                                                                switch (moisVerif) {
-                                                                    case '01':
-                                                                        lesMois.push("Janvier");
-                                                                        break;
-                                                                    case '02':
-                                                                        lesMois.push("Fevrier");
-                                                                        break;
-                                                                    case '03':
-                                                                        lesMois.push("Mars");
-                                                                        break;
-                                                                    case '04':
-                                                                        lesMois.push("Avril");
-                                                                        break;
-                                                                    case '05':
-                                                                        lesMois.push("Mai");
-                                                                        break;
-                                                                    case '06':
-                                                                        lesMois.push("Juin");
-                                                                        break;
-                                                                    case '07':
-                                                                        lesMois.push("Juillet");
-                                                                        break;
-                                                                    case '08':
-                                                                        lesMois.push("Août");
-                                                                        break;
-                                                                    case '09':
-                                                                        lesMois.push("Septembre");
-                                                                        break;
-                                                                    case '10':
-                                                                        lesMois.push("Octobre");
-                                                                        break;
-                                                                    case '11':
-                                                                        lesMois.push("Novembre");
-                                                                        break;
-                                                                    case '12':
-                                                                        lesMois.push("Decembre");
-                                                                        break;
-                                                                    default:
-                                                                        lesMois.push("Mois");
-                                                                }
-                                                            }
-
-                                                            if(postsParMois.length < 3){
-                                                                for(var i = 0; i <= 3 - postsParMois.length; i++){
-                                                                
-                                                                    postsParMois.push(0);
-                                                                    interacParMois.push(0);
-                                                                    reachParMois.push(0);
-                                                                    fanMois.push(0);
-                                                                    lesMois.push("Mois");
-                                                                }
-                                                            }
-
-                                                            var date = new Date(listpost.posts.data[numPost].created_time);
-                                                            var maDate = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear() + ' ' + date.getHours() + 'h' +  ((date.getMinutes() > 9) ? date.getMinutes() : ('0' + date.getMinutes()));
-
-
-                                                            var taux = (mesInteractions / mesReach) * 100;
-                                                            var intParPost = Math.round(mesInteractions / nbPosts);
-                                                            var tauxReachOrganique = (mesReachOrga / mesReach) * 100;
-
-                                                            //on vérifie que les données existent, si elle n'existe pas, la variable prend la valeur 0
-
-                                                            if (typeof listpost.posts.data[numPost].shares != "undefined") {
-                                                                var sharesPost = listpost.posts.data[numPost].shares.count;
-                                                            }else{
-                                                                var sharesPost = 0;
-                                                            }
-
-                                                            if (typeof listpost.posts.data[numTaux1].shares != "undefined") {
-                                                                var sharesPostTaux1 = listpost.posts.data[numTaux1].shares.count;
-                                                            }else{
-                                                                var sharesPostTaux1 = 0;
-                                                            }
-                                                            if (typeof listpost.posts.data[numTaux2].shares != "undefined") {
-                                                                var sharesPostTaux2 = listpost.posts.data[numTaux2].shares.count;
-                                                            }else{
-                                                                var sharesPostTaux2 = 0;
-                                                            }
-                                                            if (typeof listpost.posts.data[numTaux3].shares != "undefined") {
-                                                                var sharesPostTaux3 = listpost.posts.data[numTaux3].shares.count;
-                                                            }else{
-                                                                var sharesPostTaux3 = 0;
-                                                            }
-                                                            if (typeof listpost.posts.data[numReach1].shares != "undefined") {
-                                                                var sharesPostReach1 = listpost.posts.data[numReach1].shares.count;
-                                                            }else{
-                                                                var sharesPostReach1 = 0;
-                                                            }
-                                                            if (typeof listpost.posts.data[numReach2].shares != "undefined") {
-                                                                var sharesPostReach2 = listpost.posts.data[numReach2].shares.count;
-                                                            }else{
-                                                                var sharesPostReach2 = 0;
-                                                            }
-                                                            if (typeof listpost.posts.data[numReach3].shares != "undefined") {
-                                                                var sharesPostReach3 = listpost.posts.data[numReach3].shares.count;
-                                                            }else{
-                                                                var sharesPostReach3 = 0;
-                                                            }
-                                                            if (typeof listpost.posts.data[numDernierReach1].shares != "undefined") {
-                                                                var sharesPostDernierReach1 = listpost.posts.data[numDernierReach1].shares.count;
-                                                            }else{
-                                                                var sharesPostDernierReach1 = 0;
-                                                            }
-                                                            if (typeof listpost.posts.data[numDernierReach2].shares != "undefined") {
-                                                                var sharesPostDernierReach2 = listpost.posts.data[numDernierReach2].shares.count;
-                                                            }else{
-                                                                var sharesPostDernierReach2 = 0;
-                                                            }
-                                                            if (typeof listpost.posts.data[numDernierReach3].shares != "undefined") {
-                                                                var sharesPostDernierReach3 = listpost.posts.data[numDernierReach3].shares.count;
-                                                            }else{
-                                                                var sharesPostDernierReach3 = 0;
-                                                            }
-
-                                                            //fonction qui va permettre de convertir une image via url en image base 64
-                                                            function toDataURL(url, callback) {
-                                                                var xhr = new XMLHttpRequest();
-                                                                xhr.onload = function() {
-                                                                    var reader = new FileReader();
-                                                                    reader.onloadend = function() {
-                                                                    callback(reader.result);
-                                                                    }
-                                                                    reader.readAsDataURL(xhr.response);
-                                                                };
-                                                                xhr.open('GET', url);
-                                                                xhr.responseType = 'blob';
-                                                                xhr.send();
-                                                            }
-                                                            //on converti toutes nos images en base64 afin de pouvoir les exploiter dans pptxgenjs
-                                                            toDataURL(imageMeilleurPost, function(dataUrl1) {
-                                                                toDataURL(imgTaux1, function(dataUrl12) {
-                                                                    toDataURL(imgTaux2, function(dataUrl3) {
-                                                                        toDataURL(imgTaux3, function(dataUrl4) {
-                                                                            toDataURL(imgReach1, function(dataUrl5) {
-                                                                                toDataURL(imgReach2, function(dataUrl6) {
-                                                                                    toDataURL(imgReach3, function(dataUrl7) {
-                                                                                        toDataURL(imgDernierReach1, function(dataUrl8) {
-                                                                                            toDataURL(imgDernierReach2, function(dataUrl9) {
-                                                                                                toDataURL(imgDernierReach3, function(dataUrl10) {
-                                                                                                    //on initialise notre Powerpoint
-                                                                                                    var pptx = new PptxGenJS();
-                                                                                                    var slide = pptx.addSlide();
-                                                                                                    
-                                                                                                    html2canvas(document.body).then(function(canvas) {
-                                                                                                        //on récupère les graphiques de la page et les images dans notre dossier
-                                                                                                        var node = document.getElementById('myAreaChart2');
-                                                                                                        var node2 = document.getElementById('chartdiv');
-                                                                                                        //domtoimage va servir a faire une capture de nos canvas (graphiques) et des les convertir en image base64
-                                                                                                        domtoimage.toPng(node).then(function (dataUrl) {
-                                                                                                            domtoimage.toPng(node2).then(function (dataUrl2) {
-                                                                                                                var img = new Image();
-                                                                                                                img.src = dataUrl;
-                                                                                                                var img5 = new Image();
-                                                                                                                img5.src = dataUrl2;
-                                                                                                                var img2 = new Image();
-                                                                                                                img2.src = "images/capture3.png";
-                                                                                                                var img3 = new Image();
-                                                                                                                img3.src = "images/bandeau1.png";
-                                                                                                                var img4 = new Image();
-                                                                                                                img4.src = "images/fin.png";
-                                                                                                                var img6 = new Image();
-                                                                                                                img6.src = "images/screen-page.png";
-                                                                                                                var img7 = new Image();
-                                                                                                                img7.src = "images/screen-post1.png";
-
-                                                                                                                //page de garde
-                                                                                                                slide.addImage({ path:img2.src, x:0, y:0, w:10, h:5.6 });
-
-                                                                                                                //page de garde
-                                                                                                                slide = pptx.addSlide();
-                                                                                                                slide.bkgd = 'f1bf00';
-                                                                                                                slide.addText(selected.data('nom') ,  { x:'30%', y:'25%', w:4, color:'FFFFFF', fontFace:'Avenir 85 Heavy', align: 'center', fontSize:45 });
-                                                                                                                slide.addText('PAGE FACEBOOK',  { x:'35%', y:'40%', w:3, color:'FFFFFF', fontFace:'Avenir 85 Heavy', align: 'center', fontSize:22 });
-                                                                                                                slide.addText('BILAN Trimestriel',  { x:'30%', y:'57%', w:4, color:'FFFFFF', align: 'center', fontFace:'Avenir 85 Heavy', fontSize:30 });
-                                                                                                                slide.addText('(' + lesMois[0] + ' / ' + lesMois[1] + ' / ' + lesMois[2] + ') 2020',  { x:'25%', y:'72%', w:5, color:'FFFFFF', fontFace:'Avenir 85 Heavy', align: 'center', fontSize:22 });
-
-
-                                                                                                                $("#progress_selectionne").val("85");
-                                                                                                                
-                                                                                                                //seconde page "LA PAGE FACEBOOK"
-                                                                                                                slide = pptx.addSlide();
-                                                                                                                slide.addText([
-                                                                                                                        { text: taux.toFixed(2) + ' %', options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' Taux d\'interaction', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'10%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: fans.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' fans', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'25%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: nbPosts, options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' posts', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'40%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: mesInteractions.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' interactions soit une moyenne de ', options: {}},
-                                                                                                                        { text: intParPost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + '/post', options: {bold:true}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'55%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: mesReach.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' reach total posts', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'70%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: mesReachOrga.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' reach organique soit ' + tauxReachOrganique.toFixed(2) + '%', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'85%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
-                                                                                                                slide.addText('LA PAGE FACEBOOK',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-                                                                                                                slide.addImage({ path:img6.src, x:"18%", y:"18%", w:"64%", h:"55%" });
-                                                                                                                
-                                                                                                                //troisième page CHIFFRES CLES
-                                                                                                                slide = pptx.addSlide();
-                                                                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
-                                                                                                                slide.addText('CHIFFRES CLES',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-
-                                                                                                                slide.addText(lesMois[0],  { x:'5%', y:'18%', w:'100%', color:'000000', fontSize:18 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (interacParMois[0]/reachParMois[0]*100).toFixed(2) + ' %', options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' Taux d\'interaction', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'15%', y:'25%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: fanMois[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' fans', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'30%', y:'25%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: postsParMois[0], options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' posts', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'45%', y:'25%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: interacParMois[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' interactions soit une moyenne de ', options: {}},
-                                                                                                                        { text: Math.round(interacParMois[0] / postsParMois[0]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + '/post', options: {bold:true}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'60%', y:'25%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: reachParMois[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' reach total posts', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'75%', y:'25%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                
-
-                                                                                                                slide.addText(lesMois[1],  { x:'5%', y:'45%', w:'100%', color:'000000', fontSize:18 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (interacParMois[1]/reachParMois[1]*100).toFixed(2) + ' %', options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' Taux d\'interaction', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'15%', y:'52%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: fanMois[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' fans', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'30%', y:'52%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: postsParMois[1], options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' posts', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'45%', y:'52%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: interacParMois[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' interactions soit une moyenne de ', options: {}},
-                                                                                                                        { text: Math.round(interacParMois[1] / postsParMois[1]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + '/post', options: {bold:true}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'60%', y:'52%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: reachParMois[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' reach total posts', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'75%', y:'52%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-
-                                                                                                                slide.addText(lesMois[2],  { x:'5%', y:'72%', w:'100%', color:'000000', fontSize:18 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (interacParMois[2]/reachParMois[2]*100).toFixed(2) + ' %', options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' Taux d\'interaction', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'15%', y:'79%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: fanMois[2].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' fans', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'30%', y:'79%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: postsParMois[2], options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' posts', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'45%', y:'79%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: interacParMois[2].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' interactions soit une moyenne de ', options: {}},
-                                                                                                                        { text: Math.round(interacParMois[2] / postsParMois[2]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + '/post', options: {bold:true}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'60%', y:'79%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: reachParMois[2].toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "), options: {bold:true, fontSize:12}},
-                                                                                                                        { text: ' reach total posts', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'75%', y:'79%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                                                                                
-
-                                                                                                                //quatrième page FOCUS FANS
-                                                                                                                slide = pptx.addSlide();
-                                                                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
-                                                                                                                slide.addText('FOCUS FANS',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-                                                                                                                slide.addImage({ data:img5.src, x:1, y:1, w:8, h:3 });
-
-                                                                                                                //cinquième page FOCUS LIKE
-                                                                                                                slide = pptx.addSlide();
-                                                                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
-                                                                                                                slide.addText('FOCUS LIKE',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-                                                                                                                slide.addImage({ data:img.src, x:0.2, y:1, w:6.1, h:2.5 });
-                                                                                                                slide.addImage({ path:img7.src, x:"67%", y:"18%", w:"28%", h:"42%" });
-
-                                                                                                                //sixième page TOP POST
-                                                                                                                slide = pptx.addSlide();
-                                                                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
-                                                                                                                slide.addText('TOP POST',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'TOP REACH', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'55%', y:'17%', w:2.2, h:0.4, fill:'0088CC', line:'006699', lineSize:2 , fontSize:13, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'TOP INTERACTION*', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'55%', y:'25%', w:2.2, h:0.4, fill:'0088CC', line:'006699', lineSize:2 , fontSize:13, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                                                                        { text: maDate, options: {}}
-                                                                                                                    ],  { x:'55%', y:'35%', w:'100%', color:'000000', fontSize:15 });
-                                                                                                                slide.addText('Thème : ',  { x:'55%', y:'40%', w:'100%', color:'000000', fontSize:15 });
-                                                                                                                slide.addText('Format : ',  { x:'55%', y:'45%', w:'100%', color:'000000', fontSize:15 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numPost].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numPost].reactions.summary.total_count), options: {}},
-                                                                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                                                                    ],  { x:'55%', y:'50%', w:'100%', color:'000000', fontSize:15 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numPost].comments.summary.total_count == "" ? '0' : listpost.posts.data[numPost].comments.summary.total_count), options: {}},
-                                                                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                                                                    ],  { x:'55%', y:'55%', w:'100%', color:'000000', fontSize:15 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (sharesPost == "" ? '0' : sharesPost), options: {}},
-                                                                                                                        { text: ' Partages', options: {bold:true}}
-                                                                                                                    ],  { x:'55%', y:'60%', w:'100%', color:'000000', fontSize:15 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (clicsDuPost == "" ? '0' : clicsDuPost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Clics', options: {bold:true}}
-                                                                                                                    ],  { x:'55%', y:'65%', w:'100%', color:'000000', fontSize:15 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (meilleurReach == "" ? '0' : meilleurReach.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                                                                    ],  { x:'55%', y:'70%', w:'100%', color:'0088CC', fontSize:15 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: tauxReaction, options: {}},
-                                                                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                                                                    ],  { x:'55%', y:'75%', w:'100%', color:'000000', fontSize:15 });
-
-                                                                                                                slide.addImage({ data:dataUrl1, x:"10%", y:"18%", w:"40%", h:"65%" });
-
-                                                                                                                //septième page TOP 3 (taux d'interaction)
-                                                                                                                slide = pptx.addSlide();
-                                                                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
-                                                                                                                slide.addText('TOP 3',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Top intéraction', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'25%', y:'4%', w:2.5, h:0.3, fill:'0088CC', line:'006699', lineSize:2 , fontSize:15, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                                                                        { text: maDateTaux1, options: {}}
-                                                                                                                    ],  { x:'5%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Thème : ',  { x:'5%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Format : ',  { x:'5%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numTaux1].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numTaux1].reactions.summary.total_count), options: {}},
-                                                                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numTaux1].comments.summary.total_count == "" ? '0' : listpost.posts.data[numTaux1].comments.summary.total_count), options: {}},
-                                                                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (sharesPostTaux1 == "" ? '0' : sharesPostTaux1), options: {}},
-                                                                                                                        { text: ' Partages', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (clicTaux1 == "" ? '0' : clicTaux1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Clics', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (reachTaux1 == "" ? '0' : reachTaux1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'88%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: taux1.toFixed(2), options: {}},
-                                                                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'92%', w:'100%', color:'0088CC', fontSize:10 });
-
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                                                                        { text: maDateTaux2, options: {}}
-                                                                                                                    ],  { x:'40%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Thème : ',  { x:'40%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Format : ',  { x:'40%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numTaux2].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numTaux2].reactions.summary.total_count), options: {}},
-                                                                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numTaux2].comments.summary.total_count == "" ? '0' : listpost.posts.data[numTaux2].comments.summary.total_count), options: {}},
-                                                                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (sharesPostTaux2 == "" ? '0' : sharesPostTaux2), options: {}},
-                                                                                                                        { text: ' Partages', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (clicTaux2 == "" ? '0' : clicTaux2.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Clics', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (reachTaux2 == "" ? '0' : reachTaux2.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'88%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: taux2.toFixed(2), options: {}},
-                                                                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'92%', w:'100%', color:'0088CC', fontSize:10 });
-
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                                                                        { text: maDateTaux3, options: {}}
-                                                                                                                    ],  { x:'75%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Thème : ',  { x:'75%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Format : ',  { x:'75%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numTaux3].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numTaux3].reactions.summary.total_count), options: {}},
-                                                                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numTaux3].comments.summary.total_count == "" ? '0' : listpost.posts.data[numTaux3].comments.summary.total_count), options: {}},
-                                                                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (sharesPostTaux3 == "" ? '0' : sharesPostTaux3), options: {}},
-                                                                                                                        { text: ' Partages', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (clicTaux3 == "" ? '0' : clicTaux3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Clics', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (reachTaux3 == "" ? '0' : reachTaux3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'88%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: taux3.toFixed(2), options: {}},
-                                                                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'92%', w:'100%', color:'0088CC', fontSize:10 });
-
-                                                                                                                slide.addImage({ data:dataUrl12, x:"5%", y:"18%", w:"22%", h:"39%" });
-                                                                                                                slide.addImage({ data:dataUrl3, x:"40%", y:"18%", w:"22%", h:"39%" });
-                                                                                                                slide.addImage({ data:dataUrl4, x:"75%", y:"18%", w:"22%", h:"39%" });
-                                                                                                                
-                                                                                                                
-                                                                                                                //huitième page TOP 3 (personnes atteintes)
-                                                                                                                slide = pptx.addSlide();
-                                                                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
-                                                                                                                slide.addText('TOP 3',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Top reach', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'25%', y:'4%', w:2.5, h:0.3, fill:'0088CC', line:'006699', lineSize:2 , fontSize:15, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                                                                        { text: maDateReach1, options: {}}
-                                                                                                                    ],  { x:'5%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Thème : ',  { x:'5%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Format : ',  { x:'5%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numReach1].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numReach1].reactions.summary.total_count), options: {}},
-                                                                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numReach1].comments.summary.total_count == "" ? '0' : listpost.posts.data[numReach1].comments.summary.total_count), options: {}},
-                                                                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (sharesPostReach1 == "" ? '0' : sharesPostReach1), options: {}},
-                                                                                                                        { text: ' Partages', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (clicReach1 == "" ? '0' : clicReach1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Clics', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (reach1 == "" ? '0' : reach1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'88%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: tauxReach1.toFixed(2), options: {}},
-                                                                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'92%', w:'100%', color:'000000', fontSize:10 });
-
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                                                                        { text: maDateReach2, options: {}}
-                                                                                                                    ],  { x:'40%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Thème : ',  { x:'40%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Format : ',  { x:'40%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numReach2].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numReach2].reactions.summary.total_count), options: {}},
-                                                                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numReach2].comments.summary.total_count == "" ? '0' : listpost.posts.data[numReach2].comments.summary.total_count), options: {}},
-                                                                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (sharesPostReach2 == "" ? '0' : sharesPostReach2), options: {}},
-                                                                                                                        { text: ' Partages', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (clicReach2 == "" ? '0' : clicReach2.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Clics', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (reach2 == "" ? '0' : reach2.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'88%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: tauxReach2.toFixed(2), options: {}},
-                                                                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'92%', w:'100%', color:'000000', fontSize:10 });
-
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                                                                        { text: maDateReach3, options: {}}
-                                                                                                                    ],  { x:'75%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Thème : ',  { x:'75%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Format : ',  { x:'75%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numReach3].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numReach3].reactions.summary.total_count), options: {}},
-                                                                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numReach3].comments.summary.total_count == "" ? '0' : listpost.posts.data[numReach3].comments.summary.total_count), options: {}},
-                                                                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (sharesPostReach3 == "" ? '0' : sharesPostReach3), options: {}},
-                                                                                                                        { text: ' Partages', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (clicReach3 == "" ? '0' : clicReach3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Clics', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (reach3 == "" ? '0' : reach3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'88%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: tauxReach3.toFixed(2), options: {}},
-                                                                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'92%', w:'100%', color:'000000', fontSize:10 });
-
-                                                                                                                slide.addImage({ data:dataUrl5, x:"5%", y:"18%", w:"22%", h:"39%" });
-                                                                                                                slide.addImage({ data:dataUrl6, x:"40%", y:"18%", w:"22%", h:"39%" });
-                                                                                                                slide.addImage({ data:dataUrl7, x:"75%", y:"18%", w:"22%", h:"39%" });
-
-
-                                                                                                                //neuvième page FLOP POST
-                                                                                                                slide = pptx.addSlide();
-                                                                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
-                                                                                                                slide.addText('FLOP POST',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Flop reach', options: {}}
-                                                                                                                    ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'35%', y:'4%', w:2.5, h:0.3, fill:'0088CC', line:'006699', lineSize:2 , fontSize:15, color:'FFFFFF'});
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                                                                        { text: maDateDernierReach1, options: {}}
-                                                                                                                    ],  { x:'5%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Thème : ',  { x:'5%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Format : ',  { x:'5%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numDernierReach1].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numDernierReach1].reactions.summary.total_count), options: {}},
-                                                                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numDernierReach1].comments.summary.total_count == "" ? '0' : listpost.posts.data[numDernierReach1].comments.summary.total_count), options: {}},
-                                                                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (sharesPostDernierReach1 == "" ? '0' : sharesPostDernierReach1), options: {}},
-                                                                                                                        { text: ' Partages', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (clicDernierReach1 == "" ? '0' : clicDernierReach1), options: {}},
-                                                                                                                        { text: ' Clics', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (dernierReach1 == "" ? '0' : dernierReach1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'88%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: tauxDernierReach1.toFixed(2), options: {}},
-                                                                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                                                                    ],  { x:'5%', y:'92%', w:'100%', color:'000000', fontSize:10 });
-
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                                                                        { text: maDateDernierReach2, options: {}}
-                                                                                                                    ],  { x:'40%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Thème : ',  { x:'40%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Format : ',  { x:'40%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numDernierReach2].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numDernierReach2].reactions.summary.total_count), options: {}},
-                                                                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numDernierReach2].comments.summary.total_count == "" ? '0' : listpost.posts.data[numDernierReach2].comments.summary.total_count), options: {}},
-                                                                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (sharesPostDernierReach2 == "" ? '0' : sharesPostDernierReach2), options: {}},
-                                                                                                                        { text: ' Partages', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (clicDernierReach2 == "" ? '0' : clicDernierReach2), options: {}},
-                                                                                                                        { text: ' Clics', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (dernierReach2 == "" ? '0' : dernierReach2.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'88%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: tauxDernierReach2.toFixed(2), options: {}},
-                                                                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                                                                    ],  { x:'40%', y:'92%', w:'100%', color:'000000', fontSize:10 });
-
-                                                                                                                slide.addText([
-                                                                                                                        { text: 'Date du post : ', options: {bold:true}},
-                                                                                                                        { text: maDateDernierReach3, options: {}}
-                                                                                                                    ],  { x:'75%', y:'60%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Thème : ',  { x:'75%', y:'64%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText('Format : ',  { x:'75%', y:'68%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numDernierReach3].reactions.summary.total_count == "" ? '0' : listpost.posts.data[numDernierReach3].reactions.summary.total_count), options: {}},
-                                                                                                                        { text: ' Réactions', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'72%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (listpost.posts.data[numDernierReach3].comments.summary.total_count == "" ? '0' : listpost.posts.data[numDernierReach3].comments.summary.total_count), options: {}},
-                                                                                                                        { text: ' Commentaires', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'76%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (sharesPostDernierReach3 == "" ? '0' : sharesPostDernierReach3), options: {}},
-                                                                                                                        { text: ' Partages', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'80%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (clicDernierReach3 == "" ? '0' : clicDernierReach3), options: {}},
-                                                                                                                        { text: ' Clics', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'84%', w:'100%', color:'000000', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: (dernierReach3 == "" ? '0' : dernierReach3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")), options: {}},
-                                                                                                                        { text: ' Personnes atteintes', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'88%', w:'100%', color:'0088CC', fontSize:10 });
-                                                                                                                slide.addText([
-                                                                                                                        { text: tauxDernierReach3.toFixed(2), options: {}},
-                                                                                                                        { text: '% Taux d\'interaction', options: {bold:true}}
-                                                                                                                    ],  { x:'75%', y:'92%', w:'100%', color:'000000', fontSize:10 });
-
-                                                                                                                slide.addImage({ data:dataUrl8, x:"5%", y:"18%", w:"22%", h:"39%" });
-                                                                                                                slide.addImage({ data:dataUrl9, x:"40%", y:"18%", w:"22%", h:"39%" });
-                                                                                                                slide.addImage({ data:dataUrl10, x:"75%", y:"18%", w:"22%", h:"39%" });
-
-                                                                                                                //dixième page CONCLUSION
-                                                                                                                slide = pptx.addSlide();
-                                                                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
-                                                                                                                slide.addText('CONCLUSION',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-
-                                                                                                                //onxième page CONCLUSION ET RECOMMANDATIONS
-                                                                                                                slide = pptx.addSlide();
-                                                                                                                slide.addImage({ path:img3.src, x:0, y:0, w:10, h:0.8 });
-                                                                                                                slide.addText('CONCLUSION ET RECOMMANDATIONS',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-
-                                                                                                                //douzième page FIN
-                                                                                                                slide = pptx.addSlide();
-                                                                                                                slide.addImage({ path:img4.src, x:0, y:0, w:'100%', h:'100%' });
-                                                                                                                slide.addText('Merci',  { x:'35%', y:'40%', w:3, color:'FFFFFF', align: 'center', fontFace:'Avenir 85 Heavy', fontSize:35 });
-                                                                                                                
-                                                                                                                $("#progress_selectionne").val("100");
-
-                                                                                                                //on enregistre le powerpoint
-                                                                                                                pptx.writeFile('bilan-reporting');
-                                                                                                            }).catch(function (error) {
-                                                                                                                console.error('oops, something went wrong!', error);
-                                                                                                            });
-                                                                                                            //fin du 2eme domtoimage
-                                                                                                            
-                                                                                                        }).catch(function (error) {
-                                                                                                            console.error('oops, something went wrong!', error);
-                                                                                                        });
-                                                                                                        //fin du 1er domtoimage
-                                                                                                    });
-                                                                                                    //fin de html2canvas
-                                                                                                    
-                                                                                                //debut convertion image
-                                                                                                });
-                                                                                            });
-                                                                                        });
-                                                                                    });
-                                                                                });
-                                                                            });
-                                                                        });
-                                                                        
-                                                                    });
-                                                                });
-                                                            });
-                                                            //fin convertion image
-
-                                                            
-                                                            
-                                                            
-                                                        }
-                                                        //fin du if de dernière boucle
-
-
-                                                    }
-                                                }
-                                            ); */
-                                            //fin de l'ajax récupérant les reach etc
-
-                                       /*  } */
-                                   
-
                                         break;
                                 
                                     default: $('#erreur').html(msgErreur('Soucis avec l\'API de Facebook'));

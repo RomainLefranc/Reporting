@@ -1,9 +1,9 @@
 <?php
 
-    /* Dependance de la page */
+    /* Dependances de la page */
     include 'model/m_pagesInsta.php';
     include 'model/m_compteFB.php';
 
-    /* Preparation de la page */
+    /* Récuperation de toutes les comptes Instagram */
     $listePageInsta = getPagesInsta_BDD();
 ?>
