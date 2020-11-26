@@ -68,8 +68,8 @@
                                 $token = getComptesFB( $pageFB['id_comptes']);
                                 echo '
                                     <div class="form-check">
-                                        <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" data-value="'.$token.'" value="'.$pageFB['id'].'">
-                                        <label class="form-check-label">
+                                        <input class="form-check-input position-static" type="checkbox" id="'.$pageFB['nom'].'" data-value="'.$token.'" value="'.$pageFB['id'].'">
+                                        <label for="'.$pageFB['nom'].'" class="form-check-label">
                                         '.$pageFB['nom'].'
                                         </label>
                                     </div>
@@ -82,8 +82,8 @@
                                 $token = getComptesFB( $pageFB['id_comptes']);
                                 echo '
                                     <div class="form-check">
-                                        <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" data-value="'.$token.'" value="'.$pageFB['id'].'">
-                                        <label class="form-check-label">
+                                        <input class="form-check-input position-static" type="checkbox" id="'.$pageFB['nom'].'" data-value="'.$token.'" value="'.$pageFB['id'].'">
+                                        <label for="'.$pageFB['nom'].'" class="form-check-label">
                                         '.$pageFB['nom'].'
                                         </label>
                                     </div>

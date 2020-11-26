@@ -52,8 +52,8 @@
                                     $token = getComptesFB( $pageInsta['id_comptes']);
                                     echo '
                                         <div class="form-check">
-                                            <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" data-value="'.$token.'" value="'.$pageInsta[0].'">
-                                            <label class="form-check-label">
+                                            <input class="form-check-input position-static" type="checkbox" id="'.$pageInsta[1].'" data-value="'.$token.'" value="'.$pageInsta[0].'">
+                                            <label for="'.$pageInsta[1].'" class="form-check-label">
                                             '.$pageInsta[1].'
                                             </label>
                                         </div>';
@@ -65,8 +65,8 @@
                                     $token = getComptesFB( $pageInsta['id_comptes']);
                                     echo '
                                         <div class="form-check">
-                                            <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" data-value="'.$token.'" value="'.$pageInsta[0].'">
-                                            <label class="form-check-label">
+                                            <input class="form-check-input position-static" type="checkbox" id="'.$pageInsta[1].'" data-value="'.$token.'" value="'.$pageInsta[0].'">
+                                            <label for="'.$pageInsta[1].'" class="form-check-label">
                                             '.$pageInsta[1].'
                                             </label>
                                         </div>
