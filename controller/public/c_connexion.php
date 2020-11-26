@@ -2,7 +2,7 @@
 
     include "model/m_utilisateurs.php";
 
-    if (isset($_SESSION['user'])) {
+    if (isset($_SESSION['connecté']) && htmlspecialchars($_SESSION['connecté']) == true) {
         /* Redirection admin */
         header ('location: index.php?a=a'); 
 

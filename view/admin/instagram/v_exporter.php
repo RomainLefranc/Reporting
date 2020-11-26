@@ -229,6 +229,7 @@
                                                 var url =`https://graph.facebook.com/v8.0/${idMedia}/insights?metric=impressions,reach,engagement&access_token=${token}`;
                                                 break;
                                         }
+                                        console.log(url);
                                         $.ajax({
                                             type: "GET",
                                             url: url,
