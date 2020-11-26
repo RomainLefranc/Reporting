@@ -25,6 +25,7 @@ $navigations = array (
     /* API */
     ['action' => "api",   "NiveauAcces" => 0, "controller" => "c_api",                            "view" => "v_api"                  ]
 );
+
 if (isset($_GET["a"])) {
     $actionEstValide = false;
 
