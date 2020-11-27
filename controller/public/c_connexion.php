@@ -12,7 +12,7 @@
         $recaptcha = new \ReCaptcha\ReCaptcha('6LeQn-EZAAAAAJIPWyMdK0NjEGgmIGbIEWti3_Ee');
         $cleCaptcha = htmlspecialchars($_POST['g-recaptcha-response']);
         $resp = $recaptcha->verify($cleCaptcha);
-        
+
         if ($resp->isSuccess()) {
 
             /* Nettoyage des données reçu */
@@ -23,8 +23,8 @@
 
             if (!empty($user) && password_verify($mdp,$user[0]['mdp'])) {
 
-                $_SESSION["reporting_user"] = $user[0]['pseudo'];
                 $_SESSION["reporting_connecté"] = true;
+                $_SESSION["reporting_user"] = $user[0]['pseudo'];
                 /* Redirection admin */
                 header ('location: index.php?a=a');
 

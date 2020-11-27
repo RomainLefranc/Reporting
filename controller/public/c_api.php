@@ -7,6 +7,7 @@
         $idPageInsta = htmlspecialchars($_GET['idPageInsta']);
         $dateDebut = htmlspecialchars($_GET['dateDebut']);
         $dateFin = htmlspecialchars($_GET['dateFin']);
+        
         /* Vérification de la validité de la periode choisi */
         if ($dateDebut < $dateFin) {
             /* Récuperation des stories de la periode pour la page Instagram */
