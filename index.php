@@ -7,14 +7,13 @@ require_once __DIR__ . '/vendor/Facebook/autoload.php';
 /* Tableau de parametrage des route */
 $navigations = array (
     /* Connexion */
-    ['action' => "c",    "acces" => 'private',  "controller" => "c_connexion",                      "view" => "v_connexion"            ],
+    ['action' => "c",    "acces" => 'public',  "controller" => "c_connexion",                      "view" => "v_connexion"            ],
     /* accueil */
     ['action' => "a",    "acces" => 'private',  "controller" => "c_admin",                          "view" => "v_admin"                ],
     /* Connexion Facebook */
     ['action' => "l",    "acces" => 'private',  "controller" => "c_lier",                           "view" => "v_lier"                 ],
     /* Deconnexion */
     ['action' => "d",    "acces" => 'private',  "controller" => "c_deconnexion",                    "view" => ""                       ],
-    
     /* Instagram */
 
         /* Bilan */
@@ -40,6 +39,7 @@ $navigations = array (
         ['action' => "ff",   "acces" => 'private',  "controller" => "facebook/c_facebook_comparatif" ,  "view" => "facebook/v_comparatif"  ],
         /* Rapport */
         ['action' => "fr",   "acces" => 'private',  "controller" => "facebook/c_facebook_rapport" ,     "view" => "facebook/v_rapport"     ],
+    
     
     /* Api */
     ['action' => "api",   "acces" => 'public', "controller" => "c_api",                             "view" => "v_api"                  ]

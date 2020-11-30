@@ -2,7 +2,7 @@
 CREATE DATABASE IF NOT EXISTS nautilusv2 CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 USE nautilusv2;
 
-CREATE TABLE IF NOT EXISTS `users` (
+CREATE TABLE IF NOT EXISTS `reporting_users` (
   `id` int(3) NOT NULL AUTO_INCREMENT,
   `pseudo` varchar(255) NOT NULL,
   `login` varchar(255) NOT NULL,
@@ -10,43 +10,42 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   UNIQUE (login)
 )
-CREATE TABLE IF NOT EXISTS `comptesFB` (
+CREATE TABLE IF NOT EXISTS `reporting_comptesFB` (
   `id` varchar(50) NOT NULL,
   `nom` varchar(50) NOT NULL,
   `jeton` varchar(250) NOT NULL,
   PRIMARY KEY (`id`)
 ) 
-CREATE TABLE IF NOT EXISTS `pagesFB` (
+CREATE TABLE IF NOT EXISTS `reporting_pagesFB` (
   `id` varchar(100) NOT NULL,
   `nom` varchar(50) NOT NULL,
   `id_comptes` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_pagesFB_1` FOREIGN KEY (`id_comptes`) REFERENCES `comptesFB` (`id`)
+  CONSTRAINT `FK_pagesFB_1` FOREIGN KEY (`id_comptes`) REFERENCES `reporting_comptesFB` (`id`)
 )
-CREATE TABLE IF NOT EXISTS `pagesInsta` (
+CREATE TABLE IF NOT EXISTS `reporting_pagesInsta` (
   `id` VARCHAR(17) NOT NULL,
   `nom` varchar(100) NOT NULL,
   `id_pagesFB` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_pagesInsta_1` FOREIGN KEY (`id_pagesFB`) REFERENCES `pagesFB` (`id`)
+  CONSTRAINT `FK_pagesInsta_1` FOREIGN KEY (`id_pagesFB`) REFERENCES `reporting_pagesFB` (`id`)
 )
-CREATE TABLE IF NOT EXISTS `storiesInsta` (
+CREATE TABLE IF NOT EXISTS `reporting_storiesInsta` (
   `id` VARCHAR(17) NOT NULL,
   `id_pagesInsta` VARCHAR(17) NOT NULL,
   `date` DATETIME NOT NULL,
   `impression` INT NOT NULL,
   `reach` INT NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_storiesInsta_1` FOREIGN KEY (`id_pagesInsta`) REFERENCES `pagesInsta` (`id`)
+  CONSTRAINT `FK_storiesInsta_1` FOREIGN KEY (`id_pagesInsta`) REFERENCES `reporting_pagesInsta` (`id`)
 )
 
-INSERT INTO `comptesFB` (`id`,`nom`,`jeton`) VALUES
+INSERT INTO `reporting_comptesFB` (`id`,`nom`,`jeton`) VALUES
 	('10156975604778178', 'Sim On','EAANX4doqDDsBAOBQszs1wRZCIUG5SEQaArSVtofdWwdZA6ivaIvn6JnvaMFfIyHN7AynqP2Sf9gfeSFKXFDGIJEupHBB0wiyZArFt5hIodzJPreTYqZBK4tO7408TQhiiaqc20hJuuYZC6cT0Fjl4xug8CWLb6APtZCWOGYX2jvgZDZD'),
 	('454172598774501', 'Thomas Lemoine','EAANX4doqDDsBAFjo5yb1gPfWzZAQ7TGlzxRVl5CtDilGpYFi9E9kuvzfrFkALgZAE43JiPQiJPilWtvqzV42Lszgkz1X6PbXsK4NeXSI3lwWmuiPCwMDEcdG9oQ6yoApQQysoig3xsDvreLwO6ZCTHZCfeEhjoukj4If7q0ZCq9YPB89s1xhN');
 
-INSERT INTO `users` (`pseudo`, `login`, `mdp`) VALUES
-	('admin','supernautilus', '$2y$10$uzLHCF/52Qhyp2Z7TC7EJOLN3Jow7DaP/aSb4Hdye/l1PZ4ontRaS'),
-	('admin', 'toto', '$2y$10$tP3XL0r1d3qIzSX1ymBpkOBQ0iAh2d1Aea6Xg7PyPDvtLPfvu8xOq');
+INSERT INTO `reporting_users` (`pseudo`, `login`, `mdp`) VALUES
+	('admin','supernautilus', '$2y$10$FIrh1xVegKyuTHSpw9.YdONWhthE/aW8ese1nocGga766IWc28Mme');
 
 INSERT INTO `storiesInsta` (`id`, `id_pagesInsta`, `date`, `impression`, `reach`) VALUES
 	('17849161295425104', '17841415018870083', '2020-11-23 00:59:07', 57, 54),
