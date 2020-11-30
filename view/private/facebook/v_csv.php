@@ -29,7 +29,7 @@
 
         <!-- Sidebar -->
         <?php
-            include 'view/admin/inc/sidebar.php'
+            include 'view/private/inc/sidebar.php'
         ?>
         <!-- End of Sidebar -->
 
@@ -41,7 +41,7 @@
 
                 <!-- Topbar -->
                 <?php
-                    include 'view/admin/inc/navbar.php'
+                    include 'view/private/inc/navbar.php'
                 ?>
                 <!-- End of Topbar -->
 
@@ -394,11 +394,11 @@
     </a>
 
     <?php
-        include 'view/admin/inc/footer.php';
+        include 'view/private/inc/footer.php';
     ?>
     <!-- Logout Modal-->
     <?php
-        include 'view/admin/inc/modalDeconnexion.php'
+        include 'view/private/inc/modalDeconnexion.php'
     ?>
 
     <!-- Bootstrap core JavaScript-->
