@@ -9,27 +9,27 @@ CREATE TABLE IF NOT EXISTS `reporting_users` (
   `mdp` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE (login)
-)
+);
 CREATE TABLE IF NOT EXISTS `reporting_comptesFB` (
   `id` varchar(50) NOT NULL,
   `nom` varchar(50) NOT NULL,
   `jeton` varchar(250) NOT NULL,
   PRIMARY KEY (`id`)
-) 
+) ;
 CREATE TABLE IF NOT EXISTS `reporting_pagesFB` (
   `id` varchar(100) NOT NULL,
   `nom` varchar(50) NOT NULL,
   `id_comptes` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_pagesFB_1` FOREIGN KEY (`id_comptes`) REFERENCES `reporting_comptesFB` (`id`)
-)
+);
 CREATE TABLE IF NOT EXISTS `reporting_pagesInsta` (
   `id` VARCHAR(17) NOT NULL,
   `nom` varchar(100) NOT NULL,
   `id_pagesFB` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_pagesInsta_1` FOREIGN KEY (`id_pagesFB`) REFERENCES `reporting_pagesFB` (`id`)
-)
+);
 CREATE TABLE IF NOT EXISTS `reporting_storiesInsta` (
   `id` VARCHAR(17) NOT NULL,
   `id_pagesInsta` VARCHAR(17) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `reporting_storiesInsta` (
   `reach` INT NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_storiesInsta_1` FOREIGN KEY (`id_pagesInsta`) REFERENCES `reporting_pagesInsta` (`id`)
-)
+);
 
 INSERT INTO `reporting_comptesFB` (`id`,`nom`,`jeton`) VALUES
 	('10156975604778178', 'Sim On','EAANX4doqDDsBAOBQszs1wRZCIUG5SEQaArSVtofdWwdZA6ivaIvn6JnvaMFfIyHN7AynqP2Sf9gfeSFKXFDGIJEupHBB0wiyZArFt5hIodzJPreTYqZBK4tO7408TQhiiaqc20hJuuYZC6cT0Fjl4xug8CWLb6APtZCWOGYX2jvgZDZD'),
@@ -46,20 +46,6 @@ INSERT INTO `reporting_comptesFB` (`id`,`nom`,`jeton`) VALUES
 
 INSERT INTO `reporting_users` (`pseudo`, `login`, `mdp`) VALUES
 	('admin','supernautilus', '$2y$10$FIrh1xVegKyuTHSpw9.YdONWhthE/aW8ese1nocGga766IWc28Mme');
-
-INSERT INTO `reporting_storiesInsta` (`id`, `id_pagesInsta`, `date`, `impression`, `reach`) VALUES
-	('17849161295425104', '17841415018870083', '2020-11-23 00:59:07', 57, 54),
-	('17862494768224345', '17841415018870083', '2020-11-23 00:53:29', 56, 53),
-	('17872686113016540', '17841415018870083', '2020-11-22 05:35:20', 55, 43),
-	('17884933927815827', '17841415018870083', '2020-11-23 00:55:46', 53, 50),
-	('17885612953791121', '17841415018870083', '2020-11-21 21:19:07', 43, 37),
-	('17917244245499953', '17841415018870083', '2020-11-21 21:15:28', 23, 23),
-	('17938147369419867', '17841415018870083', '2020-11-23 00:56:53', 54, 51),
-	('17967719377346129', '17841415018870083', '2020-11-21 21:20:27', 21, 21),
-	('17978282788324925', '17841415018870083', '2020-11-23 00:56:29', 61, 53),
-	('18116877166165850', '17841415018870083', '2020-11-23 00:58:55', 49, 47),
-	('18159198037079869', '17841415018870083', '2020-11-23 01:03:49', 54, 51),
-	('18176287696032609', '17841415018870083', '2020-11-21 21:23:11', 30, 30);
 
 INSERT INTO `reporting_pagesFB` (`id`, `nom`, `id_comptes`) VALUES
 	('106656610804614', 'Double Test', '454172598774501'),

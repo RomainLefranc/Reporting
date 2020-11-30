@@ -14,7 +14,7 @@ function ajouterPageInsta($idPageFB,$idPageInsta,$nomPageInsta){
 }
 function getPagesInsta_BDD(){
     global $pdo;
-    $requete = $pdo->prepare("SELECT * FROM reporting_pagesInsta INNER JOIN pagesFB ON pagesInsta.id_pagesFB = pagesFB.id");
+    $requete = $pdo->prepare("SELECT * FROM reporting_pagesInsta INNER JOIN reporting_pagesFB ON reporting_pagesInsta.id_pagesFB = reporting_pagesFB.id");
     $requete->execute();
     $resultat = $requete->fetchall();
     return $resultat;
