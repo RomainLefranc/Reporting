@@ -19,7 +19,7 @@
             $id = htmlspecialchars($_POST['id']);
             $mdp = htmlspecialchars($_POST['mdp']);
             /* Récuperation de l'utilisateur */
-            $user = getUsers($id);
+            $user = getUser($id);
 
             if (!empty($user) && password_verify($mdp,$user[0]['mdp'])) {
 

@@ -12,7 +12,7 @@
                 date, 
                 impression, 
                 reach
-                FROM storiesInsta 
+                FROM reporting_storiesInsta 
                 WHERE id_pagesInsta = :id_pagesInsta AND date BETWEEN :dateDebut AND :dateFin
                 ORDER BY date
         ');

@@ -299,7 +299,7 @@
                                 /* Récuperation de tout les storie Instagram pendant la periode */
                                 $.ajax({
                                     type: "GET",
-                                    url: `https://localhost/Projet_Reporting_v2/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${tabMois[0].dateSince}&dateFin=${tabMois[2].dateUntil}`,
+                                    url: `https://reporting.nautilus.fr/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${tabMois[0].dateSince}&dateFin=${tabMois[2].dateUntil}`,
                                     async: false,
                                     dataType: "json",
                                     success: function (response) {

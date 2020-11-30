@@ -47,7 +47,7 @@ INSERT INTO `reporting_comptesFB` (`id`,`nom`,`jeton`) VALUES
 INSERT INTO `reporting_users` (`pseudo`, `login`, `mdp`) VALUES
 	('admin','supernautilus', '$2y$10$FIrh1xVegKyuTHSpw9.YdONWhthE/aW8ese1nocGga766IWc28Mme');
 
-INSERT INTO `storiesInsta` (`id`, `id_pagesInsta`, `date`, `impression`, `reach`) VALUES
+INSERT INTO `reporting_storiesInsta` (`id`, `id_pagesInsta`, `date`, `impression`, `reach`) VALUES
 	('17849161295425104', '17841415018870083', '2020-11-23 00:59:07', 57, 54),
 	('17862494768224345', '17841415018870083', '2020-11-23 00:53:29', 56, 53),
 	('17872686113016540', '17841415018870083', '2020-11-22 05:35:20', 55, 43),
@@ -61,7 +61,7 @@ INSERT INTO `storiesInsta` (`id`, `id_pagesInsta`, `date`, `impression`, `reach`
 	('18159198037079869', '17841415018870083', '2020-11-23 01:03:49', 54, 51),
 	('18176287696032609', '17841415018870083', '2020-11-21 21:23:11', 30, 30);
 
-INSERT INTO `pagesFB` (`id`, `nom`, `id_comptes`) VALUES
+INSERT INTO `reporting_pagesFB` (`id`, `nom`, `id_comptes`) VALUES
 	('106656610804614', 'Double Test', '454172598774501'),
 	('106713080776694', 'Test', '454172598774501'),
 	('112020496873982', 'Khalass King', '454172598774501'),

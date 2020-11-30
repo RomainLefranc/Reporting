@@ -28,11 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     global $pdo;
     $requete = $pdo->prepare("
         INSERT 
-            INTO storiesInsta (
-                id, 
-                id_pagesInsta, 
+            INTO reporting_storiesInsta (
+                id,
+                id_pagesInsta,
                 date, 
-                impression, 
+                impression,
                 reach
             )
             VALUES (
