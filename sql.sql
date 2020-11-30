@@ -1,6 +1,6 @@
 
-CREATE DATABASE IF NOT EXISTS nautilusv2 CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
-USE nautilusv2;
+CREATE DATABASE IF NOT EXISTS reporting_nautilus CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+USE reporting_nautilus;
 
 CREATE TABLE IF NOT EXISTS `reporting_users` (
   `id` int(3) NOT NULL AUTO_INCREMENT,
