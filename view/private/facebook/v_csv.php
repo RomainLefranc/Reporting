@@ -95,6 +95,7 @@
 
                     <script>
                     //a chaque changement de mes select dans mon formulaire, on execute la fonction
+                    
                     $("#cmd2").click(function () {
 
                         //on récupère l'id de la page en value
