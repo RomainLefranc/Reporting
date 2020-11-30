@@ -46,8 +46,7 @@
     <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
 
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-
-
+    
 </head>
 
 <body id="page-top">
