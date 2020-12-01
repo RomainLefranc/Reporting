@@ -13,7 +13,6 @@
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="js/script.js"></script>
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -78,7 +77,7 @@
 
                     <div id="erreur"></div>
 
-                    <div id="result" class="container row" style="max-width: initial;"></div>
+                    <div id="result" class="row mt-2" style="max-width: initial;"></div>
 
                     <script>
                         //a chaque changement de mes select dans mon formulaire, on execute la fonction
@@ -103,6 +102,8 @@
                                 function (data, textStatus) {
                                     switch (textStatus) {
                                         case 'success':
+                                            console.log(data);
+
                                             var nbPost = 0;
                                             data.posts.data.forEach(post => {
                                                 var datePost = new Date(post.created_time);
@@ -172,6 +173,9 @@
                                                     });
                                                 }
                                             });
+                                            if (nbPost == 0) {
+                                                $('#erreur').html(msgErreur('Aucun post pour cette periode, veuillez choisir une date plus ancienne'));
+                                            }
                                             break;
                                     
                                         default:
