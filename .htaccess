@@ -1,6 +1,4 @@
-ErrorDocument 404 /index.php?error=404
-ErrorDocument 403 /index.php?error=403
-ErrorDocument 500 /index.php?error=500
+
 # Disable directory browsing 
 Options -Indexes
 # Deny access to .htaccess
