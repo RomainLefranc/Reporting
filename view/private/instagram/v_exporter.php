@@ -195,16 +195,20 @@
                                 tabMois[index].dateFin = dateFin;
                                 tabMois[index].dateUntil = dateUntil;
                             }
+
                             var tabDateMedia = [];
                             var TabLikeMedia = [];
                             var trimestre = [];
                             var tabPost = [];
+                            var tabStorie = [];
 
                             var nbMediaTrimestre = 0;
+                            var nbStoriesTrimestre = 0;
                             var totalInteractionTrimestre = 0;
                             var totalReachTrimestre = 0
                             var totalImpressionTrimestre = 0;
-
+                            var totalFollowerGagneTrimestre = 0;
+                            var totalReachStorieTrimestre = 0;
                             tabMois.forEach((mois,index) => {
                                 $.ajax({
                                     type: "GET",
@@ -282,36 +286,50 @@
                                         var followergagneMensuel = 0;
                                         response.data[0].values.forEach(element => {
                                             followergagneMensuel += element.value
-                                            trimestre.totalFollowerGagne += element.value
+                                            totalFollowerGagneTrimestre += element.value
                                         });
                                         mois.totalFollowerGagneMensuel = followergagneMensuel; 
+                                    }
+                                });
+                                $.ajax({
+                                    type: "GET",
+                                    url: `https://reporting.nautilus.fr/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${mois.dateSince}&dateFin=${mois.dateUntil}`,
+                                    async: false,
+                                    dataType: "json",
+                                    success: function (response) {
+                                        var nbStorieMois = 0;
+                                        var totalreachMois = 0;
+                                        response.resultat.stories.forEach(storie => {
+                                            nbStoriesTrimestre++;
+                                            nbStorieMois++;
+                                            totalreachMois += storie.reach;
+                                            totalReachStorieTrimestre += storie.reach;
+                                            storie.date = new Date(storie.date);
+                                            storie.date = formatterDate(storie.date);
+                                            tabStorie.push(storie);
+                                        });
+                                        mois.nbStorie = nbStorieMois;
+                                        mois.personneAtteintesMoyen = (totalreachMois/nbStorieMois).toFixed(2);
+                                        mois.totalreach = totalreachMois
                                     }
                                 });
                             });
                             if (nbMediaTrimestre == 0) {
                                 $('#erreur').html(msgErreur('Aucun post trouvé dans cet periode'));
                             } else {
+                                if (nbStoriesTrimestre == 0) {
+                                    trimestre.ReachStoriesMoyen = 0
+                                } else {
+                                    trimestre.ReachStoriesMoyen = (totalReachStorieTrimestre/nbStoriesTrimestre).toFixed(0);
+                                }
                                 trimestre.nbMedia = nbMediaTrimestre;
                                 trimestre.totalInteraction = totalInteractionTrimestre;
                                 trimestre.totalReach = totalReachTrimestre;
                                 trimestre.totalImpression = totalImpressionTrimestre;
-                                trimestre.totalFollowerGagne = 0;
-                                var tabStorie = [];
-                                /* Récuperation de tout les storie Instagram pendant la periode */
-                                $.ajax({
-                                    type: "GET",
-                                    url: `https://reporting.nautilus.fr/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${tabMois[0].dateSince}&dateFin=${tabMois[2].dateUntil}`,
-                                    async: false,
-                                    dataType: "json",
-                                    success: function (response) {
-                                        response.resultat.stories.forEach(storie => {
-                                            
-                                            storie.date = new Date(storie.date);
-                                            storie.date = formatterDate(storie.date);
-                                            tabStorie.push(storie);
-                                        });
-                                    }
-                                });
+                                trimestre.totalFollowerGagne = totalFollowerGagneTrimestre;
+                                trimestre.nbStories = nbStoriesTrimestre;
+                                trimestre.totalReachStories = totalReachStorieTrimestre;
+
                                 $("#progress_bar").val("10");
 
                                 /* Tri du tableau des post pour avoir le top 3 des post en taux d'interaction */
@@ -601,24 +619,40 @@
                                             slide.addText([
                                                 { text:  ((donneesPowerPoint.trimestre.totalInteraction/donneesPowerPoint.trimestre.totalReach)*100).toFixed(2) + ' %', options: {bold:true, fontSize:12}},
                                                 { text: ' Taux d\'interaction moyen', options: {}}
-                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'15%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'6%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                             slide.addText([
                                                 { text: donneesPowerPoint.trimestre.totalFollowerGagne.toLocaleString(), options: {bold:true, fontSize:12}},
                                                 { text: ' abonnés gagné', options: {}}
-                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'30%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'17%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                             slide.addText([
                                                 { text:  donneesPowerPoint.trimestre.nbMedia.toLocaleString(), options: {bold:true, fontSize:12}},
                                                 { text: ' posts', options: {}}
-                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'45%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'28%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                             slide.addText([
                                                 { text: donneesPowerPoint.trimestre.totalInteraction.toLocaleString(), options: {bold:true, fontSize:12}},
                                                 { text: ' interactions soit une moyenne de ', options: {}},
                                                 { text: (donneesPowerPoint.trimestre.totalInteraction/donneesPowerPoint.trimestre.nbMedia).toFixed(0) + '/post', options: {bold:true}}
-                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'60%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'39%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                             slide.addText([
                                                 { text: donneesPowerPoint.trimestre.totalReach.toLocaleString(), options: {bold:true, fontSize:12}},
                                                 { text: ' reach total posts', options: {}}
-                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'75%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'50%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                            
+                                            slide.addText([
+                                                { text: donneesPowerPoint.trimestre.nbStories.toLocaleString(), options: {bold:true, fontSize:12}},
+                                                { text: ' stories', options: {}}
+                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'61%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+
+                                            slide.addText([
+                                                { text: donneesPowerPoint.trimestre.ReachStoriesMoyen.toLocaleString(), options: {bold:true, fontSize:12}},
+                                                { text: ' personnes atteintes par story', options: {}}
+                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'72%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                            
+                                            slide.addText([
+                                                { text: donneesPowerPoint.trimestre.totalReachStories.toLocaleString(), options: {bold:true, fontSize:12}},
+                                                { text: ' reach total stories', options: {}}
+                                            ], { shape:pptx.shapes.RECTANGLE, align:'center', x:'83%', y:'80%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                            
                                             slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                             slide.addText('LE COMPTE INSTAGRAM',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
                                             slide.addImage({ path:screenPage, x:"18%", y:"18%", w:"64%", h:"55%" });
@@ -627,7 +661,7 @@
                                             slide = pptx.addSlide();
                                             slide.addImage({ path:header, x:0, y:0, w:10, h:0.8 });
                                             slide.addText('CHIFFRES CLES',  { x:'9%', y:'7%', w:'100%', color:'FFFFFF', fontFace:'Avenir 85 Heavy', fontSize:25 });
-                                            var posXShape = 15
+                                            var posXShape = 6
                                             var posYShape = 25
                                             var posXTitre = 5;
                                             var posYTitre = 18;
@@ -638,17 +672,17 @@
                                                     { text: donneesPowerPoint.mois[index].tauxInteraction + ' %', options: {bold:true, fontSize:12}},
                                                     { text: ' Taux d\'interaction', options: {}}
                                                 ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                posXShape += 15
+                                                posXShape += 11
                                                 slide.addText([
                                                     { text: donneesPowerPoint.mois[index].totalFollowerGagneMensuel.toString(), options: {bold:true, fontSize:12}},
                                                     { text: ' abonnés gagné', options: {}}
                                                 ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                posXShape += 15
+                                                posXShape += 11
                                                 slide.addText([
                                                     { text: donneesPowerPoint.mois[index].nbMediaMensuel.toString(), options: {bold:true, fontSize:12}},
                                                     { text: ' posts', options: {}}
                                                 ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape +'%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                posXShape += 15
+                                                posXShape += 11
                                                 if (donneesPowerPoint.mois[index].nbMediaMensuel == 0) {
                                                     slide.addText([
                                                         { text: donneesPowerPoint.mois[index].totalInteractionMensuel.toString(), options: {bold:true, fontSize:12}},
@@ -661,12 +695,30 @@
                                                         { text: Math.round(donneesPowerPoint.mois[index].totalInteractionMensuel / donneesPowerPoint.mois[index].nbMediaMensuel).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + '/post', options: {bold:true}}
                                                     ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                 }
-                                                posXShape += 15
+                                                posXShape += 11
                                                 slide.addText([
                                                     { text: donneesPowerPoint.mois[index].totalReachMensuel.toString(), options: {bold:true, fontSize:12}},
                                                     { text: ' reach total posts', options: {}}
                                                 ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
-                                                posXShape = 15;
+                                                posXShape += 11
+                                                slide.addText([
+                                                    { text: donneesPowerPoint.mois[index].nbStorie.toString(), options: {bold:true, fontSize:12}},
+                                                    { text: ' stories', options: {}}
+                                                ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+                                                
+                                                posXShape += 11
+                                                slide.addText([
+                                                    { text: donneesPowerPoint.mois[index].personneAtteintesMoyen.toString(), options: {bold:true, fontSize:12}},
+                                                    { text: ' personnes atteintes / story en moyenne', options: {}}
+                                                ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+
+                                                posXShape += 11
+                                                slide.addText([
+                                                    { text: donneesPowerPoint.mois[index].totalreach.toString(), options: {bold:true, fontSize:12}},
+                                                    { text: ' reach total stories', options: {}}
+                                                ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
+
+                                                posXShape = 6;
                                                 posYShape += 27;
 
                                             }
