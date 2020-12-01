@@ -309,7 +309,12 @@
                                             tabStorie.push(storie);
                                         });
                                         mois.nbStorie = nbStorieMois;
-                                        mois.personneAtteintesMoyen = (totalreachMois/nbStorieMois).toFixed(2);
+                                        if (nbStorieMois ==) {
+                                            mois.personneAtteintesMoyen = 0
+
+                                        } else {
+                                            mois.personneAtteintesMoyen = (totalreachMois/nbStorieMois).toFixed(2);
+                                        }
                                         mois.totalreach = totalreachMois
                                     }
                                 });
