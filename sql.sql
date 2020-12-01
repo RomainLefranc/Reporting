@@ -1,35 +1,36 @@
 
-CREATE DATABASE IF NOT EXISTS reporting_nautilus CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
-USE reporting_nautilus;
-
 CREATE TABLE IF NOT EXISTS `reporting_users` (
   `id` int(3) NOT NULL AUTO_INCREMENT,
-  `pseudo` varchar(255) NOT NULL,
-  `login` varchar(255) NOT NULL,
-  `mdp` varchar(255) NOT NULL,
+  `pseudo` varchar(191) NOT NULL,
+  `login` varchar(191) NOT NULL,
+  `mdp` varchar(191) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE (login)
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
 CREATE TABLE IF NOT EXISTS `reporting_comptesFB` (
   `id` varchar(50) NOT NULL,
   `nom` varchar(50) NOT NULL,
   `jeton` varchar(250) NOT NULL,
   PRIMARY KEY (`id`)
-) ;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
 CREATE TABLE IF NOT EXISTS `reporting_pagesFB` (
   `id` varchar(100) NOT NULL,
   `nom` varchar(50) NOT NULL,
   `id_comptes` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_pagesFB_1` FOREIGN KEY (`id_comptes`) REFERENCES `reporting_comptesFB` (`id`)
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
 CREATE TABLE IF NOT EXISTS `reporting_pagesInsta` (
   `id` VARCHAR(17) NOT NULL,
   `nom` varchar(100) NOT NULL,
   `id_pagesFB` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_pagesInsta_1` FOREIGN KEY (`id_pagesFB`) REFERENCES `reporting_pagesFB` (`id`)
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
 CREATE TABLE IF NOT EXISTS `reporting_storiesInsta` (
   `id` VARCHAR(17) NOT NULL,
   `id_pagesInsta` VARCHAR(17) NOT NULL,
@@ -38,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `reporting_storiesInsta` (
   `reach` INT NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_storiesInsta_1` FOREIGN KEY (`id_pagesInsta`) REFERENCES `reporting_pagesInsta` (`id`)
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 INSERT INTO `reporting_comptesFB` (`id`,`nom`,`jeton`) VALUES
 	('10156975604778178', 'Sim On','EAANX4doqDDsBAOBQszs1wRZCIUG5SEQaArSVtofdWwdZA6ivaIvn6JnvaMFfIyHN7AynqP2Sf9gfeSFKXFDGIJEupHBB0wiyZArFt5hIodzJPreTYqZBK4tO7408TQhiiaqc20hJuuYZC6cT0Fjl4xug8CWLb6APtZCWOGYX2jvgZDZD'),

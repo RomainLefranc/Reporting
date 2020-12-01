@@ -115,18 +115,7 @@
                                 $imgPageFB = $pageFB['picture']['data']['url'];
                                 $listePageFBrecupere.= "<img src='" . $imgPageFB . "' width='25' height='25' style='border-radius:30px'> ".$nomPageFB.'<br>';
                         
-                                /* $json = file_get_contents('https://graph.facebook.com/v8.0/'.$pageFB['id'].'?fields=instagram_business_account&access_token='.$token);
-                                $parsed_json = json_decode($json, true);
-                                $pageInsta = $parsed_json = json_decode($json, true);
-                    
-                                if (array_key_exists('instagram_business_account', $pageInsta)) {
-                                    $idPageInsta = $pageInsta['instagram_business_account']['id'];
-                                    $json = file_get_contents('https://graph.facebook.com/v3.2/'.$idPageInsta.'?fields=name,profile_picture_url&access_token='.$token);
-                                    $parsed_json = json_decode($json, true);
-                                    $nomPageInsta = $parsed_json['name'];
-                                    $imgPageInsta = $parsed_json['profile_picture_url'];
-                                    $listePageInstarecupere.= "<img src='" . $imgPageInsta . "' width='25' height='25' style='border-radius:30px'> ".$nomPageInsta.'<br>';
-                                } */
+                                
                     
                                 $listepagesFB_BDD = getPagesFB_BDD();
                                 $trouve = false;
@@ -136,21 +125,34 @@
                                         $trouve = true;
                                     }
                                 }
+                                
                                 //si la page de l'utilisateur n'a pas été trouvé, on l'ajoute
-                                /* if(!$trouve){
+                                if(!$trouve){
                                     ajouterPageFB($idPageFB,$nomPageFB,$user['id']);
                                 }
-                        
-                                $listepagesInsta_BDD = getPagesInsta_BDD();
-                                $trouve = false;
-                                foreach ($listepagesInsta_BDD as $pageInsta_BDD) {
-                                    if ($pageInsta_BDD[0] == $idPageInsta) {
-                                        $trouve = true;
+                                $json = file_get_contents('https://graph.facebook.com/v8.0/'.$pageFB['id'].'?fields=instagram_business_account&access_token='.$token);
+                                $parsed_json = json_decode($json, true);
+                                $pageInsta = $parsed_json = json_decode($json, true);
+                                
+                                if (array_key_exists('instagram_business_account', $pageInsta)) {
+                                    $idPageInsta = $pageInsta['instagram_business_account']['id'];
+                                    $json = file_get_contents('https://graph.facebook.com/v3.2/'.$idPageInsta.'?fields=name,profile_picture_url&access_token='.$token);
+                                    $parsed_json = json_decode($json, true);
+                                    $nomPageInsta = $parsed_json['name'];
+                                    $imgPageInsta = $parsed_json['profile_picture_url'];
+                                    $listePageInstarecupere.= "<img src='" . $imgPageInsta . "' width='25' height='25' style='border-radius:30px'> ".$nomPageInsta.'<br>';
+                                    
+                                    $listepagesInsta_BDD = getPagesInsta_BDD();
+                                    $trouve = false;
+                                    foreach ($listepagesInsta_BDD as $pageInsta_BDD) {
+                                        if ($pageInsta_BDD[0] == $idPageInsta) {
+                                            $trouve = true;
+                                        }
+                                    }
+                                    if(!$trouve){
+                                        ajouterPageInsta($idPageFB,$idPageInsta,$nomPageInsta);
                                     }
                                 }
-                                if(!$trouve){
-                                    ajouterPageInsta($idPageFB,$idPageInsta,$nomPageInsta);
-                                } */
                             }
                             echo $listePageFBrecupere;
                             echo '<br>';

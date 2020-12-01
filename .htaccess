@@ -1,0 +1,31 @@
+ErrorDocument 404 /index.php?error=404
+ErrorDocument 403 /index.php?error=403
+ErrorDocument 500 /index.php?error=500
+# Disable directory browsing 
+Options -Indexes
+# Deny access to .htaccess
+<Files .htaccess>
+Order allow,deny
+Deny from all
+</Files>
+# Deny access to files with extensions .php
+<FilesMatch "\.php$">
+Order allow,deny
+Deny from all
+
+</FilesMatch>
+# Deny access to .htaccess
+<Files index.php>
+Order allow,deny
+Allow from all
+</Files>
+
+<Files *.gz>
+Order allow,deny
+Deny from all
+</Files>
+
+<Files *.sql>
+Order allow,deny
+Deny from all
+</Files>

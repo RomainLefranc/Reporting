@@ -36,10 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 reach
             )
             VALUES (
-                :id, 
-                :id_pagesInsta, 
-                :date, 
-                :impression, 
+                :id,
+                :id_pagesInsta,
+                :date,
+                :impression,
                 :reach
             )
     ");
