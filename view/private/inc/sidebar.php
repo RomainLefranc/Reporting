@@ -33,8 +33,8 @@
                 <a class="collapse-item" href="index.php?a=fr">Rapport</a>
                 <a class="collapse-item" href="index.php?a=ff">Fan et Followers</a>
                 <a class="collapse-item" href="index.php?a=fb">Bilan</a>
-                <a class="collapse-item" href="index.php?a=fe">Exporter</a>
-                <a class="collapse-item" href="index.php?a=fcsv">CSV</a>
+                <a class="collapse-item" href="index.php?a=fe">Export PPTX</a>
+                <a class="collapse-item" href="index.php?a=fcsv">Export CSV</a>
             </div>
         </div>
     </li>
@@ -50,8 +50,8 @@
                 <a class="collapse-item" href="index.php?a=ir">Rapport</a>
                 <a class="collapse-item" href="index.php?a=if">Fan et Followers</a>
                 <a class="collapse-item" href="index.php?a=ib">Bilan</a>
-                <a class="collapse-item" href="index.php?a=ie">Exporter</a>
-                <a class="collapse-item" href="index.php?a=icsv">CSV</a>
+                <a class="collapse-item" href="index.php?a=ie">Export PPTX</a>
+                <a class="collapse-item" href="index.php?a=icsv">Export CSV</a>
             </div>
         </div>
     </li>

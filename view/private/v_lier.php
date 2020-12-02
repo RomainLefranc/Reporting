@@ -85,12 +85,12 @@
                             $user = $response->getGraphUser();
                             //on récupère toutes les pages que l'utilisateur connecté nous a autorisé à ajouter
                             $json = file_get_contents('https://graph.facebook.com/v4.0/' . $user['id'] . '/accounts?fields=access_token,name,picture&access_token='. $token);
+                            
                             $listePageFB = $parsed_json = json_decode($json, true);
                             $listePageFB = $listePageFB['data'];
-                            
                             $listeComptesFB = getListeComptesFB();
                             $compteFBtrouver = false;
-                    
+                            
                             foreach ($listeComptesFB as $compteFB) {
                                 if ($compteFB['id'] == $user['id']) {
                                     $compteFBtrouver = true;
@@ -108,15 +108,24 @@
                             echo "<h2>Voici la liste des pages récupérées :</h2>"; 
                             $listePageFBrecupere = 'Facebook :<br/>';
                             $listePageInstarecupere = 'Instagram :<br/>';
-
+                            function httpPost($url, $data) {
+                                $curl = curl_init($url);
+                                curl_setopt($curl, CURLOPT_POST, true);
+                                curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
+                                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                                $response = curl_exec($curl);
+                                curl_close($curl);
+                                return $response;
+                            }
                             foreach ($listePageFB as $pageFB) {
                                 $nomPageFB = $pageFB['name'];
                                 $idPageFB = $pageFB['id'];
                                 $imgPageFB = $pageFB['picture']['data']['url'];
+                                $tokenPageFB = $pageFB['access_token'];
                                 $listePageFBrecupere.= "<img src='" . $imgPageFB . "' width='25' height='25' style='border-radius:30px'> ".$nomPageFB.'<br>';
-                        
                                 
-                    
+                                $json = httpPost('https://graph.facebook.com/v9.0/'.$idPageFB.'/subscribed_apps?subscribed_fields=feed&access_token='.$tokenPageFB,[]);
+
                                 $listepagesFB_BDD = getPagesFB_BDD();
                                 $trouve = false;
                                 foreach ($listepagesFB_BDD as $pageFB_BDD) {
