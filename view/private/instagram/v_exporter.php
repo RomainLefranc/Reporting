@@ -298,6 +298,7 @@
                                     async: false,
                                     dataType: "json",
                                     success: function (response) {
+                                        console.log(response);
                                         var nbStorieMois = 0;
                                         var totalreachMois = 0;
                                         response.resultat.stories.forEach(storie => {
@@ -585,6 +586,7 @@
                                 donneesPowerPoint.top3FlopReach = flopReach;
                                 donneesPowerPoint.storieInsta = tabStorie;
                                 donneesPowerPoint.top3ReachStories = top3ReachStories;
+                                console.log(donneesPowerPoint);
                                 $("#progress_bar").val("70");
 
                                 /* Création du powerpoint */
@@ -673,28 +675,28 @@
                                                 slide.addText(mois.mois,  { x:posXTitre + '%', y:posYTitre + '%', w:'100%', color:'000000', fontSize:18 });
                                                 posYTitre+= 27;
                                                 slide.addText([
-                                                    { text: mois.tauxInteraction + ' %', options: {bold:true, fontSize:12}},
+                                                    { text: mois.tauxInteraction.toLocaleString() + ' %', options: {bold:true, fontSize:12}},
                                                     { text: ' Taux d\'interaction', options: {}}
                                                 ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                 posXShape += 11
                                                 slide.addText([
-                                                    { text: mois.totalFollowerGagneMensuel.toString(), options: {bold:true, fontSize:12}},
+                                                    { text: mois.totalFollowerGagneMensuel.toLocaleString(), options: {bold:true, fontSize:12}},
                                                     { text: ' abonnés gagné', options: {}}
                                                 ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                 posXShape += 11
                                                 slide.addText([
-                                                    { text: mois.nbMediaMensuel.toString(), options: {bold:true, fontSize:12}},
+                                                    { text: mois.nbMediaMensuel.toLocaleString(), options: {bold:true, fontSize:12}},
                                                     { text: ' posts', options: {}}
                                                 ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape +'%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                 posXShape += 11
                                                 if (mois.nbMediaMensuel == 0) {
                                                     slide.addText([
-                                                        { text: mois.totalInteractionMensuel.toString(), options: {bold:true, fontSize:12}},
+                                                        { text: mois.totalInteractionMensuel.toLocaleString(), options: {bold:true, fontSize:12}},
                                                         { text: ' interactions', options: {}},
                                                     ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
                                                 } else {
                                                     slide.addText([
-                                                        { text: mois.totalreach, options: {bold:true, fontSize:12}},
+                                                        { text: mois.totalInteractionMensuel.toLocaleString(), options: {bold:true, fontSize:12}},
                                                         { text: ' interactions soit une moyenne de ', options: {}},
                                                         { text: Math.round(mois.totalInteractionMensuel / mois.nbMediaMensuel).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + '/post', options: {bold:true}}
                                                     ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});
