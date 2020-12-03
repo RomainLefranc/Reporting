@@ -211,6 +211,7 @@
                             var totalReachStorieTrimestre = 0;
 
                             tabMois.forEach((mois,index) => {
+                                /* Récuperation des posts */
                                 $.ajax({
                                     type: "GET",
                                     async: false,
@@ -278,6 +279,7 @@
                                         } 
                                     }
                                 });
+                                /* Récuperation du nombre de follower gagné */
                                 $.ajax({
                                     type: "GET",
                                     async: false,
@@ -292,9 +294,10 @@
                                         mois.totalFollowerGagneMensuel = followergagneMensuel; 
                                     }
                                 });
+                                /* Récuperation des stories */
                                 $.ajax({
                                     type: "GET",
-                                    url: `https://reporting.nautilus.fr/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${mois.dateSince}&dateFin=${mois.dateUntil}`,
+                                    url: `https://localhost/Projet_reporting_v2/index.php?a=API&idPageInsta=${idPageInsta}&dateDebut=${mois.dateSince}&dateFin=${mois.dateUntil}`,
                                     async: false,
                                     dataType: "json",
                                     success: function (response) {
@@ -304,8 +307,8 @@
                                         response.resultat.stories.forEach(storie => {
                                             nbStoriesTrimestre++;
                                             nbStorieMois++;
-                                            totalreachMois += storie.reach;
-                                            totalReachStorieTrimestre += storie.reach;
+                                            totalreachMois += parseInt(storie.reach);
+                                            totalReachStorieTrimestre += parseInt(storie.reach;
                                             storie.date = new Date(storie.date);
                                             storie.date = formatterDate(storie.date);
                                             tabStorie.push(storie);
@@ -315,7 +318,7 @@
                                             mois.personneAtteintesMoyen = 0
 
                                         } else {
-                                            mois.personneAtteintesMoyen = (totalreachMois/nbStorieMois).toFixed(2);
+                                            mois.personneAtteintesMoyen = Math.round(totalreachMois/nbStorieMois);
                                         }
                                         mois.totalreach = totalreachMois
                                     }
