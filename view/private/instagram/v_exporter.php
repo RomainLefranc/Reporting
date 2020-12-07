@@ -904,7 +904,7 @@
                                                                         { text: ' personnes atteintes', options: {bold:true}}
                                                                     ],  { x:posXText + '%', y: posYText + '%', w:'100%', color:'0088CC', fontSize:10 });
                                                                 slide.addText([
-                                                                    { text: ((tabPost[numMedia-1].interaction/tabPost[numMedia-1].reach)*100).toFixed(2), options: {}},
+                                                                    { text: tabPost[numMedia-1].TauxInteraction, options: {}},
                                                                     { text: ' % Taux d\'interaction', options: {bold:true}}
                                                                 ],  { x:posXText + '%', y:(posYText + 5) +'%', w:'100%', color:'000000', fontSize:10 }); 
                                                             }
