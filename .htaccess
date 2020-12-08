@@ -9,7 +9,7 @@ Deny from all
 # Deny access to files with extensions .php
 <FilesMatch "\.php$">
 Order allow,deny
-Deny from all
+Deny from all 
 
 </FilesMatch>
 # Deny access to .htaccess
@@ -26,4 +26,9 @@ Deny from all
 <Files *.sql>
 Order allow,deny
 Deny from all
+</Files>
+
+<Files webhook.php>
+Order allow,deny
+Allow from all
 </Files>
