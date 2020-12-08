@@ -63,6 +63,15 @@
     <li class="nav-item">
         <a class="nav-link" href="index.php?a=l"><i class="fas fa-fw fa-chart-area"></i><span>Lier un compte</span></a>
     </li>
+    <?php
+    if ($username == "Administrateur") {
+        echo '
+            <li class="nav-item">
+                <a class="nav-link" href="index.php?a=ga"><i class="fas fa-fw fa-chart-area"></i><span>Administration</span></a>
+            </li>
+        ';
+    }
+    ?>
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
     <!-- Sidebar Toggler (Sidebar) -->

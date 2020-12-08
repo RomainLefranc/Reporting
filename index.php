@@ -42,7 +42,10 @@ $navigations = array (
     
     
     /* Api */
-    ['action' => "api",   "acces" => 'public', "controller" => "c_api",                             "view" => "v_api"                  ]
+    ['action' => "api",      "acces" => 'public',   "controller" => "c_api",                            "view" => "v_api"                  ],
+    ['action' => "ga",       "acces" => 'private',  "controller" => "c_administration",                 "view" => "v_crud_utilisateur"     ]
+
+
 );
 
 if (isset($_GET["a"])) {
