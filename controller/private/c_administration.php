@@ -9,7 +9,7 @@ GET
 3 => Modification effectué
 4 => Cette utilisateur n'existe pas
 */
-if ($username == "Administrateur") {
+if ($username == "admin") {
     if (isset($_GET['crud'])) {
         $crud = htmlspecialchars($_GET['crud']);
         switch ($crud) {

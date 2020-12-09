@@ -64,7 +64,7 @@
         <a class="nav-link" href="index.php?a=l"><i class="fas fa-fw fa-chart-area"></i><span>Lier un compte</span></a>
     </li>
     <?php
-    if ($username == "Administrateur") {
+    if ($username == "admin") {
         echo '
             <li class="nav-item">
                 <a class="nav-link" href="index.php?a=ga"><i class="fas fa-fw fa-chart-area"></i><span>Administration</span></a>
