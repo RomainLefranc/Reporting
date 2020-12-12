@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Nautilus Social Manager - Export PPTX Instagral</title>
+    <title>Nautilus Social Manager - Export PPTX Instagram</title>
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -235,19 +235,20 @@
                                                 TabLikeMedia.push(media.like_count);
                                                 totalInteractionTrimestre += media.like_count + media.comments_count;
                                                 var idMedia = media.id;
+                                                var url = "";
                                                 switch (media.media_type) {
                                                     case 'VIDEO':
                                                         media.media_url = media.thumbnail_url;
-                                                        var url =`https://graph.facebook.com/v8.0/${idMedia}/insights?metric=impressions,reach,engagement,video_views&access_token=${token}`;
+                                                        url =`https://graph.facebook.com/v8.0/${idMedia}/insights?metric=impressions,reach,engagement,video_views&access_token=${token}`;
                                                         break;
                                                 
                                                     default:
-                                                        var url =`https://graph.facebook.com/v8.0/${idMedia}/insights?metric=impressions,reach,engagement&access_token=${token}`;
+                                                        url =`https://graph.facebook.com/v8.0/${idMedia}/insights?metric=impressions,reach,engagement&access_token=${token}`;
                                                         break;
                                                 }
                                                 $.ajax({
                                                     type: "GET",
-                                                    url: `https://graph.facebook.com/v8.0/${media.id}/insights?metric=impressions,reach,engagement&access_token=${token}`,
+                                                    url: url,
                                                     async: false,
                                                     dataType: "json",
                                                     success: function (response) {
@@ -301,14 +302,13 @@
                                     async: false,
                                     dataType: "json",
                                     success: function (response) {
-                                        console.log(response);
                                         var nbStorieMois = 0;
                                         var totalreachMois = 0;
                                         response.resultat.stories.forEach(storie => {
                                             nbStoriesTrimestre++;
                                             nbStorieMois++;
                                             totalreachMois += parseInt(storie.reach);
-                                            totalReachStorieTrimestre += parseInt(storie.reach;
+                                            totalReachStorieTrimestre += parseInt(storie.reach);
                                             storie.date = new Date(storie.date);
                                             storie.date = formatterDate(storie.date);
                                             tabStorie.push(storie);
@@ -436,6 +436,7 @@
                                         }
                                     }
                                     /* Récuperation de toute les données nécessaire à la création du graphique */
+
                                     totalFans = 0;
                                     totalFans += verifValeur(data.data[0].values[0].value["F.13-17"]);
                                     totalFans += verifValeur(data.data[0].values[0].value["F.18-24"]);
@@ -451,21 +452,27 @@
                                     totalFans += verifValeur(data.data[0].values[0].value["M.45-54"]);
                                     totalFans += verifValeur(data.data[0].values[0].value["M.55-64"]);
                                     totalFans += verifValeur(data.data[0].values[0].value["M.65+"]);
-                                    
-                                    femme13 = verifValeur(data.data[0].values[0].value["F.13-17"]);
-                                    femme18 = verifValeur(data.data[0].values[0].value["F.18-24"]);
-                                    femme25 = verifValeur(data.data[0].values[0].value["F.25-34"]);
-                                    femme35 = verifValeur(data.data[0].values[0].value["F.35-44"]);
-                                    femme45 = verifValeur(data.data[0].values[0].value["F.45-54"]);
-                                    femme55 = verifValeur(data.data[0].values[0].value["F.55-64"]);
-                                    femme65 = verifValeur(data.data[0].values[0].value["F.65+"]);
-                                    homme13 = verifValeur(data.data[0].values[0].value["M.13-17"]);
-                                    homme18 = verifValeur(data.data[0].values[0].value["M.18-24"]);
-                                    homme25 = verifValeur(data.data[0].values[0].value["M.25-34"]);
-                                    homme35 = verifValeur(data.data[0].values[0].value["M.35-44"]);
-                                    homme45 = verifValeur(data.data[0].values[0].value["M.45-54"]);
-                                    homme55 = verifValeur(data.data[0].values[0].value["M.55-64"]);
-                                    homme65 = verifValeur(data.data[0].values[0].value["M.65+"]);
+                                    var totalFemme = 0;
+                                    var totalHomme = 0;
+                                    totalFemme += femme13 = verifValeur(data.data[0].values[0].value["F.13-17"]);
+                                    totalFemme += femme18 = verifValeur(data.data[0].values[0].value["F.18-24"]);
+                                    totalFemme += femme25 = verifValeur(data.data[0].values[0].value["F.25-34"]);
+                                    totalFemme += femme35 = verifValeur(data.data[0].values[0].value["F.35-44"]);
+                                    totalFemme += femme45 = verifValeur(data.data[0].values[0].value["F.45-54"]);
+                                    totalFemme += femme55 = verifValeur(data.data[0].values[0].value["F.55-64"]);
+                                    totalFemme += femme65 = verifValeur(data.data[0].values[0].value["F.65+"]);
+                                    totalHomme += homme13 = verifValeur(data.data[0].values[0].value["M.13-17"]);
+                                    totalHomme += homme18 = verifValeur(data.data[0].values[0].value["M.18-24"]);
+                                    totalHomme += homme25 = verifValeur(data.data[0].values[0].value["M.25-34"]);
+                                    totalHomme += homme35 = verifValeur(data.data[0].values[0].value["M.35-44"]);
+                                    totalHomme += homme45 = verifValeur(data.data[0].values[0].value["M.45-54"]);
+                                    totalHomme += homme55 = verifValeur(data.data[0].values[0].value["M.55-64"]);
+                                    totalHomme += homme65 = verifValeur(data.data[0].values[0].value["M.65+"]);
+
+                                    totalFemme = (totalFemme/totalFans*100).toFixed(2)
+                                    totalHomme = (totalHomme/totalFans*100).toFixed(2)
+                                    console.log("Femme " + totalFemme);
+                                    console.log("Homme " + totalHomme);
 
                                     /* Definition et affichage du graphique */
                                     am4core.ready(function() {
@@ -556,7 +563,7 @@
                                         var maleRange = valueAxis.axisRanges.create();
                                         maleRange.value = -10;
                                         maleRange.endValue = 0;
-                                        maleRange.label.text = "Femme";
+                                        maleRange.label.text = "Femme "+ totalFemme;
                                         maleRange.label.fill = chart.colors.list[0];
                                         maleRange.label.dy = 20;
                                         maleRange.label.fontWeight = '600';
@@ -566,7 +573,7 @@
                                         var femaleRange = valueAxis.axisRanges.create();
                                         femaleRange.value = 0;
                                         femaleRange.endValue = 10;
-                                        femaleRange.label.text = "Homme";
+                                        femaleRange.label.text = "Homme " + totalHomme;
                                         femaleRange.label.fill = chart.colors.list[1];
                                         femaleRange.label.dy = 20;
                                         femaleRange.label.fontWeight = '600';
@@ -589,7 +596,6 @@
                                 donneesPowerPoint.top3FlopReach = flopReach;
                                 donneesPowerPoint.storieInsta = tabStorie;
                                 donneesPowerPoint.top3ReachStories = top3ReachStories;
-                                console.log(donneesPowerPoint);
                                 $("#progress_bar").val("70");
 
                                 /* Création du powerpoint */
@@ -717,7 +723,7 @@
                                                 
                                                 posXShape += 11
                                                 slide.addText([
-                                                    { text: mois.personneAtteintesMoyen.toString(), options: {bold:true, fontSize:12}},
+                                                    { text: mois.totalreach.toString(), options: {bold:true, fontSize:12}},
                                                     { text: ' reach total stories soit une moyenne de ', options: {}},
                                                     { text: mois.personneAtteintesMoyen + '/story', options: {bold:true}}
                                                 ], { shape:pptx.shapes.RECTANGLE, align:'center', x:posXShape + '%', y:posYShape + '%', w:1, h:1, fill:'0088CC', line:'006699', lineSize:2 , fontSize:10, color:'FFFFFF'});

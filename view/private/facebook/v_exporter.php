@@ -426,24 +426,30 @@
                                                         totalFans += data.data[0].values[0].value["M.45-54"];
                                                         totalFans += data.data[0].values[0].value["M.55-64"];
                                                         totalFans += data.data[0].values[0].value["M.65+"];
+                                                        totalFemme = 0;
+                                                        totalHomme = 0;
+                                                        totalFemme += femme13 = data.data[0].values[0].value["F.13-17"];
+                                                        totalFemme += femme18 = data.data[0].values[0].value["F.18-24"];
+                                                        totalFemme += femme25 = data.data[0].values[0].value["F.25-34"];
+                                                        totalFemme += femme35 = data.data[0].values[0].value["F.35-44"];
+                                                        totalFemme += femme45 = data.data[0].values[0].value["F.45-54"];
+                                                        totalFemme += femme55 = data.data[0].values[0].value["F.55-64"];
+                                                        totalFemme += femme65 = data.data[0].values[0].value["F.65+"];
+                                                        totalHomme += homme13 = data.data[0].values[0].value["M.13-17"];
+                                                        totalHomme += homme18 = data.data[0].values[0].value["M.18-24"];
+                                                        totalHomme += homme25 = data.data[0].values[0].value["M.25-34"];
+                                                        totalHomme += homme35 = data.data[0].values[0].value["M.35-44"];
+                                                        totalHomme += homme45 = data.data[0].values[0].value["M.45-54"];
+                                                        totalHomme += homme55 = data.data[0].values[0].value["M.55-64"];
+                                                        totalHomme += homme65 = data.data[0].values[0].value["M.65+"];
 
-                                                        femme13 = data.data[0].values[0].value["F.13-17"];
-                                                        femme18 = data.data[0].values[0].value["F.18-24"];
-                                                        femme25 = data.data[0].values[0].value["F.25-34"];
-                                                        femme35 = data.data[0].values[0].value["F.35-44"];
-                                                        femme45 = data.data[0].values[0].value["F.45-54"];
-                                                        femme55 = data.data[0].values[0].value["F.55-64"];
-                                                        femme65 = data.data[0].values[0].value["F.65+"];
-                                                        homme13 = data.data[0].values[0].value["M.13-17"];
-                                                        homme18 = data.data[0].values[0].value["M.18-24"];
-                                                        homme25 = data.data[0].values[0].value["M.25-34"];
-                                                        homme35 = data.data[0].values[0].value["M.35-44"];
-                                                        homme45 = data.data[0].values[0].value["M.45-54"];
-                                                        homme55 = data.data[0].values[0].value["M.55-64"];
-                                                        homme65 = data.data[0].values[0].value["M.65+"];
+                                                        totalFemme = (totalFemme/totalFans*100).toFixed(2)
+                                                        totalHomme = (totalHomme/totalFans*100).toFixed(2)
+
                                                     } else {
                                                         totalFans = 0;
-
+                                                        totalFemme = 0;
+                                                        totalHomme = 0;
                                                         femme13 = 0;
                                                         femme18 = 0;
                                                         femme25 = 0;
@@ -459,6 +465,7 @@
                                                         homme55 = 0;
                                                         homme65 = 0;
                                                     } 
+
 
                                                     am4core.ready(function() {
 
@@ -550,7 +557,7 @@
                                                         var maleRange = valueAxis.axisRanges.create();
                                                         maleRange.value = -10;
                                                         maleRange.endValue = 0;
-                                                        maleRange.label.text = "Femme";
+                                                        maleRange.label.text = "Femme " + totalFemme;
                                                         maleRange.label.fill = chart.colors.list[0];
                                                         maleRange.label.dy = 20;
                                                         maleRange.label.fontWeight = '600';
@@ -560,7 +567,7 @@
                                                         var femaleRange = valueAxis.axisRanges.create();
                                                         femaleRange.value = 0;
                                                         femaleRange.endValue = 10;
-                                                        femaleRange.label.text = "Homme";
+                                                        femaleRange.label.text = "Homme " + totalHomme;
                                                         femaleRange.label.fill = chart.colors.list[1];
                                                         femaleRange.label.dy = 20;
                                                         femaleRange.label.fontWeight = '600';
