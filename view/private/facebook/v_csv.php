@@ -117,7 +117,6 @@
                         
                         $("#progress_selectionne").val("15");
                         var monUrl = 'https://graph.facebook.com/v4.0/' + str + '?fields=id,name,posts.since(' + maDate1 + ').until(' + maDate2 + '){id,full_picture,message,reactions.summary(true),created_time,comments.summary(true),shares,attachments},fan_count&access_token=' + token;               
-                        console.log(monUrl);
                         $.ajax(
                             {
                             url : monUrl,
@@ -203,7 +202,6 @@
                                                     }
                                                     //recuperationDesInsights(idPage,pos,tokenPage);
                                                     var monUrl2 = 'https://graph.facebook.com/v4.0/' + idPage + '/insights/post_clicks,post_impressions_organic,post_impressions_paid,post_impressions,post_engaged_users,post_video_views,post_impressions_paid_unique,post_impressions_unique,post_video_views_10s,post_video_views_15s?access_token=' + tokenPage;
-                                                    console.log(monUrl2)
                                                     $.ajax(
                                                         {
                                                             url : monUrl2,
@@ -250,8 +248,6 @@
                                                                     nbVues: nbVues,
                                                                     nbVues10s: nbVues10s
                                                                 });
-                                                                console.log(( response.data[0].values[0].value + reactions + shares + commentaires));
-                                                                        console.log(response.data[7].values[0].value);
                                                             } 
                                                                         
                                                         }
@@ -274,7 +270,6 @@
                                     }
 
                                     $( "#result" ).html( htm );
-                                    console.log(itemsNotFormatted)
                                     function convertToCSV(objArray) {
                                     var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
                                     var str = '';
